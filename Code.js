@@ -47,13 +47,6 @@ function setProperty(key, value) {
   userProperties.setProperty(key, JSON.stringify(value));
 }
 
-function logUserInfo() {
-  var email = Session.getActiveUser().getEmail();
-  var userProperties = PropertiesService.getUserProperties();
-  var properties = userProperties.getProperties();
-  Logger.log('Active user Email: %s\nUser properties: %s', email, properties);
-}
-
 function logDebug(msg) {
   Logger.log(msg);
   return msg;

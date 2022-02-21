@@ -6,7 +6,6 @@
     vuetify: new Vuetify(),
     data() {
       return {
-        ready: false,
         grade: 3,
         reveal: false,
         loading: true,
@@ -105,11 +104,7 @@
     watch: {
     },
     created() {
-      reportUserInfo();
       this.loadQuestions(this.grade);
-      window.addEventListener('beforeunload', (event) => {
-        reportUserInfo();
-      });
     },
   });
 
