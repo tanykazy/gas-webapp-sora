@@ -1,0 +1,168 @@
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script>
+  const app = new Vue({
+    el: '#app',
+    vuetify: new Vuetify(),
+    data() {
+      return {
+        ready: false,
+        grade: 3,
+        reveal: false,
+        loading: true,
+        disable: true,
+        questions: null,
+        answer: "",
+        question: "",
+        num: "",
+        weakCount: 0,
+        history: {},
+      };
+    },
+    methods: {
+      onClickDone(event) {
+        this.loading = true;
+        this.turnFront(event);
+        this.increaseHistory(this.num);
+        this.nextQuestion();
+        setItem(this.grade, trimHistory(this.history));
+        this.disable = true;
+        this.loading = false;
+      },
+      onClickClear(event) {
+        this.loading = true;
+        this.turnFront(event);
+        this.decreaseHistory(this.num);
+        this.nextQuestion();
+        setItem(this.grade, trimHistory(this.history));
+        this.disable = true;
+        this.loading = false;
+      },
+      nextQuestion() {
+        var q = null;
+        if (this.weakCount === 0) {
+          q = this.weakQuestion();
+        }
+        this.weakCount = (this.weakCount + 1) % 10;
+        if (q === null || this.num === q[0]) {
+          q = this.randomQuestion();
+        }
+        this.num = q[0];
+        this.answer = q[1];
+        this.question = q[4];
+      },
+      weakQuestion() {
+        var weak = null;
+        for (var key in this.history) {
+          if (this.history[key] < (this.history[weak] || 0)) {
+            weak = key;
+          }
+        }
+        if (weak !== null) {
+          return this.questions[weak - 1];
+        }
+        return null;
+      },
+      randomQuestion() {
+        return this.questions[getRandomInt(this.questions.length)];
+      },
+      increaseHistory(num) {
+        if (this.history[num] === undefined) {
+          this.history[num] = 0;
+        }
+        this.history[num] += 1;
+      },
+      decreaseHistory(num) {
+        if (this.history[num] === undefined) {
+          this.history[num] = 0;
+        }
+        this.history[num] -= 1;
+      },
+      turnFront(event) {
+        this.reveal = false;
+        this.disable = false;
+      },
+      turnBack(event) {
+        this.reveal = true;
+        this.disable = false;
+      },
+      loadQuestions(grade) {
+        getItem(grade, (result) => {
+          if (result !== null) {
+            this.history = result;
+          }
+        });
+        fetchQuestions(grade, (result) => {
+          if (!result) {
+            return report('fetchQuestions(), google.script.run.withSuccessHandler called with null.');
+          }
+          this.questions = result;
+          this.nextQuestion();
+          this.loading = false;
+        });
+      },
+    },
+    watch: {
+    },
+    created() {
+      reportUserInfo();
+      this.loadQuestions(this.grade);
+      window.addEventListener('beforeunload', (event) => {
+        reportUserInfo();
+      });
+    },
+  });
+
+  function fetchQuestions(grade, callback) {
+    google.script.run
+      .withSuccessHandler(callback)
+      .withFailureHandler(function (error) {
+        report('the server-side function throws an exception');
+        report(error);
+      })
+      .getData(grade);
+  }
+
+  function getItem(keyName, callback) {
+    google.script.run
+      .withSuccessHandler(callback)
+      .withFailureHandler(report)
+      .getProperty(keyName);
+  }
+
+  function setItem(keyName, keyValue) {
+    google.script.run
+      .withFailureHandler(report)
+      .setProperty(keyName, keyValue);
+  }
+
+  function reportUserInfo() {
+    google.script.run
+      .withFailureHandler(report)
+      .logUserInfo();
+  }
+
+  function report(msg) {
+    google.script.run
+      .withSuccessHandler(function (result) {
+        console.log(result);
+      })
+      .withFailureHandler(function (error) {
+        console.log(error);
+      })
+      .logDebug(msg);
+  }
+
+  function trimHistory(history) {
+    for (var key in history) {
+      if (history[key] === 0) {
+        delete history[key];
+      }
+    }
+    return history;
+  }
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+</script>

@@ -1,0 +1,70 @@
+<div id="app">
+  <v-app>
+    <v-app-bar app absolute color="primary">
+      <v-toolbar-title>SoraKanji</v-toolbar-title>
+    </v-app-bar>
+
+    <v-main>
+      <v-container>
+        <v-row>
+
+          <v-col>
+            <v-card :loading="loading" :disabled="loading">
+              <v-card-subtitle>
+                <p>{{num}}</p>
+              </v-card-subtitle>
+              <v-card-title>
+                <p class="custom-fonts">{{question}}</p>
+              </v-card-title>
+              <v-card-text>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn icon bottom color="primary" @click="turnBack($event)">
+                  <v-icon>arrow_drop_down</v-icon>
+                </v-btn>
+              </v-card-actions>
+              <v-expand-transition>
+                <v-card v-if="reveal" class="transition-fast-in-fast-out v-card--reveal" style="height: 100%;">
+                  <v-card-subtitle>
+                    <p>{{num}}</p>
+                  </v-card-subtitle>
+                  <v-card-title>
+                    <p class="custom-fonts">{{answer}}</p>
+                  </v-card-title>
+                  <v-card-text>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn icon bottom color="primary" @click="turnFront($event)">
+                      <v-icon>arrow_drop_up</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-expand-transition>
+            </v-card>
+          </v-col>
+
+        </v-row>
+        <v-row>
+
+          <v-col>
+            <v-btn block color="success" :loading="loading" :disabled="disable" @click="onClickDone($event)">
+              <v-icon>done</v-icon>
+            </v-btn>
+          </v-col>
+
+          <v-col>
+            <v-btn block color="error" :loading="loading" :disabled="disable" @click="onClickClear($event)">
+              <v-icon>clear</v-icon>
+            </v-btn>
+          </v-col>
+
+        </v-row>
+      </v-container>
+    </v-main>
+
+    <v-footer app fixed color="primary">
+      <v-col class="text-center" cols="12">
+      </v-col>
+    </v-footer>
+  </v-app>
+</div>
