@@ -17,7 +17,7 @@ function getData(grade) {
     return JSON.parse(values);
   }
   try {
-    var spreadsheet = SpreadsheetApp.openById('');
+    var spreadsheet = SpreadsheetApp.openById('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
     var sheet = spreadsheet.getSheetByName(grade);
     if (sheet === null) {
       throw 'there is no sheet with the given name.';
