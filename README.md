@@ -1,1 +1,1 @@
-# gas-webapp-sorakanji
+# gas-webapp-sora
