@@ -19,7 +19,45 @@
         num: "",
         weakCount: 0,
         history: {},
+        flashcardExist: null,
+        flashcardCreated: null,
+        flashcardList: null,
       };
+    },
+    created() {
+      existFlashcard((result) => {
+        this.flashcardExist = result;
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    watch: {
+      flashcardCreated(value, old) {
+        // console.log(`created new: ${value}, old: ${old}`)
+        if (value) {
+          getFlashcardList((result) => {
+            this.flashcardList = result;
+          }, (error) => {
+            console.log(error);
+          });
+        }
+      },
+      flashcardExist(value, old) {
+        // console.log(`exist new: ${value}, old: ${old}`)
+        if (value) {
+          this.flashcardCreated = true;
+        } else {
+          createUserFlashcard((result) => {
+            this.flashcardExist = true;
+            this.flashcardCreated = true;
+          }, (error) => {
+            console.log(error);
+          });
+        }
+      },
+      flashcardList(value, old) {
+        // console.log(`list new: ${value}, old: ${old}`)
+      },
     },
     methods: {
       onClickDone(event) {
@@ -104,16 +142,70 @@
         });
       },
     },
-    watch: {
-    },
-    created() {
-      reportUserInfo();
-      this.loadQuestions(this.grade);
-      window.addEventListener('beforeunload', (event) => {
-        reportUserInfo();
-      });
-    },
   });
+
+  function createUserFlashcard(success, failure) {
+    google.script.run
+      .withSuccessHandler(success)
+      .withFailureHandler(failure)
+      .createUserFlashcard();
+  }
+
+  function existFlashcard(success, failure) {
+    google.script.run
+      .withSuccessHandler(success)
+      .withFailureHandler(failure)
+      .existUserFlashcard();
+  }
+
+  function getFlashcardList(success, failure) {
+    google.script.run
+      .withSuccessHandler(success)
+      .withFailureHandler(failure)
+      .getFlashcardList();
+  }
+
+  function initFlashcard(object) {
+    google.script.run
+      .withSuccessHandler(function (result, object) {
+        if (result) {
+          getFlashcardList(function (result, object) {
+            console.log(result);
+          }, object);
+        } else {
+          createUserFlashcard(function (result, object) {
+            getFlashcardList(function (result, object) {
+              console.log(result);
+            }, object);
+          }, object);
+        }
+      })
+      .withFailureHandler(function (error, object) {
+        console.log(error);
+      })
+      .withUserObject(this)
+      .existUserFlashcard();
+  }
+
+  function createUserFlashcard(callback, object) {
+    google.script.run
+      .withSuccessHandler(callback)
+      .withFailureHandler(function (error, object) {
+        console.log(error);
+      })
+      .withUserObject(object)
+      .createUserFlashcard();
+  }
+
+  function getFlashcardList(callback, object) {
+    google.script.run
+      .withSuccessHandler(callback)
+      .withFailureHandler(function (error, object) {
+        console.log(error);
+      })
+      .withUserObject(object)
+      .getFlashcardList();
+  }
 
   function fetchQuestions(grade, callback) {
     google.script.run
@@ -136,12 +228,6 @@
     google.script.run
       .withFailureHandler(report)
       .setProperty(keyName, keyValue);
-  }
-
-  function reportUserInfo() {
-    google.script.run
-      .withFailureHandler(report)
-      .logUserInfo();
   }
 
   function report(msg) {
