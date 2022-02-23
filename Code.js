@@ -6,10 +6,6 @@ function doGet(e) {
   return output;
 }
 
-function doPost(e) {
-  return doGet(e);
-}
-
 function getData(grade) {
   var cache = CacheService.getUserCache();
   var values = cache.get(grade);
