@@ -6,29 +6,6 @@ function doGet(e) {
   return output;
 }
 
-function getData(grade) {
-  var cache = CacheService.getUserCache();
-  var values = cache.get(grade);
-  if (values !== null) {
-    return JSON.parse(values);
-  }
-  try {
-    var spreadsheet = SpreadsheetApp.openById('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
-    var sheet = spreadsheet.getSheetByName(grade);
-    if (sheet === null) {
-      throw 'there is no sheet with the given name.';
-    }
-    var range = sheet.getDataRange();
-    values = range.getValues();
-    values.shift();
-    cache.put(grade, JSON.stringify(values));
-    return values;
-  } catch (e) {
-    logDebug(e);
-  }
-  return null;
-}
-
 function createUserFlashcard() {
   newUserFlashcardFile_();
 }
@@ -41,7 +18,7 @@ function existUserFlashcard() {
   return false;
 }
 
-function getFlashcardList() {
+function getFlashcardNameList() {
   const file = getUserFlashcardFile_();
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
@@ -52,7 +29,7 @@ function getFlashcardList() {
   return list;
 }
 
-function fetchFlashcardData(sheetName) {
+function getFlashcardData(sheetName) {
   const cache = CacheService.getUserCache();
   let values = cache.get(sheetName);
   if (values !== null) {
@@ -66,9 +43,23 @@ function fetchFlashcardData(sheetName) {
   }
   const range = sheet.getDataRange();
   values = range.getValues();
+  if (values.length === 0) {
+    return null;
+  }
   values.shift();
+  if (values.length === 0) {
+    return ['', '', ''];
+  }
   cache.put(sheetName, JSON.stringify(values));
   return values;
+}
+
+function getFlashcardUrl() {
+  const file = getUserFlashcardFile_();
+  if (file !== null) {
+    return file.getUrl();
+  }
+  return null;
 }
 
 function getFileById_(id) {
@@ -114,16 +105,4 @@ function getProperty_(key) {
 function setProperty_(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
-}
-
-function logUserInfo() {
-  var email = Session.getActiveUser().getEmail();
-  var userProperties = PropertiesService.getUserProperties();
-  var properties = userProperties.getProperties();
-  Logger.log('Active user Email: %s\nUser properties: %s', email, properties);
-}
-
-function logDebug(msg) {
-  Logger.log(msg);
-  return msg;
 }

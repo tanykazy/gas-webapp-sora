@@ -5,10 +5,10 @@
       <v-toolbar-title>Sora</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn icon>
+        <v-btn icon :href="flashcardUrl" :disabled="flashcardUrlDisabled">
           <v-icon>quiz</v-icon>
         </v-btn>
-        <v-btn icon>
+        <v-btn icon :disabled="true">
           <v-icon>delete_sweep</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -17,18 +17,13 @@
     <v-navigation-drawer v-model="drawer" app temporary>
       <v-list nav>
         <v-list-item-group v-model="group">
-          <v-list-item>
+          <v-list-item ripple v-for="name in flashcardNameList" :key="name" @click="onClickListItem(name)">
             <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
+              <v-icon>list</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Account</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title v-text="name"></v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -93,10 +88,10 @@
     </v-main>
 
     <v-footer app fixed color="primary">
-        <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>bug_report</v-icon>
-        </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn icon :disabled="true">
+        <v-icon>bug_report</v-icon>
+      </v-btn>
     </v-footer>
   </v-app>
 </div>

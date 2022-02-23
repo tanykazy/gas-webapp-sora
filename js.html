@@ -11,70 +11,123 @@
         ready: false,
         grade: 3,
         reveal: false,
-        loading: true,
+        loading: false,
         disable: true,
-        questions: null,
         answer: "",
         question: "",
         num: "",
         weakCount: 0,
         history: {},
+        flashcardData: null,
+        flashcardName: null,
         flashcardExist: null,
         flashcardCreated: null,
-        flashcardList: null,
+        flashcardNameList: null,
+        flashcardUrl: null,
+        flashcardUrlDisabled: true,
       };
     },
+    beforeCreate() {
+      setHistoryChangeHandler((event) => {
+        const name = event.state.name;
+        if (name !== null) {
+          if (name !== this.flashcardName) {
+            this.changeFlashcardList(name);
+          } else {
+            const card = event.state.card;
+            if (card !== null) {
+              this.changeFlashcard(card);
+            }
+          }
+        }
+      });
+    },
     created() {
+      this.loading = true;
       existFlashcard((result) => {
         this.flashcardExist = result;
+        this.loading = false;
       }, (error) => {
         console.log(error);
       });
     },
     watch: {
       flashcardCreated(value, old) {
-        // console.log(`created new: ${value}, old: ${old}`)
         if (value) {
-          getFlashcardList((result) => {
-            this.flashcardList = result;
+          this.loading = true;
+          getFlashcardNameList((result) => {
+            this.flashcardNameList = result;
+            this.loading = false;
           }, (error) => {
             console.log(error);
           });
         }
       },
       flashcardExist(value, old) {
-        // console.log(`exist new: ${value}, old: ${old}`)
         if (value) {
           this.flashcardCreated = true;
+          getFlashcardUrl((result) => {
+            this.flashcardUrl = result;
+            this.flashcardUrlDisabled = false;
+          }, (error) => {
+            console.log(error);
+          });
         } else {
+          this.loading = true;
           createUserFlashcard((result) => {
             this.flashcardExist = true;
             this.flashcardCreated = true;
+            this.loading = false;
           }, (error) => {
             console.log(error);
           });
         }
       },
-      flashcardList(value, old) {
-        // console.log(`list new: ${value}, old: ${old}`)
+      flashcardNameList(value, old) {
+        this.changeFlashcardList(this.flashcardNameList[0]);
       },
     },
     methods: {
       onClickDone(event) {
-        this.loading = true;
-        this.turnFront(event);
         this.increaseHistory(this.num);
         this.nextQuestion();
-        setItem(this.grade, trimHistory(this.history));
-        this.disable = true;
-        this.loading = false;
+        // setItem(this.grade, trimHistory(this.history));
       },
       onClickClear(event) {
-        this.loading = true;
-        this.turnFront(event);
         this.decreaseHistory(this.num);
         this.nextQuestion();
-        setItem(this.grade, trimHistory(this.history));
+        // setItem(this.grade, trimHistory(this.history));
+      },
+      onClickListItem(event) {
+        if (event !== this.flashcardName) {
+          this.changeFlashcardList(event);
+        }
+        this.drawer = false;
+      },
+      changeFlashcardList(name) {
+        this.loading = true;
+        getFlashcardData(name, (result) => {
+          this.flashcardData = result;
+          this.flashcardName = name;
+          pushHistory({
+            name: name,
+            card: null,
+          }, {
+            name: name,
+            card: '',
+          }, '');
+          this.nextQuestion();
+          this.loading = false;
+        }, (error) => {
+          console.log(error);
+        });
+      },
+      changeFlashcard(card) {
+        this.loading = true;
+        this.turnFront(event);
+        this.num = card[0];
+        this.answer = card[1];
+        this.question = card[2];
         this.disable = true;
         this.loading = false;
       },
@@ -87,9 +140,14 @@
         if (q === null || this.num === q[0]) {
           q = this.randomQuestion();
         }
-        this.num = q[0];
-        this.answer = q[1];
-        this.question = q[2];
+        this.changeFlashcard(q);
+        pushHistory({
+          name: this.flashcardName,
+          card: q,
+        }, {
+          name: this.flashcardName,
+          card: this.num,
+        }, '');
       },
       weakQuestion() {
         var weak = null;
@@ -99,12 +157,12 @@
           }
         }
         if (weak !== null) {
-          return this.questions[weak - 1];
+          return this.flashcardData[weak - 1];
         }
         return null;
       },
       randomQuestion() {
-        return this.questions[getRandomInt(this.questions.length)];
+        return this.flashcardData[getRandomInt(this.flashcardData.length)];
       },
       increaseHistory(num) {
         if (this.history[num] === undefined) {
@@ -126,21 +184,6 @@
         this.reveal = true;
         this.disable = false;
       },
-      loadQuestions(grade) {
-        getItem(grade, (result) => {
-          if (result !== null) {
-            this.history = result;
-          }
-        });
-        fetchQuestions(grade, (result) => {
-          if (!result) {
-            return report('fetchQuestions(), google.script.run.withSuccessHandler called with null.');
-          }
-          this.questions = result;
-          this.nextQuestion();
-          this.loading = false;
-        });
-      },
     },
   });
 
@@ -158,96 +201,40 @@
       .existUserFlashcard();
   }
 
-  function getFlashcardList(success, failure) {
+  function getFlashcardNameList(success, failure) {
     google.script.run
       .withSuccessHandler(success)
       .withFailureHandler(failure)
-      .getFlashcardList();
+      .getFlashcardNameList();
   }
 
-  function initFlashcard(object) {
+  function getFlashcardData(name, success, failure) {
     google.script.run
-      .withSuccessHandler(function (result, object) {
-        if (result) {
-          getFlashcardList(function (result, object) {
-            console.log(result);
-          }, object);
-        } else {
-          createUserFlashcard(function (result, object) {
-            getFlashcardList(function (result, object) {
-              console.log(result);
-            }, object);
-          }, object);
-        }
-      })
-      .withFailureHandler(function (error, object) {
-        console.log(error);
-      })
-      .withUserObject(this)
-      .existUserFlashcard();
+      .withSuccessHandler(success)
+      .withFailureHandler(failure)
+      .getFlashcardData(name);
   }
 
-  function createUserFlashcard(callback, object) {
+  function getFlashcardUrl(success, failure) {
     google.script.run
-      .withSuccessHandler(callback)
-      .withFailureHandler(function (error, object) {
-        console.log(error);
-      })
-      .withUserObject(object)
-      .createUserFlashcard();
+      .withSuccessHandler(success)
+      .withFailureHandler(failure)
+      .getFlashcardUrl();
   }
 
-  function getFlashcardList(callback, object) {
-    google.script.run
-      .withSuccessHandler(callback)
-      .withFailureHandler(function (error, object) {
-        console.log(error);
-      })
-      .withUserObject(object)
-      .getFlashcardList();
+  function pushHistory(state, params, hash) {
+    google.script.history
+      .push(state, params, hash);
   }
 
-  function fetchQuestions(grade, callback) {
-    google.script.run
-      .withSuccessHandler(callback)
-      .withFailureHandler(function (error) {
-        report('the server-side function throws an exception');
-        report(error);
-      })
-      .getData(grade);
+  function replaceHistory(state, params, hash) {
+    google.script.history
+      .replace(state, params, hash);
   }
 
-  function getItem(keyName, callback) {
-    google.script.run
-      .withSuccessHandler(callback)
-      .withFailureHandler(report)
-      .getProperty(keyName);
-  }
-
-  function setItem(keyName, keyValue) {
-    google.script.run
-      .withFailureHandler(report)
-      .setProperty(keyName, keyValue);
-  }
-
-  function report(msg) {
-    google.script.run
-      .withSuccessHandler(function (result) {
-        console.log(result);
-      })
-      .withFailureHandler(function (error) {
-        console.log(error);
-      })
-      .logDebug(msg);
-  }
-
-  function trimHistory(history) {
-    for (var key in history) {
-      if (history[key] === 0) {
-        delete history[key];
-      }
-    }
-    return history;
+  function setHistoryChangeHandler(handler) {
+    google.script.history
+      .setChangeHandler(handler);
   }
 
   function getRandomInt(max) {
