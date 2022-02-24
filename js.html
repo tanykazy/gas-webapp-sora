@@ -104,6 +104,9 @@
         }
         this.drawer = false;
       },
+      flipCard() {
+        this.reveal = !this.reveal;
+      },
       changeFlashcardList(name) {
         this.loading = true;
         getFlashcardData(name, (result) => {

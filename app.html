@@ -17,7 +17,7 @@
     <v-navigation-drawer v-model="drawer" app temporary>
       <v-list nav>
         <v-list-item-group v-model="group">
-          <v-list-item ripple v-for="name in flashcardNameList" :key="name" @click="onClickListItem(name)">
+          <v-list-item v-for="name in flashcardNameList" :key="name" @click="onClickListItem(name)">
             <v-list-item-icon>
               <v-icon>list</v-icon>
             </v-list-item-icon>
@@ -34,38 +34,43 @@
         <v-row>
 
           <v-col>
-            <v-card :loading="loading" :disabled="loading">
-              <v-card-subtitle>
-                <p>{{num}}</p>
-              </v-card-subtitle>
-              <v-card-title>
-                <p class="custom-fonts">{{question}}</p>
-              </v-card-title>
-              <v-card-text>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn icon bottom color="primary" @click="turnBack($event)">
-                  <v-icon>arrow_drop_down</v-icon>
-                </v-btn>
-              </v-card-actions>
-              <v-expand-transition>
-                <v-card v-if="reveal" class="transition-fast-in-fast-out v-card--reveal" style="height: 100%;">
-                  <v-card-subtitle>
-                    <p>{{num}}</p>
-                  </v-card-subtitle>
-                  <v-card-title>
-                    <p class="custom-fonts">{{answer}}</p>
-                  </v-card-title>
-                  <v-card-text>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn icon bottom color="primary" @click="turnFront($event)">
-                      <v-icon>arrow_drop_up</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-expand-transition>
-            </v-card>
+            <transition name="flip">
+              <v-card v-show="!reveal" :loading="loading" :disabled="loading">
+                <v-card-subtitle>
+                  <p>{{num}}</p>
+                </v-card-subtitle>
+                <v-card-title>
+                  <p>{{question}}</p>
+                </v-card-title>
+                <v-card-text>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn icon bottom color="primary" @click="turnBack($event)">
+                    <v-icon>flip_to_back</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </transition>
+
+            <transition name="flip">
+              <v-card ripple v-show="reveal" :loading="loading" :disabled="loading">
+                <v-card-subtitle>
+                  <p>{{num}}</p>
+                </v-card-subtitle>
+                <v-card-title>
+                  <p>{{answer}}</p>
+                </v-card-title>
+                <v-card-text>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn icon bottom color="primary" @click="turnFront($event)">
+                    <v-icon>flip_to_front</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </transition>
           </v-col>
 
         </v-row>
