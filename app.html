@@ -21,9 +21,15 @@
             <v-icon>light_mode</v-icon>
           </v-btn>
         </transition>
-        <v-btn icon :href="flashcardFileUrl" target="_blank" :disabled="flashcardFileUrlDisabled">
-          <v-icon>launch</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon target="_blank" :href="flashcardFileUrl" :disabled="flashcardFileUrlDisabled" v-bind="attrs"
+              v-on="on">
+              <v-icon>launch</v-icon>
+            </v-btn>
+          </template>
+          <span>Open SpreadSheet</span>
+        </v-tooltip>
       </v-toolbar-items>
     </v-app-bar>
 
