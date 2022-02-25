@@ -7,13 +7,13 @@
     }),
     data() {
       return {
+        appName: 'Sora',
         drawer: false,
-        group: null,
         ready: false,
-        grade: 3,
         reveal: false,
         loading: false,
         disable: true,
+        themeMode: true,
         answer: "",
         question: "",
         num: "",
@@ -54,6 +54,9 @@
       });
     },
     watch: {
+      themeMode(value, old) {
+        this.$vuetify.theme.dark = !value;
+      },
       flashcardCreated(value, old) {
         if (value) {
           this.loading = true;

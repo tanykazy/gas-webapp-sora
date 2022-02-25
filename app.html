@@ -2,12 +2,25 @@
   <v-app>
     <v-app-bar app absolute color="primary">
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
-      <v-toolbar-title>Sora</v-toolbar-title>
+      <v-toolbar-title v-text="appName"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn icon :disabled="true">
           <v-icon>delete_sweep</v-icon>
         </v-btn>
+        <v-btn icon :disabled="true">
+          <v-icon>settings</v-icon>
+        </v-btn>
+        <transition name="flip">
+          <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
+            <v-icon>dark_mode</v-icon>
+          </v-btn>
+        </transition>
+        <transition name="flip">
+          <v-btn icon v-show="!themeMode" @click="themeMode = !themeMode">
+            <v-icon>light_mode</v-icon>
+          </v-btn>
+        </transition>
         <v-btn icon :href="flashcardFileUrl" target="_blank" :disabled="flashcardFileUrlDisabled">
           <v-icon>launch</v-icon>
         </v-btn>
@@ -15,9 +28,6 @@
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
-      <v-subheader>
-        <p>Flashcard</p>
-      </v-subheader>
       <v-list nav>
         <v-list-group :value="true">
           <template v-slot:activator>
@@ -28,8 +38,6 @@
           </template>
           <v-list-item v-for="name in flashcardNameList" :key="name" @click="onClickListItem(name)">
             <v-list-item-title v-text="name"></v-list-item-title>
-            <v-list-item-content>
-            </v-list-item-content>
             <v-list-item-icon>
               <v-icon>list</v-icon>
             </v-list-item-icon>
@@ -45,12 +53,9 @@
           <v-col>
             <transition name="flip">
               <v-card v-show="!reveal" :loading="loading" :disabled="loading">
-                <v-card-subtitle v-text="num">
-                </v-card-subtitle>
-                <v-card-title v-text="question">
-                </v-card-title>
-                <v-card-text>
-                </v-card-text>
+                <v-card-subtitle v-text="num"></v-card-subtitle>
+                <v-card-title v-text="question"></v-card-title>
+                <v-card-text></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon bottom @click="flipCard($event)">
@@ -62,12 +67,9 @@
 
             <transition name="flip">
               <v-card v-show="reveal" :loading="loading" :disabled="loading">
-                <v-card-subtitle v-text="num">
-                </v-card-subtitle>
-                <v-card-title v-text="answer">
-                </v-card-title>
-                <v-card-text>
-                </v-card-text>
+                <v-card-subtitle v-text="num"></v-card-subtitle>
+                <v-card-title v-text="answer"></v-card-title>
+                <v-card-text></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon bottom @click="flipCard($event)">
