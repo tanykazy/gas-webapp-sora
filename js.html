@@ -3,7 +3,8 @@
 <script>
   const app = new Vue({
     el: '#app',
-    vuetify: new Vuetify(),
+    vuetify: new Vuetify({
+    }),
     data() {
       return {
         drawer: false,
@@ -23,8 +24,9 @@
         flashcardExist: null,
         flashcardCreated: null,
         flashcardNameList: null,
-        flashcardUrl: null,
-        flashcardUrlDisabled: true,
+        flashcardFileUrl: null,
+        flashcardFileName: null,
+        flashcardFileUrlDisabled: true,
       };
     },
     beforeCreate() {
@@ -66,9 +68,14 @@
       flashcardExist(value, old) {
         if (value) {
           this.flashcardCreated = true;
+          getFlashcardFileName((result) => {
+            this.flashcardFileName = result;
+          }, (error) => {
+            console.log(error);
+          });
           getFlashcardUrl((result) => {
-            this.flashcardUrl = result;
-            this.flashcardUrlDisabled = false;
+            this.flashcardFileUrl = result;
+            this.flashcardFileUrlDisabled = false;
           }, (error) => {
             console.log(error);
           });
@@ -127,11 +134,12 @@
       },
       changeFlashcard(card) {
         this.loading = true;
+        this.disable = true;
         this.turnFront(event);
         this.num = card[0];
         this.answer = card[1];
         this.question = card[2];
-        this.disable = true;
+        this.disable = false;
         this.loading = false;
       },
       nextQuestion() {
@@ -216,6 +224,13 @@
       .withSuccessHandler(success)
       .withFailureHandler(failure)
       .getFlashcardData(name);
+  }
+
+  function getFlashcardFileName(success, failure) {
+    google.script.run
+      .withSuccessHandler(success)
+      .withFailureHandler(failure)
+      .getFlashcardFileName();
   }
 
   function getFlashcardUrl(success, failure) {

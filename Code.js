@@ -18,6 +18,11 @@ function existUserFlashcard() {
   return false;
 }
 
+function getFlashcardFileName() {
+  const file = getUserFlashcardFile_();
+  return file.getName();
+}
+
 function getFlashcardNameList() {
   const file = getUserFlashcardFile_();
   const spreadsheet = SpreadsheetApp.open(file);
