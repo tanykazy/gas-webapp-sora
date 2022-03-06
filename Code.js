@@ -1,13 +1,95 @@
 function doGet(e) {
-  var template = HtmlService.createTemplateFromFile('index');
-  var url = ScriptApp.getService().getUrl();
+  console.log(e);
+
+  if (e.parameters['copy']) {
+    try {
+      waitUserLock_();
+
+      let infList = getPropertyList_();
+      for (const parent of e.parameters['copy']) {
+        if (!infList.find(inf => new CardSetListInf(inf).parent === parent)) {
+          const file = getFileById_(parent).makeCopy();
+          let inf = new CardSetListInf();
+          inf.parent = parent;
+          inf.id = file.getId();
+          infList.push(inf);
+        }
+      }
+
+      setProperty_('list', infList);
+      console.log(JSON.stringify(infList));
+
+      releaseUserLock_();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  let template = HtmlService.createTemplateFromFile('index');
+  const url = ScriptApp.getService().getUrl();
   template.url = url;
-  var output = template.evaluate();
+  const output = template.evaluate();
   return output;
 }
 
+function getCardSetList() {
+  let infList = getPropertyList_();
+  return infList.map((inf) => {
+    return {
+      id: inf.id,
+      name: getFileById_(inf.id).getName()
+    };
+  });
+}
+
+function getCardSet(id) {
+  const file = getFileById_(id);
+  const spreadsheet = SpreadsheetApp.open(file);
+  const sheets = spreadsheet.getSheets();
+  return sheets.map((sheet) => {
+    return {
+      id: sheet.getSheetId(),
+      name: sheet.getName()
+    };
+  });
+}
+
+function getCards(setlist, name) {
+  const file = getFileById_(setlist);
+  const spreadsheet = SpreadsheetApp.open(file);
+  const sheet = spreadsheet.getSheetByName(name);
+
+
+  // const cache = CacheService.getUserCache();
+  // let values = cache.get(sheetName);
+  // if (values !== null) {
+  //   return JSON.parse(values);
+  // }
+  // const file = getUserFlashcardFile_();
+  // const spreadsheet = SpreadsheetApp.open(file);
+  // const sheet = spreadsheet.getSheetByName(sheetName);
+  if (sheet === null) {
+    throw 'there is no sheet with the given name.';
+  }
+  const range = sheet.getDataRange();
+  values = range.getValues();
+  if (values.length === 0) {
+    return null;
+  }
+  values.shift();
+  if (values.length === 0) {
+    return ['', '', ''];
+  }
+  // cache.put(sheetName, JSON.stringify(values));
+  console.log(values);
+  console.log(values[0]);
+  console.log(values[0][0]);
+  return values;
+}
+
+
 function createUserFlashcard() {
-  newUserFlashcardFile_();
+  newUserFlashcardFile_('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
 }
 
 function existUserFlashcard() {
@@ -76,12 +158,13 @@ function getFileById_(id) {
   return null;
 }
 
-function getOriginFlashcardFile_() {
-  return getFileById_('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
+function getOriginFlashcardFile_(id) {
+  // return getFileById_('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
+  return getFileById_(id);
 }
 
-function newUserFlashcardFile_() {
-  const file = getOriginFlashcardFile_().makeCopy();
+function newUserFlashcardFile_(id) {
+  const file = getOriginFlashcardFile_(id).makeCopy();
   setProperty_('id', file.getId());
   return file;
 }
@@ -101,6 +184,14 @@ function getUserFlashcardFile_() {
   return null;
 }
 
+function getPropertyList_() {
+  let list = getProperty_('list');
+  if (list === null) {
+    return [];
+  }
+  return list.map(value => new CardSetListInf(value));
+}
+
 function getProperty_(key) {
   var userProperties = PropertiesService.getUserProperties();
   var value = userProperties.getProperty(key);
@@ -110,4 +201,46 @@ function getProperty_(key) {
 function setProperty_(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
+}
+
+function waitUserLock_() {
+  let lock = LockService.getUserLock();
+  try {
+    lock.waitLock(10000);
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
+}
+
+function releaseUserLock_() {
+  let lock = LockService.getUserLock();
+  lock.releaseLock();
+}
+
+class CardSetListInf {
+  constructor(object) {
+    this.p = object && object.p;
+    this.i = object && object.i;
+  }
+  get parent() {
+    return this.p;
+  }
+  set parent(id) {
+    this.p = id;
+  }
+  get id() {
+    return this.p;
+  }
+  set id(id) {
+    this.i = id;
+  }
+}
+
+function getCardSetListInfByParentId(list, id) {
+  return list.find(inf => inf.p === id);
+}
+
+function getCardSetListInfById(list, id) {
+  return list.find(inf => inf.i === id);
 }

@@ -30,19 +30,21 @@
       };
     },
     beforeCreate() {
-      setHistoryChangeHandler((event) => {
-        const name = event.state.name;
-        if (name !== null) {
-          if (name !== this.flashcardName) {
-            this.changeFlashcardList(name);
-          } else {
-            const card = event.state.card;
-            if (card !== null) {
-              this.changeFlashcard(card);
-            }
-          }
-        }
-      });
+      // console.log(window.location);
+      // console.log(copy);
+      // setHistoryChangeHandler((event) => {
+      //   const name = event.state.name;
+      //   if (name !== null) {
+      //     if (name !== this.flashcardName) {
+      //       this.changeFlashcardList(name);
+      //     } else {
+      //       const card = event.state.card;
+      //       if (card !== null) {
+      //         this.changeFlashcard(card);
+      //       }
+      //     }
+      //   }
+      // });
     },
     created() {
       this.loading = true;
@@ -122,13 +124,13 @@
         getFlashcardData(name, (result) => {
           this.flashcardData = result;
           this.flashcardName = name;
-          pushHistory({
-            name: name,
-            card: null,
-          }, {
-            name: name,
-            card: '',
-          }, '');
+          // pushHistory({
+          //   name: name,
+          //   card: null,
+          // }, {
+          //   name: name,
+          //   card: '',
+          // }, '');
           this.nextQuestion();
           this.loading = false;
         }, (error) => {
@@ -155,13 +157,13 @@
           q = this.randomQuestion();
         }
         this.changeFlashcard(q);
-        pushHistory({
-          name: this.flashcardName,
-          card: q,
-        }, {
-          name: this.flashcardName,
-          card: this.num,
-        }, '');
+        // pushHistory({
+        //   name: this.flashcardName,
+        //   card: q,
+        // }, {
+        //   name: this.flashcardName,
+        //   card: this.num,
+        // }, '');
       },
       weakQuestion() {
         var weak = null;
@@ -256,6 +258,17 @@
   function setHistoryChangeHandler(handler) {
     google.script.history
       .setChangeHandler(handler);
+  }
+
+  function googleScriptRun(name, ...args) {
+    return new Promise(function (resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function (...e) {
+          resolve(...e);
+        }).withFailureHandler(function (...e) {
+          reject(...e);
+        })[name](...args);
+    });
   }
 
   function getRandomInt(max) {

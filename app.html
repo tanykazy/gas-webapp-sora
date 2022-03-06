@@ -9,6 +9,12 @@
           <v-icon>delete_sweep</v-icon>
         </v-btn>
         <v-btn icon :disabled="true">
+          <v-icon>library_add</v-icon>
+        </v-btn>
+        <v-btn icon :disabled="true">
+          <v-icon>event</v-icon>
+        </v-btn>
+        <v-btn icon :disabled="true">
           <v-icon>settings</v-icon>
         </v-btn>
         <transition name="flip">
@@ -21,6 +27,9 @@
             <v-icon>light_mode</v-icon>
           </v-btn>
         </transition>
+        <v-btn icon :disabled="true">
+          <v-icon>share</v-icon>
+        </v-btn>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon target="_blank" :href="flashcardFileUrl" :disabled="flashcardFileUrlDisabled" v-bind="attrs"
