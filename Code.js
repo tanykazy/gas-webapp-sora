@@ -4,8 +4,8 @@ function doGet(e) {
   if (e.parameters['copy']) {
     try {
       let lock = LockService.getUserLock();
-
-      waitUserLock_();
+      console.log(lock.hasLock());
+      lock.waitLock(10000);
       console.log(lock.hasLock());
       let infList = getPropertyList_();
       for (const parent of e.parameters['copy']) {
@@ -22,9 +22,10 @@ function doGet(e) {
       console.log(JSON.stringify(infList));
 
       console.log(lock.hasLock());
-      releaseUserLock_();
+      lock.releaseLock();
       console.log(lock.hasLock());
     } catch (error) {
+      console.log('Could not obtain lock after 10 seconds.');
       throw error;
     }
   }
@@ -205,21 +206,6 @@ function getProperty_(key) {
 function setProperty_(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
-}
-
-function waitUserLock_() {
-  let lock = LockService.getUserLock();
-  try {
-    lock.waitLock(10000);
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
-  }
-}
-
-function releaseUserLock_() {
-  let lock = LockService.getUserLock();
-  lock.releaseLock();
 }
 
 class CardSetListInf {
