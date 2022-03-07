@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v2
       
       - name: Install clasp
-      - run: |
+        run: |
           npm init -y
           npm install clasp -g
 
