@@ -231,3 +231,34 @@ function getCardSetListInfByParentId(list, id) {
 function getCardSetListInfById(list, id) {
   return list.find(inf => inf.i === id);
 }
+
+class Card {
+  constructor() {
+    this.id = null;
+    this.front = null;
+    this.back = null;
+    this.efact = null;
+    this.n = null;
+    this.i = null;
+    this.q = null;
+  }
+}
+
+class CardSet {
+  constructor() {
+    this.id = null;
+    this.name = null;
+    this.cards = null;
+  }
+}
+
+class SetList {
+  constructor() {
+    this.id = null;
+    this.name = null;
+    this.set = null;
+  }
+}
+// volume
+// box
+// pack
