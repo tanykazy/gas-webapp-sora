@@ -16,10 +16,8 @@ jobs:
       CLASPRC_ACCESS_TOKEN: ${{ secrets.CLASPRC_ACCESS_TOKEN }}
       CLASPRC_CLIENT_ID: ${{ secrets.CLASPRC_CLIENT_ID }}
       CLASPRC_CLIENT_SECRET: ${{ secrets.CLASPRC_CLIENT_SECRET }}
-      # CLASPRC_EXPIRY_DATE: ${{ secrets.CLASPRC_EXPIRY_DATE }}
       CLASPRC_ID_TOKEN: ${{ secrets.CLASPRC_ID_TOKEN }}
       CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
-      # CLASP_SCRIPT_ID: ${{ secrets.CLASP_SCRIPT_ID }}
 
     steps:
       - name: Checkout
