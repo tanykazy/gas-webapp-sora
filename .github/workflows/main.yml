@@ -30,7 +30,7 @@ jobs:
       
       - name: Install clasp
         run: |
-          npm install @google/clasp -g
+          npm ci
 
       - name: Create .clasprc.json
         run: |
@@ -55,4 +55,4 @@ jobs:
 
       - name: Push
         run: |
-          clasp push
+          npx clasp push
