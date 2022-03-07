@@ -18,6 +18,8 @@ jobs:
       CLASPRC_CLIENT_SECRET: ${{ secrets.CLASPRC_CLIENT_SECRET }}
       CLASPRC_ID_TOKEN: ${{ secrets.CLASPRC_ID_TOKEN }}
       CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
+      CLASP_SCRIPTID: ${{ secrets.CLASP_SCRIPTID}}
+      CLASP_ROOTDIR: ${{ secrets.CLASP_ROOTDIR}}
 
     steps:
       - name: Checkout
@@ -50,6 +52,16 @@ jobs:
           }
           EOS
           ) > ~/.clasprc.json
+
+      - name: Create .clasp.json
+        run: |
+          echo $(cat <<-EOS
+          {
+            "scriptId": "${CLASP_SCRIPTID}",
+            "rootDir": "${CLASP_ROOTDIR}"
+          }
+          EOS
+          ) > ./.clasp.json  
 
       - name: Push
         run: |
