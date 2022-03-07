@@ -1,0 +1,43 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+      - uses: actions/setup-node@v2
+      
+      - name: Install clasp
+      - run: |
+          npm init -y
+          npm install clasp -g
+
+      - name: Create clasprc.json
+        run: |
+          echo \{\"token\":\{\"access_token\":\"${{ secrets.ACCESS_TOKEN}}\",\"scope\":\"https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/script.projects https://www.googleapis.com/auth/script.webapp.deploy https://www.googleapis.com/auth/logging.read openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/script.deployments https://www.googleapis.com/auth/service.management https://www.googleapis.com/auth/cloud-platform\",\"token_type\":\"Bearer\",\"id_token\":\"${{ secrets.ID_TOKEN }}\",\"expiry_date\":1620870307822,\"refresh_token\":\"${{ secrets.REFRESH_TOKEN }}\"\},\"oauth2ClientSettings\":\{\"clientId\":\"${{ secrets.CLIENTID }}\",\"clientSecret\":\"${{ secrets.CLIENTSECRET }}\",\"redirectUri\":\"http://localhost\"\},\"isLocalCreds\":false\} > ~/.clasprc.json
+
+      - name: Deploy
+        run: |
+          clasp push
