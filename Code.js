@@ -34,33 +34,28 @@ function doGet(e) {
   return output;
 }
 
-function getCardSetList() {
-  let infList = getPropertyList_();
-  return infList.map((inf) => {
-    return {
-      id: inf.id,
-      name: getFileById_(inf.id).getName()
-    };
+function getPacks() {
+  const infList = getPropertyList_();
+  const packs = infList.map((inf) => {
+    return new Pack(inf.id, getFileById_(inf.id).getName());
   });
+  return packs;
 }
 
-function getCardSet(id) {
-  const file = getFileById_(id);
+function getDecks(pack) {
+  const file = getFileById_(pack);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
-  return sheets.map((sheet) => {
-    return {
-      id: sheet.getSheetId(),
-      name: sheet.getName()
-    };
+  const decks = sheets.map((sheet) => {
+    return new Deck(sheet.getSheetId(), sheet.getName());
   });
+  return decks;
 }
 
-function getCards(setlist, name) {
-  const file = getFileById_(setlist);
+function getCards(pack, deck) {
+  const file = getFileById_(pack);
   const spreadsheet = SpreadsheetApp.open(file);
-  const sheet = spreadsheet.getSheetByName(name);
-
+  const sheet = spreadsheet.getSheetByName(deck);
 
   // const cache = CacheService.getUserCache();
   // let values = cache.get(sheetName);
@@ -233,29 +228,29 @@ function getCardSetListInfById(list, id) {
 }
 
 class Card {
-  constructor() {
-    this.id = null;
-    this.front = null;
-    this.back = null;
-    this.efact = null;
-    this.n = null;
-    this.i = null;
+  constructor(id, front, back, efact, n, i) {
+    this.id = id;
+    this.front = front;
+    this.back = back;
+    this.efact = efact;
+    this.n = n;
+    this.i = i;
     this.q = null;
   }
 }
 
 class Deck {
-  constructor() {
-    this.id = null;
-    this.name = null;
-    this.cards = null;
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
+    this.cards = [];
   }
 }
 
 class Pack {
-  constructor() {
-    this.id = null;
-    this.name = null;
-    this.decks = null;
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
+    this.decks = [];
   }
 }
