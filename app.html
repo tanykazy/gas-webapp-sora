@@ -110,6 +110,20 @@
             </v-btn>
           </v-col>
 
+          <v-col>
+            <v-item-group>
+              <v-item>
+                <v-btn block color="success" :loading="loading" :disabled="disable" @click="onClickDone($event)">
+                  <v-icon>done</v-icon>
+                </v-btn>
+              </v-item>
+              <v-item>
+                <v-btn block color="error" :loading="loading" :disabled="disable" @click="onClickClear($event)">
+                  <v-icon>clear</v-icon>
+                </v-btn>
+              </v-item>
+            </v-item-group>
+          </v-col>
         </v-row>
       </v-container>
     </v-main>
