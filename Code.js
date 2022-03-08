@@ -244,7 +244,7 @@ class Card {
   }
 }
 
-class CardSet {
+class Deck {
   constructor() {
     this.id = null;
     this.name = null;
@@ -252,13 +252,10 @@ class CardSet {
   }
 }
 
-class SetList {
+class Pack {
   constructor() {
     this.id = null;
     this.name = null;
-    this.set = null;
+    this.decks = null;
   }
 }
-// volume
-// box
-// pack
