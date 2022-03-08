@@ -213,7 +213,7 @@ class CardSetListInf {
     this.p = id;
   }
   get id() {
-    return this.p;
+    return this.i;
   }
   set id(id) {
     this.i = id;
