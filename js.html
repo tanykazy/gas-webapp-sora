@@ -34,6 +34,10 @@
       (async () => {
         this.packs = await googleScriptRun('getPacks');
         console.log(this.packs);
+        for (const pack of this.packs) {
+          pack.decks = await googleScriptRun('getDecks', pack.id);
+        }
+        console.log(this.packs);
       })();
       // console.log(window.location);
       // console.log(copy);
