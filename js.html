@@ -33,9 +33,11 @@
     beforeCreate() {
       (async () => {
         this.packs = await googleScriptRun('getPacks');
-        console.log(this.packs);
         for (const pack of this.packs) {
           pack.decks = await googleScriptRun('getDecks', pack.id);
+          for (const deck of pack.decks) {
+            deck.cards = await googleScriptRun('getCards', pack.id, deck.id);
+          }
         }
         console.log(this.packs);
       })();
