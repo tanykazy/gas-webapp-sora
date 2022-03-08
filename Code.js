@@ -70,6 +70,9 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
   const range = sheet.getDataRange();
+
+  console.log(range.getRow());
+
   values = range.getValues();
   if (values.length === 0) {
     return null;
@@ -79,9 +82,9 @@ function getCards(pack, deck) {
     return ['', '', ''];
   }
   // cache.put(sheetName, JSON.stringify(values));
-  console.log(values);
-  console.log(values[0]);
-  console.log(values[0][0]);
+
+  
+
   return values;
 }
 
