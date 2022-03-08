@@ -110,21 +110,51 @@
             </v-btn>
           </v-col>
 
+        </v-row>
+        <v-row>
           <v-col>
             <v-item-group>
               <v-container>
                 <v-row>
                   <v-col>
                     <v-item>
-                      <v-btn block color="success" :loading="loading" :disabled="disable" @click="onClickDone($event)">
-                        <v-icon>done</v-icon>
+                      <v-btn block :loading="loading" :disabled="disable" @click="onClickDone($event)">
+                        0
                       </v-btn>
                     </v-item>
                   </v-col>
                   <v-col>
                     <v-item>
-                      <v-btn block color="error" :loading="loading" :disabled="disable" @click="onClickClear($event)">
-                        <v-icon>clear</v-icon>
+                      <v-btn block :loading="loading" :disabled="disable" @click="onClickClear($event)">
+                        1
+                      </v-btn>
+                    </v-item>
+                  </v-col>
+                  <v-col>
+                    <v-item>
+                      <v-btn block :loading="loading" :disabled="disable" @click="onClickClear($event)">
+                        2
+                      </v-btn>
+                    </v-item>
+                  </v-col>
+                  <v-col>
+                    <v-item>
+                      <v-btn block :loading="loading" :disabled="disable" @click="onClickClear($event)">
+                        3
+                      </v-btn>
+                    </v-item>
+                  </v-col>
+                  <v-col>
+                    <v-item>
+                      <v-btn block :loading="loading" :disabled="disable" @click="onClickClear($event)">
+                        4
+                      </v-btn>
+                    </v-item>
+                  </v-col>
+                  <v-col>
+                    <v-item>
+                      <v-btn block :loading="loading" :disabled="disable" @click="onClickClear($event)">
+                        5
                       </v-btn>
                     </v-item>
                   </v-col>
