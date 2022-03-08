@@ -37,6 +37,7 @@ function doGet(e) {
 function getPacks() {
   const infList = getPropertyList_();
   const packs = infList.map((inf) => {
+    console.log(inf);
     return new Pack(inf.id, getFileById_(inf.id).getName());
   });
   return packs;
