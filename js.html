@@ -107,7 +107,7 @@
         }
       },
       flashcardNameList(value, old) {
-        this.changeFlashcardList(this.flashcardNameList[0]);
+        // this.changeFlashcardList(this.flashcardNameList[0]);
       },
     },
     methods: {
@@ -121,32 +121,44 @@
         this.nextQuestion();
         // setItem(this.grade, trimHistory(this.history));
       },
-      onClickListItem(event) {
-        if (event !== this.flashcardName) {
-          this.changeFlashcardList(event);
-        }
+      onClickListItem(pack, deck) {
+        // console.log(pack);
+        // console.log(deck);
+        // if (event !== this.flashcardName) {
+        //   this.changeFlashcardList(event);
+        // }
+        this.changeFlashcardList(pack, deck);
         this.drawer = false;
       },
       flipCard() {
         this.reveal = !this.reveal;
       },
-      changeFlashcardList(name) {
+      changeFlashcardList(pack, deck) {
         this.loading = true;
-        getFlashcardData(name, (result) => {
-          this.flashcardData = result;
-          this.flashcardName = name;
-          // pushHistory({
-          //   name: name,
-          //   card: null,
-          // }, {
-          //   name: name,
-          //   card: '',
-          // }, '');
+        (async () => {
+          deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
+          this.flashcardData = deck.cards;
+          this.flashcardName = deck.name;
           this.nextQuestion();
           this.loading = false;
-        }, (error) => {
-          console.log(error);
-        });
+        })();
+        console.log(pack);
+        console.log(deck);
+        // getFlashcardData(name, (result) => {
+        //   this.flashcardData = result;
+        //   this.flashcardName = name;
+        //   // pushHistory({
+        //   //   name: name,
+        //   //   card: null,
+        //   // }, {
+        //   //   name: name,
+        //   //   card: '',
+        //   // }, '');
+        //   this.nextQuestion();
+        //   this.loading = false;
+        // }, (error) => {
+        //   console.log(error);
+        // });
       },
       changeFlashcard(card) {
         this.loading = true;

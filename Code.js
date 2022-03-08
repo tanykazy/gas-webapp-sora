@@ -1,30 +1,10 @@
 function doGet(e) {
   console.log(e);
 
+  updatePacks();
+
   if (e.parameters['copy']) {
-    try {
-      let lock = LockService.getUserLock();
-      lock.waitLock(10000);
-
-      let infList = getPropertyList_();
-      for (const parent of e.parameters['copy']) {
-        if (!infList.find(inf => new CardSetListInf(inf).parent === parent)) {
-          const file = getFileById_(parent).makeCopy();
-          let inf = new CardSetListInf();
-          inf.parent = parent;
-          inf.id = file.getId();
-          infList.push(inf);
-        }
-      }
-
-      setProperty_('list', infList);
-      console.log(JSON.stringify(infList));
-
-      lock.releaseLock();
-    } catch (error) {
-      console.log('Could not obtain lock after 10 seconds.');
-      throw error;
-    }
+    handleCopy(e.parameters['copy']);
   }
 
   let template = HtmlService.createTemplateFromFile('index');
@@ -34,13 +14,66 @@ function doGet(e) {
   return output;
 }
 
+function handleCopy(parameters) {
+  try {
+    const lock = LockService.getUserLock();
+    lock.waitLock(10000);
+
+    let infList = getPropertyList_();
+    for (const parameter of parameters) {
+      if (!infList.find(inf => new CardSetListInf(inf).parent === parameter)) {
+        const file = getFileById_(parameter).makeCopy();
+        let inf = new CardSetListInf();
+        inf.parent = parameter;
+        inf.id = file.getId();
+        infList.push(inf);
+      }
+    }
+    setProperty_('list', infList);
+
+    lock.releaseLock();
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
+}
+
+function updatePacks() {
+  try {
+    const lock = LockService.getUserLock();
+    lock.waitLock(10000);
+
+    let infList = getPropertyList_();
+    setProperty_('list', infList.filter((inf) => getFileById_(inf.id) !== null));
+
+    lock.releaseLock();
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
+
+}
+
 function getPacks() {
-  const infList = getPropertyList_();
-  const packs = infList.map((inf) => {
-    console.log(inf);
-    return new Pack(inf.id, getFileById_(inf.id).getName());
-  });
-  return packs;
+  try {
+    const lock = LockService.getUserLock();
+    lock.waitLock(10000);
+
+    const infList = getPropertyList_();
+    const packs = infList.map((inf) => {
+      const file = getFileById_(inf.id);
+      if (file !== null) {
+        return new Pack(inf.id, file.getName());
+      }
+    });
+
+    lock.releaseLock();
+
+    return packs;
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
 }
 
 function getDecks(pack) {
@@ -71,7 +104,7 @@ function getCards(pack, deck) {
   }
   const range = sheet.getDataRange();
 
-  console.log(sheet.getRange(1, 1, 1, 10).getValues());
+  console.log(sheet.getRange(1, 1, 1).getValues());
 
   values = range.getValues();
   if (values.length === 0) {
@@ -83,7 +116,7 @@ function getCards(pack, deck) {
   }
   // cache.put(sheetName, JSON.stringify(values));
 
-  
+
 
   return values;
 }
@@ -154,7 +187,7 @@ function getFileById_(id) {
   try {
     return DriveApp.getFileById(id);
   } catch (error) {
-    Logger.log(error);
+    console.log(error);
   }
   return null;
 }
