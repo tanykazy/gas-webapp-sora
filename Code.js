@@ -71,7 +71,7 @@ function getCards(pack, deck) {
   }
   const range = sheet.getDataRange();
 
-  console.log(range.getRow());
+  console.log(sheet.getRange(1, 1, 1, 10).getValues());
 
   values = range.getValues();
   if (values.length === 0) {
