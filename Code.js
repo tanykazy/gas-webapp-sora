@@ -1,6 +1,8 @@
 function doGet(e) {
   console.log(e);
 
+  // setVersion(0.1);
+
   updatePacks();
 
   if (e.parameters['copy']) {
@@ -14,6 +16,26 @@ function doGet(e) {
   return output;
 }
 
+function setVersion(v) {
+  try {
+    const lock = LockService.getUserLock();
+    lock.waitLock(10000);
+
+    const currentVersion = getProperty_('version');
+    if (currentVersion !== v) {
+      const userProperties = PropertiesService.getUserProperties();
+      userProperties.deleteProperty('id');
+
+      setProperty_('version', 0.1);
+    }
+
+    lock.releaseLock();
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
+}
+
 function handleCopy(parameters) {
   try {
     const lock = LockService.getUserLock();
@@ -21,9 +43,9 @@ function handleCopy(parameters) {
 
     let infList = getPropertyList_();
     for (const parameter of parameters) {
-      if (!infList.find(inf => new CardSetListInf(inf).parent === parameter)) {
+      if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
         const file = getFileById_(parameter).makeCopy();
-        let inf = new CardSetListInf();
+        let inf = new PackInfo();
         inf.parent = parameter;
         inf.id = file.getId();
         infList.push(inf);
@@ -63,7 +85,7 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
-        return new Pack(inf.id, file.getName());
+        return new Pack(inf.id, file.getName(), inf.parent);
       }
     });
 
@@ -183,14 +205,14 @@ function getFlashcardUrl() {
   return null;
 }
 
-function getFileById_(id) {
-  try {
-    return DriveApp.getFileById(id);
-  } catch (error) {
-    console.log(error);
-  }
-  return null;
-}
+// function getFileById_(id) {
+//   try {
+//     return DriveApp.getFileById(id);
+//   } catch (error) {
+//     console.log(error);
+//   }
+//   return null;
+// }
 
 function getOriginFlashcardFile_(id) {
   // return getFileById_('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
@@ -201,6 +223,20 @@ function newUserFlashcardFile_(id) {
   const file = getOriginFlashcardFile_(id).makeCopy();
   setProperty_('id', file.getId());
   return file;
+}
+
+function getFileById_(id) {
+  try {
+    const file = DriveApp.getFileById(id);
+    if (file !== null) {
+      if (!file.isTrashed()) {
+        return file;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
 }
 
 function getUserFlashcardFile_() {
@@ -223,7 +259,7 @@ function getPropertyList_() {
   if (list === null) {
     return [];
   }
-  return list.map(value => new CardSetListInf(value));
+  return list.map(value => new PackInfo(value));
 }
 
 function getProperty_(key) {
@@ -237,7 +273,46 @@ function setProperty_(key, value) {
   userProperties.setProperty(key, JSON.stringify(value));
 }
 
-class CardSetListInf {
+// function getCardSetListInfByParentId(list, id) {
+//   return list.find(inf => inf.p === id);
+// }
+
+// function getCardSetListInfById(list, id) {
+//   return list.find(inf => inf.i === id);
+// }
+
+class Card {
+  constructor(id, front, back, efact, n, i) {
+    this.id = id;
+    this.front = front;
+    this.back = back;
+    this.efact = efact;
+    this.n = n;
+    this.i = i;
+    this.q = null;
+    this.parent = null;
+  }
+}
+
+class Deck {
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
+    this.cards = [];
+    this.parent = null;
+  }
+}
+
+class Pack {
+  constructor(id, name, parent) {
+    this.id = id;
+    this.name = name;
+    this.decks = [];
+    this.parent = parent;
+  }
+}
+
+class PackInfo {
   constructor(object) {
     this.p = object && object.p;
     this.i = object && object.i;
@@ -253,41 +328,5 @@ class CardSetListInf {
   }
   set id(id) {
     this.i = id;
-  }
-}
-
-function getCardSetListInfByParentId(list, id) {
-  return list.find(inf => inf.p === id);
-}
-
-function getCardSetListInfById(list, id) {
-  return list.find(inf => inf.i === id);
-}
-
-class Card {
-  constructor(id, front, back, efact, n, i) {
-    this.id = id;
-    this.front = front;
-    this.back = back;
-    this.efact = efact;
-    this.n = n;
-    this.i = i;
-    this.q = null;
-  }
-}
-
-class Deck {
-  constructor(id, name) {
-    this.id = id;
-    this.name = name;
-    this.cards = [];
-  }
-}
-
-class Pack {
-  constructor(id, name) {
-    this.id = id;
-    this.name = name;
-    this.decks = [];
   }
 }
