@@ -128,11 +128,18 @@
       },
       'current.deck': {
         handler(val, old) {
-          console.log('change deck!');
-          console.log('new value:');
-          console.log(val);
-          console.log('old value:');
-          console.log(old);
+          (async () => {
+            val.cards = await googleScriptRun('getCards', val.parent, val.id);
+            if (val.cards.length > 0) {
+              this.current.card = val.cards[0];
+            }
+            console.log(this.current);
+          })();
+          // console.log('change deck!');
+          // console.log('new value:');
+          // console.log(val);
+          // console.log('old value:');
+          // console.log(old);
         },
         // deep: true
       },
