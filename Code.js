@@ -42,6 +42,7 @@ function handleCopy(parameters) {
     lock.waitLock(10000);
 
     let infList = getPropertyList_();
+    console.log(infList);
     for (const parameter of parameters) {
       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
         const file = getFileById_(parameter).makeCopy();
@@ -67,6 +68,7 @@ function updatePacks() {
 
     let infList = getPropertyList_();
     setProperty_('list', infList.filter((inf) => getFileById_(inf.id) !== null));
+    console.log(infList);
 
     lock.releaseLock();
   } catch (error) {
