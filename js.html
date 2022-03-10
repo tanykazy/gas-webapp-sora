@@ -67,6 +67,12 @@
         console.log(error);
       });
     },
+    mounted() {
+      document.addEventListener('keydown', this.onKeyup);
+    },
+    beforeUnmount() {
+      document.removeEventListener('keydown', this.onKeyup);
+    },
     watch: {
       packs: {
         handler(val, old) {
@@ -118,6 +124,9 @@
       },
     },
     methods: {
+      onKeyup(event) {
+        console.log(event);
+      },
       onClickAssessment(scale) {
         console.log(scale);
       },
