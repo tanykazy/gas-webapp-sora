@@ -76,14 +76,24 @@
     computed: {
     },
     watch: {
-      // packs: {
-      //   handler(val, old) {
-      //     console.log('new value:');
-      //     console.log(val);
-      //     console.log('old value:');
-      //     console.log(old);
-      //   },
-      // },
+      'packs': {
+        handler(val, old) {
+          console.log('change packs!');
+          console.log('new value:');
+          console.log(val);
+          console.log('old value:');
+          console.log(old);
+        },
+      },
+      'packs.decks': {
+        handler(val, old) {
+          console.log('change decks!');
+          console.log('new value:');
+          console.log(val);
+          console.log('old value:');
+          console.log(old);
+        },
+      },
       themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
       },
