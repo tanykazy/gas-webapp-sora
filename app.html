@@ -15,6 +15,9 @@
           <v-icon>event</v-icon>
         </v-btn>
         <v-btn icon :disabled="true">
+          <v-icon>sync</v-icon>
+        </v-btn>
+        <v-btn icon :disabled="true">
           <v-icon>settings</v-icon>
         </v-btn>
         <transition name="flip">
@@ -64,12 +67,17 @@
     <v-main>
       <v-container>
         <v-row>
+          <v-col>
+            <v-breadcrumbs :items="breadcrumb.items"></v-breadcrumbs>
+          </v-col>
+        </v-row>
 
+        <v-row>
           <v-col>
             <transition name="flip">
               <v-card v-show="!reveal" :loading="loading" :disabled="loading">
-                <v-card-subtitle v-text="num"></v-card-subtitle>
-                <v-card-title v-text="question"></v-card-title>
+                <v-card-subtitle v-text="currentId"></v-card-subtitle>
+                <v-card-title v-text="currentFront"></v-card-title>
                 <v-card-text></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -82,8 +90,8 @@
 
             <transition name="flip">
               <v-card v-show="reveal" :loading="loading" :disabled="loading">
-                <v-card-subtitle v-text="num"></v-card-subtitle>
-                <v-card-title v-text="answer"></v-card-title>
+                <v-card-subtitle v-text="currentId"></v-card-subtitle>
+                <v-card-title v-text="currentBack"></v-card-title>
                 <v-card-text></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -94,23 +102,7 @@
               </v-card>
             </transition>
           </v-col>
-
         </v-row>
-        <!-- <v-row>
-
-          <v-col>
-            <v-btn block color="success" :loading="loading" :disabled="disable" @click="onClickDone($event)">
-              <v-icon>done</v-icon>
-            </v-btn>
-          </v-col>
-
-          <v-col>
-            <v-btn block color="error" :loading="loading" :disabled="disable" @click="onClickClear($event)">
-              <v-icon>clear</v-icon>
-            </v-btn>
-          </v-col>
-
-        </v-row> -->
         <v-row>
           <v-col>
             <v-item-group>
@@ -118,48 +110,42 @@
                 <v-row>
                   <v-col>
                     <v-item>
-                      <v-btn block color="error" :loading="loading" :disabled="disable"
-                        @click="onClickAssessment(0)">
+                      <v-btn block color="error" :disabled="disable" @click="onClickAssessment(0)">
                         0
                       </v-btn>
                     </v-item>
                   </v-col>
                   <v-col>
                     <v-item>
-                      <v-btn block color="error" :loading="loading" :disabled="disable"
-                        @click="onClickAssessment(1)">
+                      <v-btn block color="error" :disabled="disable" @click="onClickAssessment(1)">
                         1
                       </v-btn>
                     </v-item>
                   </v-col>
                   <v-col>
                     <v-item>
-                      <v-btn block color="error" :loading="loading" :disabled="disable"
-                        @click="onClickAssessment(2)">
+                      <v-btn block color="error" :disabled="disable" @click="onClickAssessment(2)">
                         2
                       </v-btn>
                     </v-item>
                   </v-col>
                   <v-col>
                     <v-item>
-                      <v-btn block color="success" :loading="loading" :disabled="disable"
-                        @click="onClickAssessment(3)">
+                      <v-btn block color="success" :disabled="disable" @click="onClickAssessment(3)">
                         3
                       </v-btn>
                     </v-item>
                   </v-col>
                   <v-col>
                     <v-item>
-                      <v-btn block color="success" :loading="loading" :disabled="disable"
-                        @click="onClickAssessment(4)">
+                      <v-btn block color="success" :disabled="disable" @click="onClickAssessment(4)">
                         4
                       </v-btn>
                     </v-item>
                   </v-col>
                   <v-col>
                     <v-item>
-                      <v-btn block color="success" :loading="loading" :disabled="disable"
-                        @click="onClickAssessment(5)">
+                      <v-btn block color="success" :disabled="disable" @click="onClickAssessment(5)">
                         5
                       </v-btn>
                     </v-item>

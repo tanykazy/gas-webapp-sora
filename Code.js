@@ -128,7 +128,6 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
   const range = sheet.getDataRange();
-  // console.log(sheet.getRange(1, 1, 1).getValues());
   values = range.getValues();
   if (values.length === 0) {
     return null;
@@ -141,92 +140,8 @@ function getCards(pack, deck) {
   const cards = values.map((value) => {
     return new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
   });
-  // console.log(cards);
   // cache.put(sheetName, JSON.stringify(values));
-  // return values;
   return cards;
-}
-
-
-function createUserFlashcard() {
-  newUserFlashcardFile_('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
-}
-
-function existUserFlashcard() {
-  const file = getUserFlashcardFile_();
-  if (file !== null) {
-    return true;
-  }
-  return false;
-}
-
-function getFlashcardFileName() {
-  const file = getUserFlashcardFile_();
-  return file.getName();
-}
-
-function getFlashcardNameList() {
-  const file = getUserFlashcardFile_();
-  const spreadsheet = SpreadsheetApp.open(file);
-  const sheets = spreadsheet.getSheets();
-  let list = [];
-  for (const sheet of sheets) {
-    list.push(sheet.getName());
-  }
-  return list;
-}
-
-function getFlashcardData(sheetName) {
-  const cache = CacheService.getUserCache();
-  let values = cache.get(sheetName);
-  if (values !== null) {
-    return JSON.parse(values);
-  }
-  const file = getUserFlashcardFile_();
-  const spreadsheet = SpreadsheetApp.open(file);
-  const sheet = spreadsheet.getSheetByName(sheetName);
-  if (sheet === null) {
-    throw 'there is no sheet with the given name.';
-  }
-  const range = sheet.getDataRange();
-  values = range.getValues();
-  if (values.length === 0) {
-    return null;
-  }
-  values.shift();
-  if (values.length === 0) {
-    return ['', '', ''];
-  }
-  cache.put(sheetName, JSON.stringify(values));
-  return values;
-}
-
-function getFlashcardUrl() {
-  const file = getUserFlashcardFile_();
-  if (file !== null) {
-    return file.getUrl();
-  }
-  return null;
-}
-
-// function getFileById_(id) {
-//   try {
-//     return DriveApp.getFileById(id);
-//   } catch (error) {
-//     console.log(error);
-//   }
-//   return null;
-// }
-
-function getOriginFlashcardFile_(id) {
-  // return getFileById_('13Y87ZXg57DuuYDRs-9VUzMA3rRKVZAgH5JjJJd5QGYQ');
-  return getFileById_(id);
-}
-
-function newUserFlashcardFile_(id) {
-  const file = getOriginFlashcardFile_(id).makeCopy();
-  setProperty_('id', file.getId());
-  return file;
 }
 
 function existFile_(id) {
@@ -243,21 +158,6 @@ function getFileById_(id) {
     }
   } catch (error) {
     console.log(error);
-  }
-  return null;
-}
-
-function getUserFlashcardFile_() {
-  const id = getProperty_('id');
-  if (id !== null) {
-    const file = getFileById_(id);
-    if (file === null) {
-      return null;
-    }
-    if (file.isTrashed()) {
-      return null;
-    }
-    return file;
   }
   return null;
 }
@@ -280,14 +180,6 @@ function setProperty_(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
 }
-
-// function getCardSetListInfByParentId(list, id) {
-//   return list.find(inf => inf.p === id);
-// }
-
-// function getCardSetListInfById(list, id) {
-//   return list.find(inf => inf.i === id);
-// }
 
 class Card {
   constructor(id, front, back, efact, n, i) {
