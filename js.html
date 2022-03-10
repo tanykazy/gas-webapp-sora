@@ -82,6 +82,12 @@
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
+      enableCurrentPackUrl() {
+        if (this.current.pack !== null) {
+          return true;
+        }
+        return false;
+      },
     },
     watch: {
       'current': {
