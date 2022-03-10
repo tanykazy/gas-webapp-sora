@@ -242,14 +242,14 @@
       flipCard() {
         this.reveal = !this.reveal;
       },
-      // turnFront(event) {
-      //   this.reveal = false;
-      //   this.disable = false;
-      // },
-      // turnBack(event) {
-      //   this.reveal = true;
-      //   this.disable = false;
-      // },
+      turnFront(event) {
+        this.reveal = false;
+        this.disable = false;
+      },
+      turnBack(event) {
+        this.reveal = true;
+        this.disable = false;
+      },
     },
   });
 
