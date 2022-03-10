@@ -311,7 +311,7 @@ class Deck {
   constructor(id, name) {
     this.id = id;
     this.name = name;
-    this.cards = [];
+    this.cards = null;
     this.parent = null;
   }
 }
@@ -320,7 +320,7 @@ class Pack {
   constructor(id, name, parent) {
     this.id = id;
     this.name = name;
-    this.decks = [];
+    this.decks = null;
     this.parent = parent;
   }
 }

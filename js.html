@@ -68,6 +68,12 @@
       });
     },
     watch: {
+      packs: {
+        handler(val, old) {
+          console.log(val);
+          console.log(old);
+        },
+      },
       themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
       },
