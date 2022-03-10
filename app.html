@@ -32,7 +32,7 @@
         </v-btn>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon target="_blank" :href="flashcardFileUrl" :disabled="flashcardFileUrlDisabled" v-bind="attrs"
+            <v-btn icon target="_blank" :href="current.pack.url" :disabled="!current.pack.url.length" v-bind="attrs"
               v-on="on">
               <v-icon>launch</v-icon>
             </v-btn>
