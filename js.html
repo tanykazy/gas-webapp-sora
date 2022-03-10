@@ -145,6 +145,7 @@
       },
       'current.card': {
         handler(val, old) {
+          this.changeCard(val);
           console.log('change card!');
           console.log('new value:');
           console.log(val);
