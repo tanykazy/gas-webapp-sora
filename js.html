@@ -74,14 +74,6 @@
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
-      themeMode: {
-        get() {
-          return !this.$vuetify.theme.dark;
-        },
-        set(value) {
-          this.$vuetify.theme.dark = !value;
-        }
-      }
     },
     watch: {
       // packs: {
@@ -92,9 +84,9 @@
       //     console.log(old);
       //   },
       // },
-      // themeMode(value, old) {
-      //   this.$vuetify.theme.dark = !value;
-      // },
+      themeMode(value, old) {
+        this.$vuetify.theme.dark = !value;
+      },
       // flashcardCreated(value, old) {
       //   if (value) {
       //     this.loading = true;
