@@ -20,6 +20,11 @@
         weakCount: 0,
         history: {},
         packs: null,
+        current: {
+          pack: null,
+          deck: null,
+          card: null,
+        },
         flashcardData: null,
         flashcardName: null,
         flashcardExist: null,
@@ -39,6 +44,9 @@
             deck.parent = pack;
             // deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
           }
+        }
+        if (this.packs.length > 0) {
+          this.current.pack = this.packs[0];
         }
         console.log(this.packs);
       })();
@@ -76,25 +84,45 @@
     computed: {
     },
     watch: {
-      'packs': {
+      'current': {
         handler(val, old) {
-          console.log('change packs!');
+          console.log('change current!');
           console.log('new value:');
           console.log(val);
           console.log('old value:');
           console.log(old);
         },
-        deep:true
+        // deep: true
       },
-      'packs.decks': {
+      'current.pack': {
         handler(val, old) {
-          console.log('change decks!');
+          console.log('change pack!');
           console.log('new value:');
           console.log(val);
           console.log('old value:');
           console.log(old);
         },
-        deep:true
+        // deep: true
+      },
+      'current.deck': {
+        handler(val, old) {
+          console.log('change deck!');
+          console.log('new value:');
+          console.log(val);
+          console.log('old value:');
+          console.log(old);
+        },
+        // deep: true
+      },
+      'current.card': {
+        handler(val, old) {
+          console.log('change card!');
+          console.log('new value:');
+          console.log(val);
+          console.log('old value:');
+          console.log(old);
+        },
+        // deep: true
       },
       themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
@@ -221,15 +249,15 @@
         this.loading = false;
       },
       nextQuestion() {
-        var q = null;
+        var card = null;
         if (this.weakCount === 0) {
-          q = this.weakQuestion();
+          card = this.weakCard();
         }
         this.weakCount = (this.weakCount + 1) % 10;
-        if (q === null || this.num === q[0]) {
-          q = this.randomQuestion();
+        if (card === null || this.num === card[0]) {
+          card = this.randomCard();
         }
-        this.changeCard(q);
+        this.changeCard(card);
         // pushHistory({
         //   name: this.flashcardName,
         //   card: q,
@@ -238,7 +266,7 @@
         //   card: this.num,
         // }, '');
       },
-      weakQuestion() {
+      weakCard() {
         var weak = null;
         for (var key in this.history) {
           if (this.history[key] < (this.history[weak] || 0)) {
@@ -250,7 +278,7 @@
         }
         return null;
       },
-      randomQuestion() {
+      randomCard() {
         return this.flashcardData[getRandomInt(this.flashcardData.length)];
       },
       increaseHistory(num) {
