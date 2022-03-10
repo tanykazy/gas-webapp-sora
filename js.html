@@ -76,8 +76,10 @@
     watch: {
       packs: {
         handler(val, old) {
-          console.log('new value:' + val);
-          console.log('old value:' + old);
+          console.log('new value:');
+          console.log(val);
+          console.log('old value:');
+          console.log(old);
         },
       },
       themeMode(value, old) {
@@ -125,10 +127,25 @@
     },
     methods: {
       onKeyup(event) {
-        console.log(event);
+        // console.log(event);
+        switch (event.key) {
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+            this.onClickAssessment(parseInt(event.key));
+            break;
+
+          default:
+            break;
+        }
       },
       onClickAssessment(scale) {
-        console.log(scale);
+        // console.log(scale);
+        this.increaseHistory(this.num);
+        this.nextQuestion();
       },
       onClickDone(event) {
         this.increaseHistory(this.num);
