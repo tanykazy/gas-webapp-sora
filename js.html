@@ -177,13 +177,13 @@
         // if (event !== this.flashcardName) {
         //   this.changeFlashcardList(event);
         // }
-        this.changeFlashcardList(pack, deck);
+        this.changeDeck(pack, deck);
         this.drawer = false;
       },
       flipCard() {
         this.reveal = !this.reveal;
       },
-      changeFlashcardList(pack, deck) {
+      changeDeck(pack, deck) {
         this.loading = true;
         (async () => {
           deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
@@ -210,13 +210,13 @@
         //   console.log(error);
         // });
       },
-      changeFlashcard(card) {
+      changeCard(card) {
         this.loading = true;
         this.disable = true;
-        this.turnFront(event);
-        this.num = card[0];
-        this.answer = card[1];
-        this.question = card[2];
+        this.turnFront();
+        this.num = card.id;
+        this.answer = card.back;
+        this.question = card.front;
         this.disable = false;
         this.loading = false;
       },
@@ -229,7 +229,7 @@
         if (q === null || this.num === q[0]) {
           q = this.randomQuestion();
         }
-        this.changeFlashcard(q);
+        this.changeCard(q);
         // pushHistory({
         //   name: this.flashcardName,
         //   card: q,

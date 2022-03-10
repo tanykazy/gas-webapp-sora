@@ -3,7 +3,7 @@ function doGet(e) {
 
   // setVersion(0.1);
 
-  updatePacks();
+  updatePacksInfo();
 
   if (e.parameters['copy']) {
     handleCopy(e.parameters['copy']);
@@ -61,7 +61,7 @@ function handleCopy(parameters) {
   }
 }
 
-function updatePacks() {
+function updatePacksInfo() {
   try {
     const lock = LockService.getUserLock();
     lock.waitLock(10000);
@@ -88,7 +88,7 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
-        return new Pack(inf.id, file.getName(), inf.parent);
+        return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
       }
     });
 
@@ -310,9 +310,10 @@ class Deck {
 }
 
 class Pack {
-  constructor(id, name, parent) {
+  constructor(id, name, url, parent) {
     this.id = id;
     this.name = name;
+    this.url = url
     this.decks = null;
     this.parent = parent;
   }
