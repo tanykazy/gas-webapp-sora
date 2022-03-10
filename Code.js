@@ -134,12 +134,19 @@ function getCards(pack, deck) {
   }
   values.shift();
   if (values.length === 0) {
-    return ['', '', ''];
+    return [];
   }
+
+  const cards = values.map((value) => {
+    const card = new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
+    return card;
+  });
+
+  console.log(cards);
+
+  // return cards;
+
   // cache.put(sheetName, JSON.stringify(values));
-
-
-
   return values;
 }
 
