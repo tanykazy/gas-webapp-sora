@@ -37,7 +37,7 @@
           pack.decks = await googleScriptRun('getDecks', pack.id);
           for (const deck of pack.decks) {
             deck.parent = pack;
-            deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
+            // deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
           }
         }
         console.log(this.packs);
@@ -192,8 +192,8 @@
           this.nextQuestion();
           this.loading = false;
         })();
-        console.log(pack);
-        console.log(deck);
+        // console.log(pack);
+        // console.log(deck);
         // getFlashcardData(name, (result) => {
         //   this.flashcardData = result;
         //   this.flashcardName = name;
