@@ -36,44 +36,28 @@
       };
     },
     beforeCreate() {
-      (async () => {
-        this.packs = await googleScriptRun('getPacks');
-        // for (const pack of this.packs) {
-        //   pack.decks = await googleScriptRun('getDecks', pack.id);
-        //   for (const deck of pack.decks) {
-        //     deck.parent = pack;
-        //     // deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
+      google.script.history.setChangeHandler((event) => {
+        // event.location.parameters;
+        // const name = event.state.name;
+        // if (name !== null) {
+        //   if (name !== this.flashcardName) {
+        //     this.changeFlashcardList(name);
+        //   } else {
+        //     const card = event.state.card;
+        //     if (card !== null) {
+        //       this.changeFlashcard(card);
+        //     }
         //   }
         // }
+      });
+      (async () => {
+        this.packs = await googleScriptRun('getPacks');
         if (this.packs.length > 0) {
           this.current.pack = this.packs[0];
         }
-        // console.log(this.packs);
       })();
-      // console.log(window.location);
-      // console.log(copy);
-      // setHistoryChangeHandler((event) => {
-      //   const name = event.state.name;
-      //   if (name !== null) {
-      //     if (name !== this.flashcardName) {
-      //       this.changeFlashcardList(name);
-      //     } else {
-      //       const card = event.state.card;
-      //       if (card !== null) {
-      //         this.changeFlashcard(card);
-      //       }
-      //     }
-      //   }
-      // });
     },
     created() {
-      // this.loading = true;
-      // existFlashcard((result) => {
-      //   this.flashcardExist = result;
-      //   this.loading = false;
-      // }, (error) => {
-      //   console.log(error);
-      // });
     },
     mounted() {
       document.addEventListener('keydown', this.onKeyup);
@@ -96,16 +80,15 @@
       },
     },
     watch: {
-      'current': {
-        handler(val, old) {
-          console.log('change current!');
-          console.log('new value:');
-          console.log(val);
-          console.log('old value:');
-          console.log(old);
-        },
-        // deep: true
-      },
+      // 'current': {
+      //   handler(val, old) {
+      //     console.log('change current!');
+      //     console.log('new value:');
+      //     console.log(val);
+      //     console.log('old value:');
+      //     console.log(old);
+      //   },
+      // },
       'current.pack': {
         handler(val, old) {
           (async () => {
@@ -113,7 +96,7 @@
             if (val.decks.length > 0) {
               this.current.deck = val.decks[0];
             }
-            console.log(this.current);
+            // console.log(this.current);
           })();
           // console.log('change pack!');
           // console.log('new value:');
@@ -121,7 +104,6 @@
           // console.log('old value:');
           // console.log(old);
         },
-        // deep: true
       },
       'current.deck': {
         handler(val, old) {
@@ -130,7 +112,7 @@
             if (val.cards.length > 0) {
               this.current.card = val.cards[0];
             }
-            console.log(this.current);
+            // console.log(this.current);
           })();
           // console.log('change deck!');
           // console.log('new value:');
@@ -138,61 +120,20 @@
           // console.log('old value:');
           // console.log(old);
         },
-        // deep: true
       },
       'current.card': {
         handler(val, old) {
           this.changeCard(val);
-          console.log('change card!');
-          console.log('new value:');
-          console.log(val);
-          console.log('old value:');
-          console.log(old);
+          // console.log('change card!');
+          // console.log('new value:');
+          // console.log(val);
+          // console.log('old value:');
+          // console.log(old);
         },
-        // deep: true
       },
       themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
       },
-      // flashcardCreated(value, old) {
-      //   if (value) {
-      //     this.loading = true;
-      //     getFlashcardNameList((result) => {
-      //       this.flashcardNameList = result;
-      //       this.loading = false;
-      //     }, (error) => {
-      //       console.log(error);
-      //     });
-      //   }
-      // },
-      // flashcardExist(value, old) {
-      //   if (value) {
-      //     this.flashcardCreated = true;
-      //     getFlashcardFileName((result) => {
-      //       this.flashcardFileName = result;
-      //     }, (error) => {
-      //       console.log(error);
-      //     });
-      //     getFlashcardUrl((result) => {
-      //       this.flashcardFileUrl = result;
-      //       this.flashcardFileUrlDisabled = false;
-      //     }, (error) => {
-      //       console.log(error);
-      //     });
-      //   } else {
-      //     this.loading = true;
-      //     createUserFlashcard((result) => {
-      //       this.flashcardExist = true;
-      //       this.flashcardCreated = true;
-      //       this.loading = false;
-      //     }, (error) => {
-      //       console.log(error);
-      //     });
-      //   }
-      // },
-      // flashcardNameList(value, old) {
-      //   this.changeFlashcardList(this.flashcardNameList[0]);
-      // },
     },
     methods: {
       onKeyup(event) {
@@ -216,54 +157,32 @@
         this.increaseHistory(this.num);
         this.nextQuestion();
       },
-      onClickDone(event) {
-        this.increaseHistory(this.num);
-        this.nextQuestion();
-        // setItem(this.grade, trimHistory(this.history));
-      },
-      onClickClear(event) {
-        this.decreaseHistory(this.num);
-        this.nextQuestion();
-        // setItem(this.grade, trimHistory(this.history));
-      },
+      // onClickDone(event) {
+      //   this.increaseHistory(this.num);
+      //   this.nextQuestion();
+      //   // setItem(this.grade, trimHistory(this.history));
+      // },
+      // onClickClear(event) {
+      //   this.decreaseHistory(this.num);
+      //   this.nextQuestion();
+      //   // setItem(this.grade, trimHistory(this.history));
+      // },
       onClickListItem(pack, deck) {
-        // console.log(pack);
-        // console.log(deck);
-        // if (event !== this.flashcardName) {
-        //   this.changeFlashcardList(event);
-        // }
         this.changeDeck(pack, deck);
         this.drawer = false;
       },
-      flipCard() {
-        this.reveal = !this.reveal;
+      onClickTurn(event) {
+        this.flipCard();
       },
       changeDeck(pack, deck) {
         this.loading = true;
         (async () => {
           deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
-          this.flashcardData = deck.cards;
-          this.flashcardName = deck.name;
+          // this.flashcardData = deck.cards;
+          // this.flashcardName = deck.name;
           this.nextQuestion();
           this.loading = false;
         })();
-        // console.log(pack);
-        // console.log(deck);
-        // getFlashcardData(name, (result) => {
-        //   this.flashcardData = result;
-        //   this.flashcardName = name;
-        //   // pushHistory({
-        //   //   name: name,
-        //   //   card: null,
-        //   // }, {
-        //   //   name: name,
-        //   //   card: '',
-        //   // }, '');
-        //   this.nextQuestion();
-        //   this.loading = false;
-        // }, (error) => {
-        //   console.log(error);
-        // });
       },
       changeCard(card) {
         this.loading = true;
@@ -320,58 +239,19 @@
         }
         this.history[num] -= 1;
       },
-      turnFront(event) {
-        this.reveal = false;
-        this.disable = false;
+      flipCard() {
+        this.reveal = !this.reveal;
       },
-      turnBack(event) {
-        this.reveal = true;
-        this.disable = false;
-      },
+      // turnFront(event) {
+      //   this.reveal = false;
+      //   this.disable = false;
+      // },
+      // turnBack(event) {
+      //   this.reveal = true;
+      //   this.disable = false;
+      // },
     },
   });
-
-  function createUserFlashcard(success, failure) {
-    google.script.run
-      .withSuccessHandler(success)
-      .withFailureHandler(failure)
-      .createUserFlashcard();
-  }
-
-  function existFlashcard(success, failure) {
-    google.script.run
-      .withSuccessHandler(success)
-      .withFailureHandler(failure)
-      .existUserFlashcard();
-  }
-
-  function getFlashcardNameList(success, failure) {
-    google.script.run
-      .withSuccessHandler(success)
-      .withFailureHandler(failure)
-      .getFlashcardNameList();
-  }
-
-  function getFlashcardData(name, success, failure) {
-    google.script.run
-      .withSuccessHandler(success)
-      .withFailureHandler(failure)
-      .getFlashcardData(name);
-  }
-
-  function getFlashcardFileName(success, failure) {
-    google.script.run
-      .withSuccessHandler(success)
-      .withFailureHandler(failure)
-      .getFlashcardFileName();
-  }
-
-  function getFlashcardUrl(success, failure) {
-    google.script.run
-      .withSuccessHandler(success)
-      .withFailureHandler(failure)
-      .getFlashcardUrl();
-  }
 
   function pushHistory(state, params, hash) {
     google.script.history
