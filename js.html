@@ -84,6 +84,7 @@
           console.log('old value:');
           console.log(old);
         },
+        deep:true
       },
       'packs.decks': {
         handler(val, old) {
@@ -93,6 +94,7 @@
           console.log('old value:');
           console.log(old);
         },
+        deep:true
       },
       themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
