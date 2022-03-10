@@ -11,7 +11,7 @@
         drawer: false,
         ready: false,
         reveal: false,
-        loading: false,
+        loading: true,
         disable: true,
         themeMode: true,
         answer: "",
@@ -59,13 +59,13 @@
       // });
     },
     created() {
-      this.loading = true;
-      existFlashcard((result) => {
-        this.flashcardExist = result;
-        this.loading = false;
-      }, (error) => {
-        console.log(error);
-      });
+      // this.loading = true;
+      // existFlashcard((result) => {
+      //   this.flashcardExist = result;
+      //   this.loading = false;
+      // }, (error) => {
+      //   console.log(error);
+      // });
     },
     mounted() {
       document.addEventListener('keydown', this.onKeyup);
@@ -73,57 +73,67 @@
     beforeUnmount() {
       document.removeEventListener('keydown', this.onKeyup);
     },
-    watch: {
-      packs: {
-        handler(val, old) {
-          console.log('new value:');
-          console.log(val);
-          console.log('old value:');
-          console.log(old);
+    computed: {
+      themeMode: {
+        get() {
+          return !this.$vuetify.theme.dark;
         },
-      },
-      themeMode(value, old) {
-        this.$vuetify.theme.dark = !value;
-      },
-      flashcardCreated(value, old) {
-        if (value) {
-          this.loading = true;
-          getFlashcardNameList((result) => {
-            this.flashcardNameList = result;
-            this.loading = false;
-          }, (error) => {
-            console.log(error);
-          });
+        set(value) {
+          this.$vuetify.theme.dark = !value;
         }
-      },
-      flashcardExist(value, old) {
-        if (value) {
-          this.flashcardCreated = true;
-          getFlashcardFileName((result) => {
-            this.flashcardFileName = result;
-          }, (error) => {
-            console.log(error);
-          });
-          getFlashcardUrl((result) => {
-            this.flashcardFileUrl = result;
-            this.flashcardFileUrlDisabled = false;
-          }, (error) => {
-            console.log(error);
-          });
-        } else {
-          this.loading = true;
-          createUserFlashcard((result) => {
-            this.flashcardExist = true;
-            this.flashcardCreated = true;
-            this.loading = false;
-          }, (error) => {
-            console.log(error);
-          });
-        }
-      },
-      flashcardNameList(value, old) {
-        // this.changeFlashcardList(this.flashcardNameList[0]);
-      },
+      }
+    },
+    watch: {
+      // packs: {
+      //   handler(val, old) {
+      //     console.log('new value:');
+      //     console.log(val);
+      //     console.log('old value:');
+      //     console.log(old);
+      //   },
+      // },
+      // themeMode(value, old) {
+      //   this.$vuetify.theme.dark = !value;
+      // },
+      // flashcardCreated(value, old) {
+      //   if (value) {
+      //     this.loading = true;
+      //     getFlashcardNameList((result) => {
+      //       this.flashcardNameList = result;
+      //       this.loading = false;
+      //     }, (error) => {
+      //       console.log(error);
+      //     });
+      //   }
+      // },
+      // flashcardExist(value, old) {
+      //   if (value) {
+      //     this.flashcardCreated = true;
+      //     getFlashcardFileName((result) => {
+      //       this.flashcardFileName = result;
+      //     }, (error) => {
+      //       console.log(error);
+      //     });
+      //     getFlashcardUrl((result) => {
+      //       this.flashcardFileUrl = result;
+      //       this.flashcardFileUrlDisabled = false;
+      //     }, (error) => {
+      //       console.log(error);
+      //     });
+      //   } else {
+      //     this.loading = true;
+      //     createUserFlashcard((result) => {
+      //       this.flashcardExist = true;
+      //       this.flashcardCreated = true;
+      //       this.loading = false;
+      //     }, (error) => {
+      //       console.log(error);
+      //     });
+      //   }
+      // },
+      // flashcardNameList(value, old) {
+      //   this.changeFlashcardList(this.flashcardNameList[0]);
+      // },
     },
     methods: {
       onKeyup(event) {
@@ -143,7 +153,7 @@
         }
       },
       onClickAssessment(scale) {
-        // console.log(scale);
+        console.log(scale);
         this.increaseHistory(this.num);
         this.nextQuestion();
       },
