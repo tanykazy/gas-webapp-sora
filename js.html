@@ -108,11 +108,21 @@
       },
       'current.pack': {
         handler(val, old) {
-          console.log('change pack!');
-          console.log('new value:');
-          console.log(val);
-          console.log('old value:');
-          console.log(old);
+          (async () => {
+            val.decks = await googleScriptRun('getDecks', val.id);
+            for (const deck of pack.decks) {
+              deck.parent = pack;
+            }
+            if (val.decks.length > 0) {
+              this.current.deck = val.decks[0];
+            }
+            console.log(this.current);
+          })();
+          // console.log('change pack!');
+          // console.log('new value:');
+          // console.log(val);
+          // console.log('old value:');
+          // console.log(old);
         },
         // deep: true
       },
