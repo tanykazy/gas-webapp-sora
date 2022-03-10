@@ -110,9 +110,9 @@
         handler(val, old) {
           (async () => {
             val.decks = await googleScriptRun('getDecks', val.id);
-            for (const deck of val.decks) {
-              deck.parent = val;
-            }
+            // for (const deck of val.decks) {
+            //   deck.parent = val;
+            // }
             if (val.decks.length > 0) {
               this.current.deck = val.decks[0];
             }
@@ -129,7 +129,7 @@
       'current.deck': {
         handler(val, old) {
           (async () => {
-            val.cards = await googleScriptRun('getCards', val.parent, val.id);
+            val.cards = await googleScriptRun('getCards', this.current.pack.parent, val.id);
             if (val.cards.length > 0) {
               this.current.card = val.cards[0];
             }
