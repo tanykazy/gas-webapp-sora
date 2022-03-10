@@ -67,8 +67,9 @@ function updatePacks() {
     lock.waitLock(10000);
 
     let infList = getPropertyList_();
-    setProperty_('list', infList.filter((inf) => getFileById_(inf.id) !== null));
+    infList = infList.filter((inf) => existFile_(inf.id));
     console.log(infList);
+    setProperty_('list', infList);
 
     lock.releaseLock();
   } catch (error) {
@@ -232,6 +233,10 @@ function newUserFlashcardFile_(id) {
   const file = getOriginFlashcardFile_(id).makeCopy();
   setProperty_('id', file.getId());
   return file;
+}
+
+function existFile_(id) {
+  return getFileById_(id) !== null;
 }
 
 function getFileById_(id) {
