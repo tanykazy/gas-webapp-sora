@@ -88,6 +88,12 @@
         }
         return false;
       },
+      currentPackUrl() {
+        if (this.enableCurrentPackUrl) {
+          return this.current.pack.url;
+        }
+        return '';
+      },
     },
     watch: {
       'current': {

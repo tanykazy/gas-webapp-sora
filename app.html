@@ -32,7 +32,7 @@
         </v-btn>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon target="_blank" :href="current.pack.url" :disabled="!enableCurrentPackUrl" v-bind="attrs"
+            <v-btn icon target="_blank" :href="currentPackUrl" :disabled="!enableCurrentPackUrl" v-bind="attrs"
               v-on="on">
               <v-icon>launch</v-icon>
             </v-btn>
