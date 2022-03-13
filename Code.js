@@ -16,25 +16,25 @@ function doGet(e) {
   return output;
 }
 
-function setVersion(v) {
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
+// function setVersion(v) {
+//   try {
+//     const lock = LockService.getUserLock();
+//     lock.waitLock(10000);
 
-    const currentVersion = getProperty_('version');
-    if (currentVersion !== v) {
-      const userProperties = PropertiesService.getUserProperties();
-      userProperties.deleteProperty('id');
+//     const currentVersion = getProperty_('version');
+//     if (currentVersion !== v) {
+//       const userProperties = PropertiesService.getUserProperties();
+//       userProperties.deleteProperty('id');
 
-      setProperty_('version', 0.1);
-    }
+//       setProperty_('version', 0.1);
+//     }
 
-    lock.releaseLock();
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
-  }
-}
+//     lock.releaseLock();
+//   } catch (error) {
+//     console.log('Could not obtain lock after 10 seconds.');
+//     throw error;
+//   }
+// }
 
 function handleCopy(parameters) {
   try {
@@ -121,12 +121,16 @@ function getCards(pack, deck) {
   // if (values !== null) {
   //   return JSON.parse(values);
   // }
-  // const file = getUserFlashcardFile_();
-  // const spreadsheet = SpreadsheetApp.open(file);
-  // const sheet = spreadsheet.getSheetByName(sheetName);
+
   if (sheet === null) {
     throw 'there is no sheet with the given name.';
   }
+
+  // for debug
+  // 一時的な検証結果
+  // DeveloperMetadata は Sheet 単位に保持する
+  // 実装をかんたんにするため。
+
   const range = sheet.getDataRange();
   values = range.getValues();
   if (values.length === 0) {
@@ -137,7 +141,16 @@ function getCards(pack, deck) {
     return [];
   }
 
+  const metadata = sheet.getDeveloperMetadata();
+  console.log(metadata.map((data) => {
+    return {
+      key: data.getKey(),
+      value: data.getValue()
+    };
+  }));
+
   const cards = values.map((value) => {
+    sheet.addDeveloperMetadata(value[0], 'testmetadata');
     return new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
   });
   // cache.put(sheetName, JSON.stringify(values));

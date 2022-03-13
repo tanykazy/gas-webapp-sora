@@ -151,15 +151,17 @@
         this.nextQuestion();
       },
       onClickListItem(pack, deck) {
-        this.changeDeck(pack, deck);
+        if (this.current.deck !== deck) {
+          this.changeDeck(pack, deck);
+        }
         this.drawer = false;
       },
       onClickTurn(event) {
         this.flipCard();
       },
       changeDeck(pack, deck) {
-        this.loading = true;
         (async () => {
+          this.loading = true;
           if (!deck.cards) {
             deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
           }
