@@ -154,9 +154,8 @@
           this.loading = true;
           if (!deck.cards) {
             deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
-          } else {
-            this.current.deck = deck;
           }
+          this.current.deck = deck;
           this.nextQuestion();
           this.loading = false;
         })();
