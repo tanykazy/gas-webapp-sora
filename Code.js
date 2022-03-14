@@ -49,6 +49,7 @@ function handleCopy(parameters) {
     for (const parameter of parameters) {
       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
         const file = getFileById_(parameter).makeCopy();
+        // init metadata
         let inf = new PackInfo();
         inf.parent = parameter;
         inf.id = file.getId();
@@ -152,9 +153,9 @@ function getCards(pack, deck) {
     };
   }));
 
-  sheet.getDeveloperMetadata().map((data) => {
-    data.remove();
-  });
+  // sheet.getDeveloperMetadata().map((data) => {
+  //   data.remove();
+  // });
 
   const metadata = sheet.getDeveloperMetadata().map((data) => {
     return new CardMetaData(data.getValue());
@@ -166,6 +167,15 @@ function getCards(pack, deck) {
   });
   // cache.put(sheetName, JSON.stringify(values));
   return cards;
+}
+
+function initMetadata(file) {
+  const spreadsheet = SpreadsheetApp.open(file);
+  const sheets = spreadsheet.getSheets();
+  const decks = sheets.map((sheet) => {
+    return new Deck(sheet.getSheetId(), sheet.getName());
+  });
+  return decks;
 }
 
 function existFile_(id) {
