@@ -152,6 +152,15 @@ function getCards(pack, deck) {
     };
   }));
 
+  // console.log(sheet.createDeveloperMetadataFinder().find().map((data) => {
+  //   data.remove();
+  //   // return {
+  //   //   id: data.getId(),
+  //   //   key: data.getKey(),
+  //   //   value: data.getValue()
+  //   // };
+  // }));
+
   // sheet.getDeveloperMetadata().map((data) => {
   //   data.remove();
   // });
@@ -160,6 +169,12 @@ function getCards(pack, deck) {
   //   return new CardMetaData(data.getValue());
   // });
   // console.log(metadata);
+
+  const metadata = {};
+  sheet.getDeveloperMetadata().forEach((data) => {
+    metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue()));
+  });
+  console.log(metadata);
 
   const cards = values.map((value) => {
     return new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
@@ -253,7 +268,7 @@ class CardMetaData {
     return this.e;
   }
   set efact(efact) {
-    this.e = efact; 
+    this.e = efact;
   }
   get lastRepeat() {
     return new Date(this.l);
