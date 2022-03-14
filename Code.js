@@ -49,7 +49,6 @@ function handleCopy(parameters) {
     for (const parameter of parameters) {
       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
         const file = getFileById_(parameter).makeCopy();
-        // init metadata
         let inf = new PackInfo();
         inf.parent = parameter;
         inf.id = file.getId();
@@ -169,13 +168,8 @@ function getCards(pack, deck) {
   return cards;
 }
 
-function initMetadata(file) {
-  const spreadsheet = SpreadsheetApp.open(file);
-  const sheets = spreadsheet.getSheets();
-  const decks = sheets.map((sheet) => {
-    return new Deck(sheet.getSheetId(), sheet.getName());
-  });
-  return decks;
+function initMetadata(sheet) {
+  let metadata = sheet.getDeveloperMetadata();
 }
 
 function existFile_(id) {
@@ -247,11 +241,13 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
+    console.log(metadata);
     metadata = JSON.parse(metadata);
-    this.e = !metadata ? null : metadata.e;
-    this.n = !metadata ? null : metadata.n;
-    this.i = !metadata ? null : metadata.i;
-    this.l = !metadata ? null : metadata.l;
+    console.log(metadata);
+    // this.e = !metadata ? null : metadata.e;
+    // this.n = !metadata ? null : metadata.n;
+    // this.i = !metadata ? null : metadata.i;
+    // this.l = !metadata ? null : metadata.l;
   }
   get efact() {
     return this.e;
