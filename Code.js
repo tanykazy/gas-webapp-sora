@@ -156,10 +156,10 @@ function getCards(pack, deck) {
   //   data.remove();
   // });
 
-  const metadata = sheet.getDeveloperMetadata().map((data) => {
-    return new CardMetaData(data.getValue());
-  });
-  console.log(metadata);
+  // const metadata = sheet.getDeveloperMetadata().map((data) => {
+  //   return new CardMetaData(data.getValue());
+  // });
+  // console.log(metadata);
 
   const cards = values.map((value) => {
     return new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
