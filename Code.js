@@ -205,6 +205,7 @@ class Card {
     this.efact = efact;
     this.n = n;
     this.i = i;
+    this.meta = null;
   }
 }
 
@@ -226,10 +227,31 @@ class Pack {
   }
 }
 
+class CardMetaData {
+  constructor(metadata) {
+    this.e = !metadata ? null : metadata.e;
+    this.n = !metadata ? null : metadata.n;
+    this.i = !metadata ? null : metadata.i;
+    this.l = !metadata ? null : metadata.l;
+  }
+  get efact() {
+    return this.e;
+  }
+  set efact(efact) {
+    this.e = this.efact;
+  }
+  get lastRepeat() {
+    return new Date(this.l);
+  }
+  set lastRepeat(date) {
+    this.l = data.getTime();
+  }
+}
+
 class PackInfo {
-  constructor(object) {
-    this.p = object && object.p;
-    this.i = object && object.i;
+  constructor(info) {
+    this.p = !info ? '' : info.p;
+    this.i = !info ? '' : info.i;
   }
   get parent() {
     return this.p;
