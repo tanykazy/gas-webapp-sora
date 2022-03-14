@@ -152,7 +152,7 @@ function getCards(pack, deck) {
   }));
 
   const metadata = sheet.getDeveloperMetadata().map((data) => {
-    return new CardMetaData(data);
+    return new CardMetaData(data.getValue());
   });
   console.log(metadata);
 
@@ -232,6 +232,7 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
+    metadata = JSON.parse(metadata);
     this.e = !metadata ? null : metadata.e;
     this.n = !metadata ? null : metadata.n;
     this.i = !metadata ? null : metadata.i;
