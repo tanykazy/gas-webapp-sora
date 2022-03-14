@@ -152,6 +152,10 @@ function getCards(pack, deck) {
     };
   }));
 
+  sheet.getDeveloperMetadata().map((data) => {
+    data.remove();
+  });
+
   const metadata = sheet.getDeveloperMetadata().map((data) => {
     return new CardMetaData(data.getValue());
   });
