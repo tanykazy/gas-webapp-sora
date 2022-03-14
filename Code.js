@@ -144,7 +144,12 @@ function getCards(pack, deck) {
     return [];
   }
 
-  console.log(sheet.getDeveloperMetadata());
+  console.log(sheet.getDeveloperMetadata().map((data) => {
+    return {
+      key: data.getKey(),
+      value: data.getValue()
+    };
+  }));
 
   const metadata = sheet.getDeveloperMetadata().map((data) => {
     return new CardMetaData(data);
