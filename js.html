@@ -20,9 +20,6 @@
           deck: null,
           card: null,
         },
-        breadcrumb: {
-          items: [],
-        },
       };
     },
     beforeCreate() {
@@ -87,10 +84,6 @@
     watch: {
       'current.pack': {
         handler(val, old) {
-          this.breadcrumb.items = [];
-          this.breadcrumb.items.push({
-            text: val.name
-          });
           (async () => {
             if (!val.decks) {
               val.decks = await googleScriptRun('getDecks', val.id);
@@ -103,11 +96,6 @@
       },
       'current.deck': {
         handler(val, old) {
-          console.log(val);
-          console.log(old);
-          this.breadcrumb.items.push({
-            text: val.name
-          });
           (async () => {
             if (!val.cards) {
               val.cards = await googleScriptRun('getCards', this.current.pack.id, val.name);
