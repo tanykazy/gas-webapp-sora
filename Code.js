@@ -144,13 +144,14 @@ function getCards(pack, deck) {
     return [];
   }
 
+  console.log(sheet.getDeveloperMetadata());
+
   const metadata = sheet.getDeveloperMetadata().map((data) => {
     return new CardMetaData(data);
   });
   console.log(metadata);
 
   const cards = values.map((value) => {
-    sheet.addDeveloperMetadata(value[0], 'testmetadata');
     return new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
   });
   // cache.put(sheetName, JSON.stringify(values));
