@@ -253,7 +253,7 @@ class CardMetaData {
     return this.e;
   }
   set efact(efact) {
-    this.e = this.efact;
+    this.e = efact; 
   }
   get lastRepeat() {
     return new Date(this.l);
