@@ -146,6 +146,7 @@ function getCards(pack, deck) {
 
   console.log(sheet.getDeveloperMetadata().map((data) => {
     return {
+      id: data.getId(),
       key: data.getKey(),
       value: data.getValue()
     };
