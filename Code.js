@@ -2,6 +2,9 @@ function doGet(e) {
   console.log(e);
 
   // setVersion(0.1);
+  const userProperties = PropertiesService.getUserProperties();
+  userProperties.deleteProperty('id');
+  // userProperties.deleteProperty('id');
 
   updatePacksInfo();
 
