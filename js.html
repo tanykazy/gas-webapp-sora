@@ -121,6 +121,10 @@
       },
       'current.card': {
         handler(val, old) {
+          for(key in val){
+            console.log(key);
+          }
+          console.log(val.efact);
           this.disable = false;
           this.loading = false;
         },
