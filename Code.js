@@ -257,24 +257,22 @@ class Pack {
 class CardMetaData {
   constructor(metadata) {
     console.log(metadata);
-    metadata = JSON.parse(metadata);
-    console.log(metadata);
-    // this.e = !metadata ? null : metadata.e;
-    // this.n = !metadata ? null : metadata.n;
-    // this.i = !metadata ? null : metadata.i;
-    // this.l = !metadata ? null : metadata.l;
+    this.ef = !metadata ? null : metadata.ef;
+    this.n = !metadata ? null : metadata.n;
+    this._i = !metadata ? null : metadata._i;
+    this._l = !metadata ? null : metadata._l;
   }
-  get efact() {
-    return this.e;
+  get i() {
+    return this._i / 86400000; // 1000 * 60 * 60 * 24
   }
-  set efact(efact) {
-    this.e = efact;
+  set i(day) {
+    this._i = day * 86400000;
   }
-  get lastRepeat() {
-    return new Date(this.l);
+  get l() {
+    return new Date(this._l);
   }
-  set lastRepeat(date) {
-    this.l = data.getTime();
+  set l(date) {
+    this._l = data.getTime();
   }
 }
 
