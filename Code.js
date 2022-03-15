@@ -49,7 +49,7 @@ function handleCopy(parameters) {
     for (const parameter of parameters) {
       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
         const file = getFileById_(parameter).makeCopy();
-        let inf = new PackInfo();
+        let inf = new PackInfo({});
         inf.parent = parameter;
         inf.id = file.getId();
         infList.push(inf);
@@ -264,8 +264,8 @@ class CardMetaData {
 
 class PackInfo {
   constructor(info) {
-    this.p = !info ? '' : info.p;
-    this.i = !info ? '' : info.i;
+    this.p = info.p || '';
+    this.i = info.i || '';
   }
   get parent() {
     return this.p;
