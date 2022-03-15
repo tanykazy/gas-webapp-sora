@@ -172,13 +172,15 @@ function getCards(pack, deck) {
 
   const metadata = {};
   sheet.getDeveloperMetadata().forEach((data) => {
-    metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue()));
+    metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue() || '{}'));
   });
   console.log(metadata);
 
   const cards = values.map((value) => {
-    return new Card(value[0], value[1], value[2], value[3], value[4], value[5]);
+    const data = metadata[value[0]] || new CardMetaData({});
+    return new Card(value[0], value[1], value[2], data);
   });
+  console.log(cards);
   // cache.put(sheetName, JSON.stringify(values));
   return cards;
 }
@@ -253,10 +255,10 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
-    this.ef = !metadata ? null : metadata.ef;
-    this.n = !metadata ? null : metadata.n;
-    this.i = !metadata ? null : metadata.i;
-    this.l = !metadata ? null : metadata.l;
+    this.ef = metadata.ef || 0;
+    this.n = metadata.n || 0;
+    this.i = metadata.i || 0;
+    this.l = metadata.l || 0;
   }
 }
 
