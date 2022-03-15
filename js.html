@@ -111,7 +111,7 @@
           });
           (async () => {
             if (!val.cards) {
-              val.cards = await googleScriptRun('getCards', this.current.pack.id, val.name);
+              val.cards = (await googleScriptRun('getCards', this.current.pack.id, val.name)).map(card => new FunctionalCard(card));
             }
             if (val.cards.length > 0) {
               this.current.card = val.cards[getRandomInt(val.cards.length)];
