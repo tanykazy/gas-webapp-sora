@@ -225,14 +225,32 @@ function setProperty_(key, value) {
 }
 
 class Card {
-  constructor(id, front, back, efact, n, i) {
+  constructor(id, front, back, meta) {
     this.id = id;
     this.front = front;
     this.back = back;
-    this.efact = efact;
-    this.n = n;
-    this.i = i;
-    this.meta = null;
+    this.meta = meta;
+  }
+  increaseN() {
+    this.meta.n += 1;
+  }
+  resetN() {
+    this.meta.n = 0;
+  }
+  isElapsed() {
+    return this.meta.l + this.meta.i > Data.now();
+  }
+  get efact() {
+    return this.meta.ef;
+  }
+  set efact(ef) {
+    this.meta.ef = ef;
+  }
+  get interval() {
+    return this.meta.i;
+  }
+  set interval(day) {
+    this.meta.i = day;
   }
 }
 
@@ -269,10 +287,10 @@ class CardMetaData {
     this._i = day * 86400000;
   }
   get l() {
-    return new Date(this._l);
+    return this._l;
   }
   set l(date) {
-    this._l = data.getTime();
+    this._l = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
   }
 }
 
