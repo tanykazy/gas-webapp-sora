@@ -290,6 +290,7 @@ class CardMetaData {
     return this._l;
   }
   set l(date) {
+    console.log(date);
     this._l = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
   }
 }
