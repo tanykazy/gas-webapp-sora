@@ -121,7 +121,7 @@
       },
       'current.card': {
         handler(val, old) {
-          console.log(val);
+          console.log(val.isElapsed());
           this.disable = false;
           this.loading = false;
         },
@@ -243,33 +243,5 @@
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
-  }
-
-  function algorithmSM2(q, n, ef, i) {
-    if (q < 3) {
-      i = 1;
-      n = 0;
-    } else {
-      if (n === 0) {
-        i = 1;
-      } else if (n === 1) {
-        i = 6;
-      } else {
-        i = Math.ceil(n * ef);
-      }
-      n += 1;
-    }
-
-    ef = ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
-
-    if (ef < 1.3) {
-      ef = 1.3;
-    }
-
-    return {
-      n: n,
-      ef: ef,
-      i: i
-    };
   }
 </script>
