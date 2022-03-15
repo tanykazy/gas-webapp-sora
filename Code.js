@@ -231,27 +231,6 @@ class Card {
     this.back = back;
     this.meta = meta;
   }
-  increaseN() {
-    this.meta.n += 1;
-  }
-  resetN() {
-    this.meta.n = 0;
-  }
-  isElapsed() {
-    return this.meta.l + this.meta.i > Data.now();
-  }
-  get efact() {
-    return this.meta.ef;
-  }
-  set efact(ef) {
-    this.meta.ef = ef;
-  }
-  get interval() {
-    return this.meta.i;
-  }
-  set interval(day) {
-    this.meta.i = day;
-  }
 }
 
 class Deck {
@@ -274,24 +253,10 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
-    console.log(metadata);
     this.ef = !metadata ? null : metadata.ef;
     this.n = !metadata ? null : metadata.n;
-    this._i = !metadata ? null : metadata._i;
-    this._l = !metadata ? null : metadata._l;
-  }
-  get i() {
-    return this._i / 86400000; // 1000 * 60 * 60 * 24
-  }
-  set i(day) {
-    this._i = day * 86400000;
-  }
-  get l() {
-    return this._l;
-  }
-  set l(date) {
-    console.log(date);
-    this._l = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
+    this.i = !metadata ? null : metadata.i;
+    this.l = !metadata ? null : metadata.l;
   }
 }
 
@@ -312,32 +277,4 @@ class PackInfo {
   set id(id) {
     this.i = id;
   }
-}
-
-function algorithmSM2(q, n, ef, i) {
-  if (q < 3) {
-    i = 1;
-    n = 0;
-  } else {
-    if (n === 0) {
-      i = 1;
-    } else if (n === 1) {
-      i = 6;
-    } else {
-      i = Math.ceil(n * ef);
-    }
-    n += 1;
-  }
-
-  ef = ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
-
-  if (ef < 1.3) {
-    ef = 1.3;
-  }
-
-  return {
-    n: n,
-    ef: ef,
-    i: i
-  };
 }
