@@ -70,7 +70,7 @@ function updatePacksInfo() {
     lock.waitLock(10000);
 
     let infList = getPropertyList_();
-    console.log(infList);
+    // console.log(infList);
     infList = infList.filter((inf) => existFile_(inf.id));
     // console.log(infList);
     setProperty_('list', infList);
@@ -80,7 +80,6 @@ function updatePacksInfo() {
     console.log('Could not obtain lock after 10 seconds.');
     throw error;
   }
-
 }
 
 function getPacks() {
@@ -192,25 +191,13 @@ function createNewFile(name) {
   const packInfo = new PackInfo({});
   packInfo.id = spreadsheet.getId();
   packInfo.parent = null;
-  const pack = new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
 
   try {
     const lock = LockService.getUserLock();
     lock.waitLock(10000);
 
     const infList = getPropertyList_();
-    const packInfoList = infList.map(inf => new PackInfo(inf));
-    packInfoList.push(packInfo);
-    // console.log(infList);
-    for (const parameter of parameters) {
-      if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
-        const file = getFileById_(parameter).makeCopy();
-        let inf = new PackInfo({});
-        inf.parent = parameter;
-        inf.id = file.getId();
-        infList.push(inf);
-      }
-    }
+    infList.push(packInfo);
     setProperty_('list', infList);
 
     lock.releaseLock();
@@ -218,6 +205,7 @@ function createNewFile(name) {
     console.log('Could not obtain lock after 10 seconds.');
     throw error;
   }
+  return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
 }
 
 function initMetadata(sheet) {
