@@ -70,6 +70,7 @@ function updatePacksInfo() {
     lock.waitLock(10000);
 
     let infList = getPropertyList_();
+    console.log(infList);
     infList = infList.filter((inf) => existFile_(inf.id));
     // console.log(infList);
     setProperty_('list', infList);
@@ -183,6 +184,40 @@ function getCards(pack, deck) {
   console.log(cards);
   // cache.put(sheetName, JSON.stringify(values));
   return cards;
+}
+
+function createNewFile(name) {
+  name = name || 'New Card Pack';
+  const spreadsheet = SpreadsheetApp.create(name);
+  const packInfo = new PackInfo({});
+  packInfo.id = spreadsheet.getId();
+  packInfo.parent = null;
+  const pack = new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
+
+  try {
+    const lock = LockService.getUserLock();
+    lock.waitLock(10000);
+
+    const infList = getPropertyList_();
+    const packInfoList = infList.map(inf => new PackInfo(inf));
+    packInfoList.push(packInfo);
+    // console.log(infList);
+    for (const parameter of parameters) {
+      if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
+        const file = getFileById_(parameter).makeCopy();
+        let inf = new PackInfo({});
+        inf.parent = parameter;
+        inf.id = file.getId();
+        infList.push(inf);
+      }
+    }
+    setProperty_('list', infList);
+
+    lock.releaseLock();
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
 }
 
 function initMetadata(sheet) {
