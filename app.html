@@ -5,21 +5,58 @@
       <v-toolbar-title v-text="appName"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
+
         <v-btn icon :disabled="true">
           <v-icon>delete_sweep</v-icon>
         </v-btn>
+
         <v-btn icon :disabled="true">
           <v-icon>library_add</v-icon>
         </v-btn>
+
+        <v-dialog v-model="dialog" persistent max-width="600px">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon>library_add</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <p>Create new flashcard pack</p>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <v-text-field label="File name" hint="A spreadsheet will be created in My Drive."></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="dialog = false">
+                Cancel
+              </v-btn>
+              <v-btn text @click="dialog = false">
+                Create
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <v-btn icon :disabled="true">
           <v-icon>event</v-icon>
         </v-btn>
+
         <v-btn icon :disabled="true">
           <v-icon>sync</v-icon>
         </v-btn>
+
         <v-btn icon :disabled="true">
           <v-icon>settings</v-icon>
         </v-btn>
+
         <transition name="flip">
           <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
             <v-icon>dark_mode</v-icon>
@@ -30,9 +67,11 @@
             <v-icon>light_mode</v-icon>
           </v-btn>
         </transition>
+
         <v-btn icon :disabled="true">
           <v-icon>share</v-icon>
         </v-btn>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon target="_blank" :href="currentPackUrl" :disabled="!enableCurrentPackUrl" v-bind="attrs"
@@ -42,6 +81,7 @@
           </template>
           <span>Open SpreadSheet</span>
         </v-tooltip>
+
       </v-toolbar-items>
     </v-app-bar>
 
