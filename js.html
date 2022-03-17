@@ -169,8 +169,9 @@
         console.log(this.filename);
         (async () => {
           const pack = await googleScriptRun('createNewFile', this.filename);
+          console.log(pack);
         })();
-        this.filename = null;
+        // this.filename = null;
         this.dialog = false;
       },
       onClickTurn(event) {
