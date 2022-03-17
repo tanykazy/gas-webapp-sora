@@ -167,6 +167,9 @@
       },
       onClickCreateButton() {
         console.log(this.filename);
+        (async () => {
+          const pack = await googleScriptRun('createNewFile', this.filename);
+        })();
         this.filename = null;
         this.dialog = false;
       },
