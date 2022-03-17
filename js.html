@@ -14,6 +14,7 @@
         loading: true,
         disable: true,
         themeMode: true,
+        filename: '',
         history: {},
         packs: null,
         current: {
@@ -159,6 +160,9 @@
           this.changeDeck(pack, deck);
         }
         this.drawer = false;
+      },
+      onClickCreateButton(name) {
+        console.log(name);
       },
       onClickTurn(event) {
         this.flipCard();

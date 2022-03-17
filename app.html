@@ -25,21 +25,15 @@
               <p>Create new flashcard pack</p>
             </v-card-title>
             <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col>
-                    <v-text-field label="File name" hint="A spreadsheet will be created in My Drive."
-                      value="New Flashcard Pack"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
+              <v-text-field v-model="filename" label="File name" hint="A spreadsheet will be created in My Drive."
+                value="New Flashcard Pack"></v-text-field>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn text @click="dialog = false">
+              <v-btn text @click="dialog = false; filename = '';">
                 Cancel
               </v-btn>
-              <v-btn text @click="dialog = false">
+              <v-btn text @click="onClickCreateButton(filename)">
                 Create
               </v-btn>
             </v-card-actions>
