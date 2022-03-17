@@ -14,7 +14,7 @@
         loading: true,
         disable: true,
         themeMode: true,
-        filename: '',
+        filename: null,
         history: {},
         packs: null,
         current: {
@@ -161,12 +161,13 @@
         }
         this.drawer = false;
       },
-      onClickCancelButton(name) {
-        console.log(name);
+      onClickCancelButton() {
+        this.filename = null;
         this.dialog = false;
       },
-      onClickCreateButton(name) {
-        console.log(name);
+      onClickCreateButton() {
+        console.log(this.filename);
+        this.filename = null;
         this.dialog = false;
       },
       onClickTurn(event) {
