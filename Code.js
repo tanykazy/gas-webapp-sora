@@ -278,10 +278,12 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
-    this.ef = metadata.ef || 0;
-    this.n = metadata.n || 0;
-    this.i = metadata.i || 0;
-    this.l = metadata.l || 0;
+    this.id = metadata.id || 0; // id 
+    this.d = metadata.d || 0 // digest 
+    this.ef = metadata.ef || 0; // e-factor
+    this.n = metadata.n || 0; // n
+    this.i = metadata.i || 0; // interval
+    this.l = metadata.l || 0; // last review
   }
 }
 
