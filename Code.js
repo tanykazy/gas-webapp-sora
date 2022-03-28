@@ -135,6 +135,13 @@ function getCards(pack, deck) {
   // 実装をかんたんにするため。
 
   const range = sheet.getDataRange();
+
+  console.log(range.getRow());
+  console.log(range.getColumn());
+  console.log(range.getLastRow());
+  console.log(range.getLastColumn());
+
+
   values = range.getValues();
   if (values.length === 0) {
     return null;
@@ -144,13 +151,13 @@ function getCards(pack, deck) {
     return [];
   }
 
-  console.log(sheet.getDeveloperMetadata().map((data) => {
-    return {
-      id: data.getId(),
-      key: data.getKey(),
-      value: data.getValue()
-    };
-  }));
+  // console.log(sheet.getDeveloperMetadata().map((data) => {
+  //   return {
+  //     id: data.getId(),
+  //     key: data.getKey(),
+  //     value: data.getValue()
+  //   };
+  // }));
 
   // console.log(sheet.createDeveloperMetadataFinder().find().map((data) => {
   //   data.remove();
@@ -174,13 +181,13 @@ function getCards(pack, deck) {
   sheet.getDeveloperMetadata().forEach((data) => {
     metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue() || '{}'));
   });
-  console.log(metadata);
+  // console.log(metadata);
 
   const cards = values.map((value) => {
     const data = metadata[value[0]] || new CardMetaData({});
     return new Card(value[0], value[1], value[2], data);
   });
-  console.log(cards);
+  // console.log(cards);
   // cache.put(sheetName, JSON.stringify(values));
   return cards;
 }
