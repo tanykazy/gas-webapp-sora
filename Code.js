@@ -131,17 +131,20 @@ function getCards(pack, deck) {
 
   console.log(sheet.getLastRow());
   const cards = [];
-  for (let row = 1; row <= sheet.getLastRow(); row++) {
+  for (let row = 2; row <= sheet.getLastRow(); row++) {
     const range = sheet.getRange(`${row}:${row}`);
     const value = range.getValues()[0];
     const hash = getHash(value[1] + value[2]);
-    const finder = range.createDeveloperMetadataFinder();
-    const metadata = finder.withKey(hash).find();
+    const match = range.createDeveloperMetadataFinder().withKey(hash).find();
+    const metadata = match.pop();
     const card = new Card(value[0], value[1], value[2]);
-    if (metadata.length > 0) {
-      card.meta = new CardMetaData(JSON.parse(metadata[0].getValue()));
+    if (metadata) {
+      card.meta = new CardMetaData(JSON.parse(metadata.getValue()));
+      match.forEach((data) => data.remove());
     } else {
-      card.meta = new CardMetaData({});
+      metadata = new CardMetaData({});
+      range.addDeveloperMetadata(hash, JSON.stringify(metadata));
+      card.meta = metadata;
     }
     cards.push(card);
   }
