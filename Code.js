@@ -129,6 +129,13 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
+  const finder = sheet.createDeveloperMetadataFinder();
+  const meta = finder.find();
+  for (meta of m) {
+    console.log(m.getValue());
+  }
+
+
   // for debug
   // 一時的な検証結果
   // DeveloperMetadata は Sheet 単位に保持する
@@ -141,10 +148,12 @@ function getCards(pack, deck) {
   // console.log(range.getColumn()); // 1
   // console.log(range.getLastRow()); // 11
   // console.log(range.getLastColumn()); // 7
-  for (let r = range.getRow(); r <= range.getNumRows(); r++) {
-    const row = sheet.getRange(`${r}:${r}`);
-    console.log(row.getValues());
-  }
+  // for (let r = range.getRow(); r <= range.getNumRows(); r++) {
+  //   const row = sheet.getRange(`${r}:${r}`);
+  //   // console.log(row.getValues());
+  //   row.getDeveloperMetadata();
+  // }
+
 
   values = range.getValues();
   if (values.length === 0) {
