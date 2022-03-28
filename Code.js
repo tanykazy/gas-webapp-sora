@@ -282,7 +282,8 @@ function getHash(value) {
   // Logger.log(digest);
   var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
   digest = Utilities.base64Encode(digest);
-  Logger.log(digest);
+  // Logger.log(digest);
+  return digest;
 }
 
 class Card {
