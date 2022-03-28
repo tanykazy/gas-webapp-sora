@@ -131,7 +131,7 @@ function getCards(pack, deck) {
 
   console.log(sheet.getLastRow());
   const cards = [];
-  for (let row = 1; row <= sheet.getLastrow(); row++) {
+  for (let row = 1; row <= sheet.getLastRow(); row++) {
     const range = sheet.getRange(`${row}:${row}`);
     const value = range.getValues()[0];
     const hash = getHash(value[1] + value[2]);
