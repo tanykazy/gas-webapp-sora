@@ -171,8 +171,9 @@
         (async () => {
           const pack = await googleScriptRun('createNewFile', this.filename);
           // console.log(pack);
-          this.packs.push(pack);
           window.open(pack.url, "_blank");
+          this.packs.push(pack);
+          pack.decks = await googleScriptRun('getDecks', pack.id);
         })();
         this.dialog = false;
       },
