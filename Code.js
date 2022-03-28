@@ -105,7 +105,7 @@ function getPacks() {
 }
 
 function getDecks(pack) {
-  const file = getFileById_(pack);
+  const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   const decks = sheets.map((sheet) => {
@@ -115,9 +115,9 @@ function getDecks(pack) {
 }
 
 function getCards(pack, deck) {
-  const file = getFileById_(pack);
+  const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
-  const sheet = spreadsheet.getSheetByName(deck);
+  const sheet = spreadsheet.getSheetByName(deck.name);
 
   // const cache = CacheService.getUserCache();
   // let values = cache.get(sheetName);
@@ -129,31 +129,7 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
-  // const finder = sheet.createDeveloperMetadataFinder();
-  // const meta = finder.find();
-  // for (m of meta) {
-  //   console.log(m.getValue());
-  // }
-
-  // for debug
-  // 一時的な検証結果
-  // DeveloperMetadata は Sheet 単位に保持する
-  // 実装をかんたんにするため。
-
   const range = sheet.getDataRange();
-
-  // console.log(range.getNumRows());
-  // console.log(range.getRow()); // 1
-  // console.log(range.getColumn()); // 1
-  // console.log(range.getLastRow()); // 11
-  // console.log(range.getLastColumn()); // 7
-  // for (let r = range.getRow(); r <= range.getNumRows(); r++) {
-  //   const row = sheet.getRange(`${r}:${r}`);
-  //   // console.log(row.getValues());
-  //   row.getDeveloperMetadata();
-  // }
-
-
   values = range.getValues();
   if (values.length === 0) {
     return null;
@@ -163,40 +139,7 @@ function getCards(pack, deck) {
     return [];
   }
 
-  // console.log(sheet.getDeveloperMetadata().map((data) => {
-  //   return {
-  //     id: data.getId(),
-  //     key: data.getKey(),
-  //     value: data.getValue()
-  //   };
-  // }));
-
-  // console.log(sheet.createDeveloperMetadataFinder().find().map((data) => {
-  //   data.remove();
-  //   // return {
-  //   //   id: data.getId(),
-  //   //   key: data.getKey(),
-  //   //   value: data.getValue()
-  //   // };
-  // }));
-
-  // sheet.getDeveloperMetadata().map((data) => {
-  //   data.remove();
-  // });
-
-  // const metadata = sheet.getDeveloperMetadata().map((data) => {
-  //   return new CardMetaData(data.getValue());
-  // });
-  // console.log(metadata);
-
-  // const metadata = {};
-  // sheet.getDeveloperMetadata().forEach((data) => {
-  //   metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue() || '{}'));
-  // });
-  // console.log(metadata);
-
   const cards = values.map((value) => {
-    // const data = metadata[value[0]] || new CardMetaData({});
     const finder = sheet.createDeveloperMetadataFinder();
     const hash = getHash(value[1] + value[2]);
     const metadata = finder.withKey(hash).find();
@@ -205,9 +148,7 @@ function getCards(pack, deck) {
     } else {
       return new Card(value[0], value[1], value[2], new CardMetaData({}));
     }
-    // return new Card(value[0], value[1], value[2], data);
   });
-  // console.log(cards);
   // cache.put(sheetName, JSON.stringify(values));
   return cards;
 }

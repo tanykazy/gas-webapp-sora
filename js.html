@@ -96,7 +96,7 @@
           });
           (async () => {
             if (!val.decks) {
-              val.decks = await googleScriptRun('getDecks', val.id);
+              val.decks = await googleScriptRun('getDecks', val);
             }
             if (val.decks.length > 0) {
               this.current.deck = val.decks[0];
@@ -114,7 +114,7 @@
           });
           (async () => {
             if (!val.cards) {
-              val.cards = (await googleScriptRun('getCards', this.current.pack.id, val.name)).map(card => new FunctionalCard(card));
+              val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
             }
             if (val.cards.length > 0) {
               this.current.card = val.cards[getRandomInt(val.cards.length)];
@@ -174,7 +174,7 @@
           // console.log(pack);
           window.open(pack.url, "_blank");
           this.packs.push(pack);
-          pack.decks = await googleScriptRun('getDecks', pack.id);
+          pack.decks = await googleScriptRun('getDecks', pack);
         })();
         this.dialog = false;
       },
@@ -185,7 +185,7 @@
         (async () => {
           this.loading = true;
           if (!deck.cards) {
-            deck.cards = await googleScriptRun('getCards', pack.id, deck.name);
+            deck.cards = await googleScriptRun('getCards', pack, deck);
           }
           this.current.deck = deck;
           this.nextQuestion();
