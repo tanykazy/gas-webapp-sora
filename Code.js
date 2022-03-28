@@ -142,9 +142,8 @@ function getCards(pack, deck) {
       card.meta = new CardMetaData(JSON.parse(metadata.getValue()));
       match.forEach((data) => data.remove());
     } else {
-      metadata = new CardMetaData({});
-      range.addDeveloperMetadata(hash, JSON.stringify(metadata));
-      card.meta = metadata;
+      card.meta = new CardMetaData({});
+      range.addDeveloperMetadata(hash, JSON.stringify(card.meta));
     }
     cards.push(card);
   }
