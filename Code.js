@@ -147,28 +147,28 @@ function getCards(pack, deck) {
   }
   return cards;
 
-  const range = sheet.getDataRange();
-  values = range.getValues();
-  if (values.length === 0) {
-    return null;
-  }
-  values.shift();
-  if (values.length === 0) {
-    return [];
-  }
+  // const range = sheet.getDataRange();
+  // values = range.getValues();
+  // if (values.length === 0) {
+  //   return null;
+  // }
+  // values.shift();
+  // if (values.length === 0) {
+  //   return [];
+  // }
 
-  const cards = values.map((value) => {
-    const finder = sheet.createDeveloperMetadataFinder();
-    const hash = getHash(value[1] + value[2]);
-    const metadata = finder.withKey(hash).find();
-    if (metadata.length > 0) {
-      return new Card(value[0], value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue())));
-    } else {
-      return new Card(value[0], value[1], value[2], new CardMetaData({}));
-    }
-  });
-  // cache.put(sheetName, JSON.stringify(values));
-  return cards;
+  // const cards = values.map((value) => {
+  //   const finder = sheet.createDeveloperMetadataFinder();
+  //   const hash = getHash(value[1] + value[2]);
+  //   const metadata = finder.withKey(hash).find();
+  //   if (metadata.length > 0) {
+  //     return new Card(value[0], value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue())));
+  //   } else {
+  //     return new Card(value[0], value[1], value[2], new CardMetaData({}));
+  //   }
+  // });
+  // // cache.put(sheetName, JSON.stringify(values));
+  // return cards;
 }
 
 function createNewFile(name) {
