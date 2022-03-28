@@ -136,13 +136,15 @@ function getCards(pack, deck) {
 
   const range = sheet.getDataRange();
 
-  console.log(range.getNumRows());
-  console.log(range.getRow()); // 1
-  console.log(range.getColumn()); // 1
-  console.log(range.getLastRow()); // 11
-  console.log(range.getLastColumn()); // 7
-  // for (let row = range.getRow(); row <= range.getLastRow(); row++) {
-  // }
+  // console.log(range.getNumRows());
+  // console.log(range.getRow()); // 1
+  // console.log(range.getColumn()); // 1
+  // console.log(range.getLastRow()); // 11
+  // console.log(range.getLastColumn()); // 7
+  for (let r = range.getRow(); r <= range.getNumRows(); r++) {
+    const row = sheet.getRange(`${r}:${r}`);
+    console.log(row.getValues());
+  }
 
   values = range.getValues();
   if (values.length === 0) {
