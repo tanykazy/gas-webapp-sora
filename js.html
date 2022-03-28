@@ -296,39 +296,40 @@
       this.id = card.id;
       this.front = card.front;
       this.back = card.back;
-      this.meta = {
-        ef: card.meta.ef,
-        n: card.meta.n,
-        i: card.meta.i,
-        l: card.meta.l,
-      };
+      this.meta = card.meta;
+      // this.meta = {
+      //   ef: card.meta.ef,
+      //   n: card.meta.n,
+      //   i: card.meta.i,
+      //   l: card.meta.l,
+      // };
     }
     increaseN() {
-      this.meta.n += 1;
+      this.meta.count += 1;
     }
     resetN() {
-      this.meta.n = 0;
+      this.meta.count = 0;
     }
     isElapsed() {
-      return this.meta.l + this.meta.i > Data.now();
+      return this.meta.last + this.meta.interval > Data.now();
     }
     get efact() {
-      return this.meta.ef;
+      return this.meta.efactor;
     }
     set efact(ef) {
-      this.meta.ef = ef;
+      this.meta.efactor = ef;
     }
     get interval() {
-      return this.meta.i / 86400000; // 1000 * 60 * 60 * 24
+      return this.meta.interval / 86400000; // 1000 * 60 * 60 * 24
     }
     set interval(day) {
-      this.meta.i = day * 86400000; // 1000 * 60 * 60 * 24
+      this.meta.interval = day * 86400000; // 1000 * 60 * 60 * 24
     }
     get lastRepetition() {
-      return new Date(this.meta.l);
+      return new Date(this.meta.last);
     }
     set lastRepetition(date) {
-      this.meta.l = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
+      this.meta.last = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
     }
   }
 </script>
