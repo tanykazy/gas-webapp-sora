@@ -145,6 +145,7 @@ function getCards(pack, deck) {
       metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
       const data = new CardMetaData({});
       data.id = metadata.getId();
+      data.hash = hash;
       metadata.setValue(JSON.stringify(data));
     } else {
       match.forEach((data) => data.remove());
@@ -294,7 +295,7 @@ class Pack {
 class CardMetaData {
   constructor(metadata) {
     this.id = metadata.id || 0; // id 
-    this.digest = metadata.digest || 0 // digest 
+    this.hash = metadata.hash || 0 // digest 
     this.efactor = metadata.efactor || 0; // e-factor
     this.count = metadata.count || 0; // n
     this.interval = metadata.interval || 0; // interval
