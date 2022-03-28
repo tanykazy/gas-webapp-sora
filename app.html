@@ -14,7 +14,7 @@
           <v-icon>library_add</v-icon>
         </v-btn>
 
-        <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-dialog v-model="dialog" persistent>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>library_add</v-icon>
@@ -25,7 +25,7 @@
               <p>Create new flashcard pack</p>
             </v-card-title>
             <v-card-text>
-              <v-text-field autofocus v-model="filename" label="File name" hint="A spreadsheet will be created in My Drive."
+              <v-text-field v-model="filename" label="File name" hint="A spreadsheet will be created in My Drive."
                 value="New Flashcard Pack"></v-text-field>
             </v-card-text>
             <v-card-actions>
