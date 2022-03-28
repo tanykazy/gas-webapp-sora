@@ -279,6 +279,7 @@ class Deck {
     this.id = id;
     this.name = name;
     this.cards = null;
+    this.draft = null;
   }
 }
 

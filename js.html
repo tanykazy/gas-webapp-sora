@@ -105,7 +105,7 @@
         },
       },
       'current.deck': {
-        handler(val, old) {
+        async handler(val, old) {
           if (old !== null) {
             this.breadcrumb.items.pop();
           }
@@ -251,7 +251,7 @@
       .setChangeHandler(handler);
   }
 
-  function googleScriptRun(name, ...args) {
+  async function googleScriptRun(name, ...args) {
     return new Promise(function (resolve, reject) {
       google.script.run
         .withSuccessHandler(function (...e) {
