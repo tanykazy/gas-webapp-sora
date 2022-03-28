@@ -150,8 +150,10 @@ function getCards(pack, deck) {
     // console.log(metadata.getValue());
     try {
       const value = JSON.parse(metadata.getValue());
+      console.log(value);
       cards.push(new Card(value[0], value[1], value[2], value));
     } catch (error) {
+      console.log(error);
       metadata.remove();
     }
   }
