@@ -136,8 +136,8 @@ function getCards(pack, deck) {
     const value = range.getValues().pop();
     const hash = getHash(value[1] + value[2]);
     let match = range.createDeveloperMetadataFinder().withKey(hash).find();
-    // match.forEach((data) => data.remove());
-    // match = [];
+    match.forEach((data) => data.remove());
+    match = [];
     let metadata = match.pop();
     if (!metadata) {
       metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
@@ -189,9 +189,8 @@ function updateMetadata(pack, deck, cards) {
   console.log(cards);
   cards.forEach((card) => {
     const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
-    console.log(match);
-    const meta = match[0];
-    meta.setValue(card.meta);
+    const meta = match.pop();
+    meta.setValue(JSON.stringify(card.meta));
   });
 }
 
