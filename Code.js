@@ -130,6 +130,22 @@ function getCards(pack, deck) {
   }
 
   console.log(sheet.getLastRow());
+  const cards = [];
+  for (let row = 1; row <= sheet.getLastrow(); row++) {
+    const range = sheet.getRange(`${row}:${row}`);
+    const value = range.getValues()[0];
+    const hash = getHash(value[1] + value[2]);
+    const finder = range.createDeveloperMetadataFinder();
+    const metadata = finder.withKey(hash).find();
+    const card = new Card(value[0], value[1], value[2]);
+    if (metadata.length > 0) {
+      card.meta = new CardMetaData(JSON.parse(metadata.getValue()));
+    } else {
+      card.meta = new CardMetaData({});
+    }
+    cards.push(card);
+  }
+  return cards;
 
   const range = sheet.getDataRange();
   values = range.getValues();
