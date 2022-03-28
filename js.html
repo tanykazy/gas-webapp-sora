@@ -162,7 +162,6 @@
         this.drawer = false;
       },
       onClickCancelButton() {
-        this.filename = null;
         this.dialog = false;
       },
       onClickCreateButton() {
@@ -170,9 +169,9 @@
         (async () => {
           const pack = await googleScriptRun('createNewFile', this.filename);
           console.log(pack);
-          window.open(pack.url, "_self");
+          this.packs.push(pack);
+          window.open(pack.url, "_blank");
         })();
-        // this.filename = null;
         this.dialog = false;
       },
       onClickTurn(event) {
