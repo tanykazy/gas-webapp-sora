@@ -157,7 +157,7 @@
       },
       onClickAssessment(scale) {
         const card = this.current.card.evalCard(scale);
-        card.lastRepetition(new Date());
+        card.lastRepetition = new Date();
         googleScriptRun('updateMetadata', this.current.pack, this.current.deck, [card]);
         this.nextQuestion();
       },
