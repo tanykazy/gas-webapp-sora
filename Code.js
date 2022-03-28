@@ -198,6 +198,10 @@ function getCards(pack, deck) {
 
   const cards = values.map((value) => {
     const data = metadata[value[0]] || new CardMetaData({});
+
+    getHash(value[1]);
+    getHash(value[2]);
+
     return new Card(value[0], value[1], value[2], data);
   });
   // console.log(cards);
@@ -266,6 +270,12 @@ function getProperty_(key) {
 function setProperty_(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
+}
+
+function getHash(value) {
+  // var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value);
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
+  Logger.log(digest);
 }
 
 class Card {
