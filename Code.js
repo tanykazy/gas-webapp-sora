@@ -133,22 +133,21 @@ function getCards(pack, deck) {
   const cards = [];
   for (let row = 2; row <= sheet.getLastRow(); row++) {
     const range = sheet.getRange(`${row}:${row}`);
-    const value = range.getValues()[0];
+    const value = range.getValues().pop();
     const hash = getHash(value[1] + value[2]);
     let match = range.createDeveloperMetadataFinder().withKey(hash).find();
-    match.forEach((data) => data.remove());
-    match = [];
-    const metadata = match.pop();
-    const card = new Card(value[0], value[1], value[2]);
-    if (metadata) {
-      card.meta = new CardMetaData(JSON.parse(metadata.getValue()));
-      match.forEach((data) => data.remove());
+    // match.forEach((data) => data.remove());
+    // match = [];
+    let metadata = match.pop();
+    if (!metadata) {
+      metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
+      const data = new CardMetaData({});
+      data.id = metadata.getId();
+      metadata.setValue(JSON.stringify(data));
     } else {
-      card.meta = new CardMetaData({});
-      range.addDeveloperMetadata(hash, JSON.stringify(card.meta));
-      card.meta.id = range.createDeveloperMetadataFinder().withKey(hash).find()[0].getId();
+      match.forEach((data) => data.remove());
     }
-    cards.push(card);
+    cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
   }
   console.log(cards);
   return cards;
