@@ -144,6 +144,7 @@ function getCards(pack, deck) {
     } else {
       card.meta = new CardMetaData({});
       range.addDeveloperMetadata(hash, JSON.stringify(card.meta));
+      card.meta.id = range.createDeveloperMetadataFinder().withKey(hash).find()[0].getId();
     }
     cards.push(card);
   }
@@ -171,6 +172,17 @@ function getCards(pack, deck) {
   // });
   // // cache.put(sheetName, JSON.stringify(values));
   // return cards;
+}
+
+function updateMetadata(pack, deck, cards) {
+  const file = getFileById_(pack.id);
+  const spreadsheet = SpreadsheetApp.open(file);
+  const sheet = spreadsheet.getSheetByName(deck.name);
+
+  cards.forEach((card) => {
+    const meta = card.meta;
+
+  });
 }
 
 function createNewFile(name) {
