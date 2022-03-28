@@ -44,6 +44,7 @@
       });
       (async () => {
         this.packs = await googleScriptRun('getPacks');
+        console.log(this.packs);
         if (this.packs.length > 0) {
           this.current.pack = this.packs[0];
         }
@@ -125,7 +126,6 @@
         handler(val, old) {
           this.disable = false;
           this.loading = false;
-          console.log(this.packs);
         },
       },
       themeMode(value, old) {
