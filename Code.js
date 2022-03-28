@@ -140,7 +140,6 @@ function getCards(pack, deck) {
     const card = new Card(value[0], value[1], value[2]);
     if (metadata) {
       card.meta = new CardMetaData(JSON.parse(metadata.getValue()));
-      // card.meta.id = metadata.getId();
       match.forEach((data) => data.remove());
     } else {
       card.meta = new CardMetaData({});
@@ -149,6 +148,7 @@ function getCards(pack, deck) {
     }
     cards.push(card);
   }
+  console.log(cards);
   return cards;
 
   // const range = sheet.getDataRange();
@@ -179,10 +179,12 @@ function updateMetadata(pack, deck, cards) {
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheet = spreadsheet.getSheetByName(deck.name);
-
+  console.log(cards);
   cards.forEach((card) => {
-    const meta = card.meta;
-
+    const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
+    console.log(match);
+    const meta = match[0];
+    meta.setValue(card.meta);
   });
 }
 

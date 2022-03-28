@@ -156,6 +156,8 @@
         }
       },
       onClickAssessment(scale) {
+        const card = this.current.card.evalCard(scale);
+        googleScriptRun('updateMetadata', this.current.pack, this.current.deck, [card]);
         this.nextQuestion();
       },
       onClickListItem(pack, deck) {
@@ -304,20 +306,15 @@
       //   l: card.meta.l,
       // };
     }
-    increaseN() {
-      this.meta.count += 1;
-    }
-    resetN() {
-      this.meta.count = 0;
+    evalCard(scale){
+      const result = algorithmSM2(scale, this.meta.count, this.meta.efactor, this.interval);
+      this.meta.count = result.n;
+      this.meta.efactor = result.ef;
+      this.interval = result.i;
+      return this;
     }
     isElapsed() {
       return this.meta.last + this.meta.interval > Data.now();
-    }
-    get efact() {
-      return this.meta.efactor;
-    }
-    set efact(ef) {
-      this.meta.efactor = ef;
     }
     get interval() {
       return this.meta.interval / 86400000; // 1000 * 60 * 60 * 24
