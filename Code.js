@@ -129,12 +129,11 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
-  const finder = sheet.createDeveloperMetadataFinder();
-  const meta = finder.find();
-  for (m of meta) {
-    console.log(m.getValue());
-  }
-
+  // const finder = sheet.createDeveloperMetadataFinder();
+  // const meta = finder.find();
+  // for (m of meta) {
+  //   console.log(m.getValue());
+  // }
 
   // for debug
   // 一時的な検証結果
@@ -277,13 +276,8 @@ function setProperty_(key, value) {
 }
 
 function getHash(value) {
-  // var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value);
-  // digest = Utilities.base64Encode(digest);
-  // Logger.log(digest);
-  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
-  digest = Utilities.base64Encode(digest);
-  // Logger.log(digest);
-  return digest;
+  const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
+  return Utilities.base64Encode(digest);
 }
 
 class Card {
