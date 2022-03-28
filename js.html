@@ -157,6 +157,7 @@
       },
       onClickAssessment(scale) {
         const card = this.current.card.evalCard(scale);
+        card.lastRepetition(new Date());
         googleScriptRun('updateMetadata', this.current.pack, this.current.deck, [card]);
         this.nextQuestion();
       },
@@ -187,7 +188,7 @@
         (async () => {
           this.loading = true;
           if (!deck.cards) {
-            deck.cards = await googleScriptRun('getCards', pack, deck);
+            deck.cards = (await googleScriptRun('getCards', pack, deck)).map(card => new FunctionalCard(card));
           }
           this.current.deck = deck;
           this.nextQuestion();
@@ -306,7 +307,7 @@
       //   l: card.meta.l,
       // };
     }
-    evalCard(scale){
+    evalCard(scale) {
       const result = algorithmSM2(scale, this.meta.count, this.meta.efactor, this.interval);
       this.meta.count = result.n;
       this.meta.efactor = result.ef;
