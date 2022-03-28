@@ -129,15 +129,15 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
-  console.log(sheet.getLastRow());
+  // console.log(sheet.getLastRow());
   const cards = [];
   for (let row = 2; row <= sheet.getLastRow(); row++) {
     const range = sheet.getRange(`${row}:${row}`);
     const value = range.getValues().pop();
     const hash = getHash(value[1] + value[2]);
     let match = range.createDeveloperMetadataFinder().withKey(hash).find();
-    // match.forEach((data) => data.remove());
-    // match = [];
+    match.forEach((data) => data.remove());
+    match = [];
     let metadata = match.pop();
     if (!metadata) {
       metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
