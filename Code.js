@@ -135,7 +135,7 @@ function getCards(pack, deck) {
     const range = sheet.getRange(`${row}:${row}`);
     const value = range.getValues()[0];
     const hash = getHash(value[1] + value[2]);
-    const match = range.createDeveloperMetadataFinder().withKey(hash).find();
+    let match = range.createDeveloperMetadataFinder().withKey(hash).find();
     match.forEach((data) => data.remove());
     match = [];
     const metadata = match.pop();
