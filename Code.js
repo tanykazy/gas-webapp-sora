@@ -273,8 +273,11 @@ function setProperty_(key, value) {
 }
 
 function getHash(value) {
-  // var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value);
-  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value);
+  digest = Utilities.base64Encode(digest);
+  Logger.log(digest);
+  digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
+  digest = Utilities.base64Encode(digest);
   Logger.log(digest);
 }
 
