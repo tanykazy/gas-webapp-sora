@@ -201,9 +201,9 @@ function getCards(pack, deck) {
     const hash = getHash(value[1] + value[2]);
     const metadata = finder.withKey(hash).find();
     if (metadata.length > 0) {
-      return new Card(value[0, value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue()))]);
+      return new Card(value[0], value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue())));
     } else {
-      return new Card(value[0, value[1], value[2], new CardMetaData({})]);
+      return new Card(value[0], value[1], value[2], new CardMetaData({}));
     }
     // return new Card(value[0], value[1], value[2], data);
   });
