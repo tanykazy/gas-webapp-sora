@@ -170,6 +170,7 @@
         (async () => {
           const pack = await googleScriptRun('createNewFile', this.filename);
           console.log(pack);
+          window.open(pack.url, "_self");
         })();
         // this.filename = null;
         this.dialog = false;

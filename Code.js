@@ -186,7 +186,6 @@ function getCards(pack, deck) {
 }
 
 function createNewFile(name) {
-  name = name || 'New Card Pack';
   const spreadsheet = SpreadsheetApp.create(name);
   const packInfo = new PackInfo({});
   packInfo.id = spreadsheet.getId();
