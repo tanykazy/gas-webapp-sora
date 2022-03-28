@@ -129,6 +129,8 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
+  console.log(sheet.getLastRow());
+
   const range = sheet.getDataRange();
   values = range.getValues();
   if (values.length === 0) {
