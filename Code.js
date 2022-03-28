@@ -147,6 +147,7 @@ function getCards(pack, deck) {
     } else {
       match.forEach((data) => data.remove());
     }
+    console.log(metadata.getValue());
     cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
   }
   console.log(cards);
