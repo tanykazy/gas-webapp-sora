@@ -131,7 +131,7 @@ function getCards(pack, deck) {
 
   const finder = sheet.createDeveloperMetadataFinder();
   const meta = finder.find();
-  for (meta of m) {
+  for (m of meta) {
     console.log(m.getValue());
   }
 
