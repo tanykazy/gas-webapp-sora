@@ -136,8 +136,8 @@ function getCards(pack, deck) {
     const value = range.getValues().pop();
     const hash = getHash(value[1] + value[2]);
     let match = range.createDeveloperMetadataFinder().withKey(hash).find();
-    match.forEach((data) => data.remove());
-    match = [];
+    // match.forEach((data) => data.remove());
+    // match = [];
     let metadata = match.pop();
     if (!metadata) {
       metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
@@ -147,8 +147,13 @@ function getCards(pack, deck) {
     } else {
       match.forEach((data) => data.remove());
     }
-    console.log(metadata.getValue());
-    cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
+    // console.log(metadata.getValue());
+    try {
+      const value = JSON.parse(metadata.getValue());
+      cards.push(new Card(value[0], value[1], value[2], value));
+    } catch (error) {
+      metadata.remove();
+    }
   }
   console.log(cards);
   return cards;
