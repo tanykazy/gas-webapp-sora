@@ -27,7 +27,7 @@
         },
       };
     },
-    beforeCreate() {
+    async beforeCreate() {
       google.script.history.setChangeHandler((event) => {
         // event.location.parameters;
         // const name = event.state.name;
@@ -42,13 +42,13 @@
         //   }
         // }
       });
-      (async () => {
-        this.packs = await googleScriptRun('getPacks');
-        console.log(this.packs);
-        if (this.packs.length > 0) {
-          this.current.pack = this.packs[0];
-        }
-      })();
+      // (async () => {
+      this.packs = await googleScriptRun('getPacks');
+      console.log(this.packs);
+      if (this.packs.length > 0) {
+        this.current.pack = this.packs[0];
+      }
+      // })();
     },
     created() {
     },
@@ -89,19 +89,17 @@
     },
     watch: {
       'current.pack': {
-        handler(val, old) {
+        async handler(val, old) {
           this.breadcrumb.items = [];
           this.breadcrumb.items.push({
             text: val.name
           });
-          (async () => {
-            if (!val.decks) {
-              val.decks = await googleScriptRun('getDecks', val);
-            }
-            if (val.decks.length > 0) {
-              this.current.deck = val.decks[0];
-            }
-          })();
+          if (!val.decks) {
+            val.decks = await googleScriptRun('getDecks', val);
+          }
+          if (val.decks.length > 0) {
+            this.current.deck = val.decks[0];
+          }
         },
       },
       'current.deck': {
@@ -112,14 +110,12 @@
           this.breadcrumb.items.push({
             text: val.name
           });
-          (async () => {
-            if (!val.cards) {
-              val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
-            }
-            if (val.cards.length > 0) {
-              this.current.card = val.cards[getRandomInt(val.cards.length)];
-            }
-          })();
+          if (!val.cards) {
+            val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
+          }
+          if (val.cards.length > 0) {
+            this.current.card = val.cards[getRandomInt(val.cards.length)];
+          }
         },
       },
       'current.card': {
@@ -170,16 +166,16 @@
       onClickCancelButton() {
         this.dialog = false;
       },
-      onClickCreateButton() {
+      async onClickCreateButton() {
         // console.log(this.filename);
-        (async () => {
-          const pack = await googleScriptRun('createNewFile', this.filename);
-          // console.log(pack);
-          window.open(pack.url, "_blank");
-          this.packs.push(pack);
-          pack.decks = await googleScriptRun('getDecks', pack);
-        })();
         this.dialog = false;
+        // (async () => {
+        const pack = await googleScriptRun('createNewFile', this.filename);
+        // console.log(pack);
+        window.open(pack.url, "_blank");
+        this.packs.push(pack);
+        pack.decks = await googleScriptRun('getDecks', pack);
+        // })();
       },
       onClickTurn(event) {
         this.flipCard();
