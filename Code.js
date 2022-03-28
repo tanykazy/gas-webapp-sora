@@ -190,19 +190,23 @@ function getCards(pack, deck) {
   // });
   // console.log(metadata);
 
-  const metadata = {};
-  sheet.getDeveloperMetadata().forEach((data) => {
-    metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue() || '{}'));
-  });
+  // const metadata = {};
+  // sheet.getDeveloperMetadata().forEach((data) => {
+  //   metadata[data.getKey()] = new CardMetaData(JSON.parse(data.getValue() || '{}'));
+  // });
   // console.log(metadata);
 
   const cards = values.map((value) => {
-    const data = metadata[value[0]] || new CardMetaData({});
-
-    getHash(value[1]);
-    getHash(value[2]);
-
-    return new Card(value[0], value[1], value[2], data);
+    // const data = metadata[value[0]] || new CardMetaData({});
+    const finder = sheet.createDeveloperMetadataFinder();
+    const hash = getHash(value[1] + value[2]);
+    const metadata = finder.withKey(hash).find();
+    if (metadata.length > 0) {
+      return new Card(value[0, value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue()))]);
+    } else {
+      return new Card(value[0, value[1], value[2], new CardMetaData({})]);
+    }
+    // return new Card(value[0], value[1], value[2], data);
   });
   // console.log(cards);
   // cache.put(sheetName, JSON.stringify(values));
@@ -273,10 +277,10 @@ function setProperty_(key, value) {
 }
 
 function getHash(value) {
-  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value);
-  digest = Utilities.base64Encode(digest);
-  Logger.log(digest);
-  digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
+  // var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value);
+  // digest = Utilities.base64Encode(digest);
+  // Logger.log(digest);
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
   digest = Utilities.base64Encode(digest);
   Logger.log(digest);
 }
