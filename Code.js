@@ -137,8 +137,8 @@ function getCards(pack, deck) {
     const hash = getHash(value[1] + value[2]);
     let match = range.createDeveloperMetadataFinder().withKey(hash).find();
 
-    match.forEach((data) => data.remove());
-    match = [];
+    // match.forEach((data) => data.remove());
+    // match = [];
 
     let metadata = match.pop();
     if (!metadata) {
