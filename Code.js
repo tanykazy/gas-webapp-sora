@@ -139,7 +139,7 @@ function getCards(pack, deck) {
     const metadata = finder.withKey(hash).find();
     const card = new Card(value[0], value[1], value[2]);
     if (metadata.length > 0) {
-      card.meta = new CardMetaData(JSON.parse(metadata.getValue()));
+      card.meta = new CardMetaData(JSON.parse(metadata[0].getValue()));
     } else {
       card.meta = new CardMetaData({});
     }
