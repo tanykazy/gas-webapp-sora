@@ -58,6 +58,7 @@
       document.addEventListener('keydown', this.onKeyup);
     },
     async beforeUnmount() {
+      window.alert("close!");
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {

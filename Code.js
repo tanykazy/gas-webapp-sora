@@ -1,5 +1,5 @@
 function doGet(e) {
-  console.log(e);
+  // console.log(e);
 
   // setVersion(0.1);
   const userProperties = PropertiesService.getUserProperties();
@@ -229,9 +229,11 @@ function shareFile(pack) {
     try {
       file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
     } catch (error) {
+      console.log(error);
       try {
         file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       } catch (error) {
+        console.log(error);
         return false;
       }
     }
