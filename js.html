@@ -42,13 +42,11 @@
         //   }
         // }
       });
-      // (async () => {
       this.packs = await googleScriptRun('getPacks');
       console.log(this.packs);
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
       }
-      // })();
     },
     created() {
     },
@@ -113,8 +111,14 @@
           if (!val.cards) {
             val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
           }
-          if (val.cards.length > 0) {
-            this.current.card = val.cards[getRandomInt(val.cards.length)];
+          if (!val.draft) {
+            val.draft = val.cards.filter(card => card.isElapsed);
+          }
+          // if (val.cards.length > 0) {
+          //   this.current.card = val.cards[getRandomInt(val.cards.length)];
+          // }
+          if (val.draft.length > 0) {
+            this.current.card = val.draft[getRandomInt(val.draft.length)];
           }
         },
       },
@@ -169,13 +173,11 @@
       async onClickCreateButton() {
         // console.log(this.filename);
         this.dialog = false;
-        // (async () => {
         const pack = await googleScriptRun('createNewFile', this.filename);
         // console.log(pack);
         window.open(pack.url, "_blank");
         this.packs.push(pack);
         pack.decks = await googleScriptRun('getDecks', pack);
-        // })();
       },
       onClickTurn(event) {
         this.flipCard();
@@ -185,6 +187,9 @@
           this.loading = true;
           if (!deck.cards) {
             deck.cards = (await googleScriptRun('getCards', pack, deck)).map(card => new FunctionalCard(card));
+          }
+          if (!deck.draft) {
+            deck.draft = deck.cards.filter(card => card.isElapsed);
           }
           this.current.deck = deck;
           this.nextQuestion();
@@ -204,7 +209,7 @@
         this.changeCard(card);
       },
       randomCard() {
-        return this.current.deck.cards[getRandomInt(this.current.deck.cards.length)];
+        return this.current.deck.draft[getRandomInt(this.current.deck.draft.length)];
       },
       increaseHistory(num) {
         if (this.history[num] === undefined) {
@@ -310,7 +315,7 @@
       this.interval = result.i;
       return this;
     }
-    isElapsed() {
+    get isElapsed() {
       return this.meta.last + this.meta.interval > Data.now();
     }
     get interval() {
