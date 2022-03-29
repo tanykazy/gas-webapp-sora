@@ -128,9 +128,10 @@
           // if (val.cards.length > 0) {
           //   this.current.card = val.cards[getRandomInt(val.cards.length)];
           // }
-          if (val.draft.length > 0) {
-            this.current.card = val.draft[getRandomInt(val.draft.length)];
-          }
+          // if (val.draft.length > 0) {
+          //   this.current.card = val.draft[getRandomInt(val.draft.length)];
+          // }
+          this.nextQuestion();
         },
       },
       'current.card': {
@@ -188,7 +189,16 @@
       },
       async onClickListItem(pack, deck) {
         if (this.current.deck !== deck) {
-          this.changeDeck(pack, deck);
+          // this.loading = true;
+          // if (!deck.cards) {
+          //   deck.cards = (await googleScriptRun('getCards', pack, deck)).map(card => new FunctionalCard(card));
+          // }
+          // if (!deck.draft) {
+          //   deck.draft = deck.cards.filter(card => card.isElapsed);
+          // }
+          this.current.deck = deck;
+          // this.nextQuestion();
+          // this.loading = false;
         }
         this.drawer = false;
       },
@@ -219,20 +229,6 @@
         this.syncing = true;
         await googleScriptRun('updateMetadata', pack, deck, cards);
         this.syncing = false;
-      },
-      changeDeck(pack, deck) {
-        (async () => {
-          this.loading = true;
-          if (!deck.cards) {
-            deck.cards = (await googleScriptRun('getCards', pack, deck)).map(card => new FunctionalCard(card));
-          }
-          if (!deck.draft) {
-            deck.draft = deck.cards.filter(card => card.isElapsed);
-          }
-          this.current.deck = deck;
-          this.nextQuestion();
-          this.loading = false;
-        })();
       },
       nextQuestion() {
         if (this.current.deck.draft) {
