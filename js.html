@@ -23,6 +23,7 @@
           pack: null,
           deck: null,
           card: null,
+          count: 0,
         },
         breadcrumb: {
           items: [],
@@ -142,12 +143,7 @@
     },
     methods: {
       onBeforeunload(event) {
-        console.log(event);
-        var confirmationMessage = "\o/";
-        // Gecko + IE
-        (event || window.event).returnValue = confirmationMessage;
-        // Safari, Chrome, and other WebKit-derived browsers
-        return confirmationMessage;
+        return confirmLeave(event);
       },
       async onKeyup(event) {
         if (!this.isOverlay) {
@@ -174,12 +170,14 @@
       async onClickAssessment(scale) {
         const card = this.current.card.evalCard(scale);
         card.lastRepetition = new Date();
-        this.updateMetadata(this.current.pack, this.current.deck, [card]);
+        // this.updateMetadata(this.current.pack, this.current.deck, [card]);
+        this.current.count++;
         this.nextQuestion();
       },
       async onClickSyncButton() {
         if (this.current.deck.draft) {
           this.updateMetadata(this.current.pack, this.current.deck, this.current.deck.draft);
+          this.current.count = 0;
         }
       },
       async onClickListItem(pack, deck) {
@@ -362,5 +360,16 @@
     set lastRepetition(date) {
       this.meta.last = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     }
+  }
+
+  function confirmLeave(event) {
+    const confirmationMessage = '';
+    // Cancel the event as stated by the standard.
+    event.preventDefault();
+    // Chrome requires returnValue to be set.
+    // Gecko + IE
+    (event || window.event).returnValue = confirmationMessage;
+    // Safari, Chrome, and other WebKit-derived browsers
+    return confirmationMessage;
   }
 </script>

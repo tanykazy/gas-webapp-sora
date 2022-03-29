@@ -40,9 +40,12 @@
           <v-icon>event</v-icon>
         </v-btn>
 
-        <v-btn icon :loading="syncing" @click="onClickSyncButton()">
-          <v-icon>sync</v-icon>
-        </v-btn>
+        <v-badge :content="current.count" :value="current.count">
+          <v-btn icon :loading="syncing" @click="onClickSyncButton()">
+            <v-icon>sync</v-icon>
+          </v-btn>
+        </v-badge>
+
 
         <v-btn icon :disabled="true">
           <v-icon>settings</v-icon>
