@@ -60,14 +60,13 @@
         </transition>
 
         <v-dialog v-model="dialogShare">
-          <v-snackbar absolute v-model="snackbar" v-text="snackbarText">
-          </v-snackbar>
-
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl">
               <v-icon>share</v-icon>
             </v-btn>
           </template>
+          <v-snackbar absolute v-model="snackbar" v-text="snackbarText">
+          </v-snackbar>
           <v-card>
             <v-card-title>
               <p>Share this URL</p>

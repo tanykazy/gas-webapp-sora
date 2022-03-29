@@ -178,6 +178,7 @@
       },
       async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackUrl);
+        this.dialogShare = false;
         this.showSnackbar('Copied the link.');
       },
       async onClickCancelButton() {
