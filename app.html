@@ -72,9 +72,11 @@
             <v-card-text>
               <v-text-field v-model="currentPackUrl" label="File URL" hint="" value=""></v-text-field>
             </v-card-text>
-            <v-btn text @click="">
+            <v-btn text @click="onClickCopyButton()">
               Copy
             </v-btn>
+            <v-snackbar v-model="snackbar" v-text="snackbarText">
+            </v-snackbar>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="dialogShare = false">

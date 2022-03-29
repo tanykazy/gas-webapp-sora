@@ -26,6 +26,8 @@
         breadcrumb: {
           items: [],
         },
+        snackbar: false,
+        snackbarText: '',
       };
     },
     async beforeCreate() {
@@ -173,6 +175,8 @@
       },
       async onClickShareButton() {
         const result = await googleScriptRun('shareFile', this.current.pack);
+      },
+      async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackUrl);
       },
       async onClickCancelButton() {
@@ -241,6 +245,10 @@
       turnBack(event) {
         this.reveal = true;
         this.disable = false;
+      },
+      showSnackbar(text) {
+        this.snackbarText = text;
+        this.snackbar = true;
       },
     },
   });
