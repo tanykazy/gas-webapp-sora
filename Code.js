@@ -93,6 +93,7 @@ function getPacks() {
       if (file !== null) {
 
         console.log(file.getOwner().getPhotoUrl());
+        console.log(file.getOwner().getDomain());
 
         return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
       }
@@ -157,11 +158,11 @@ function getCards(pack, deck) {
     try {
       cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       metadata.remove();
     }
   }
-  console.log(cards);
+  // console.log(cards);
   return cards;
 
   // const range = sheet.getDataRange();
@@ -192,7 +193,7 @@ function updateMetadata(pack, deck, cards) {
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheet = spreadsheet.getSheetByName(deck.name);
-  console.log(cards);
+  // console.log(cards);
   cards.forEach((card) => {
     const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
     const meta = match.pop();
@@ -222,7 +223,10 @@ function createNewFile(name) {
   return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
 }
 
-function share(){}
+function shareFile(pack) {
+  const file = getFileById_(pack.id);
+  file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
+}
 
 function initMetadata(sheet) {
   let metadata = sheet.getDeveloperMetadata();
