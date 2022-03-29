@@ -60,6 +60,9 @@
         </transition>
 
         <v-dialog v-model="dialogShare">
+          <v-snackbar absolute app v-model="snackbar" v-text="snackbarText">
+          </v-snackbar>
+
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl">
               <v-icon>share</v-icon>
@@ -85,8 +88,6 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-          <v-snackbar absolute app v-model="snackbar" v-text="snackbarText">
-          </v-snackbar>
         </v-dialog>
 
         <v-tooltip bottom>

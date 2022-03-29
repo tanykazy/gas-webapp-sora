@@ -61,7 +61,7 @@
     },
     computed: {
       isOverlay() {
-        return this.dialogCreateNewFile;
+        return this.dialogCreateNewFile || this.dialogShare;
       },
       enableCurrentPackUrl() {
         if (this.current.pack !== null) {
