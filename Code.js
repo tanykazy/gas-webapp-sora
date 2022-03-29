@@ -228,6 +228,8 @@ function createNewFile(name) {
 
 function shareFile(pack) {
   const file = getFileById_(pack.id);
+  const url = ScriptApp.getService().getUrl();
+  console.log(url);
   if (file.isShareableByEditors()) {
     try {
       file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
@@ -237,12 +239,12 @@ function shareFile(pack) {
         file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       } catch (error) {
         console.log(error);
-        return false;
+        return null;
       }
     }
-    return true;
+    return url;
   }
-  return false;
+  return null;
 }
 
 function initMetadata(sheet) {
