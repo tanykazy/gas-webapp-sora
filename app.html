@@ -61,13 +61,14 @@
           </v-btn>
         </transition>
 
+        <!-- <v-dialog hide-overlay v-model="dialogShare"> -->
+        <!-- <template v-slot:activator="{ on, attrs }"> -->
+        <!-- <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl" @click="onClickShareButton()"> -->
+        <v-btn icon :disabled="!enableCurrentPackUrl" @click.stop="onClickShareButton()">
+          <v-icon>share</v-icon>
+        </v-btn>
+        <!-- </template> -->
         <v-dialog hide-overlay v-model="dialogShare">
-          <!-- <template v-slot:activator="{ on, attrs }"> -->
-            <!-- <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl" @click="onClickShareButton()"> -->
-            <v-btn icon :disabled="!enableCurrentPackUrl" @click.stop="onClickShareButton()">
-              <v-icon>share</v-icon>
-            </v-btn>
-          <!-- </template> -->
           <v-card>
             <v-card-title>
               <p>Share this URL</p>
