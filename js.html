@@ -80,7 +80,7 @@
         return '';
       },
       currentPackShareUrl() {
-        if (this.enableCurrentPackUrl) {
+        if (this.enableCurrentPackUrl && this.current.pack.shareUrl) {
           return this.current.pack.shareUrl;
         }
         return '';
