@@ -43,17 +43,17 @@
         // }
       });
       this.packs = await googleScriptRun('getPacks');
-      console.log(this.packs);
+      // console.log(this.packs);
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
       }
     },
-    created() {
+    async created() {
     },
-    mounted() {
+    async mounted() {
       document.addEventListener('keydown', this.onKeyup);
     },
-    beforeUnmount() {
+    async beforeUnmount() {
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
@@ -123,17 +123,17 @@
         },
       },
       'current.card': {
-        handler(val, old) {
+        async handler(val, old) {
           this.disable = false;
           this.loading = false;
         },
       },
-      themeMode(value, old) {
+      async themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
       },
     },
     methods: {
-      onKeyup(event) {
+      async onKeyup(event) {
         if (!this.dialog) {
           // console.log(event);
           switch (event.key) {
@@ -155,19 +155,19 @@
           }
         }
       },
-      onClickAssessment(scale) {
+      async onClickAssessment(scale) {
         const card = this.current.card.evalCard(scale);
         card.lastRepetition = new Date();
         googleScriptRun('updateMetadata', this.current.pack, this.current.deck, [card]);
         this.nextQuestion();
       },
-      onClickListItem(pack, deck) {
+      async onClickListItem(pack, deck) {
         if (this.current.deck !== deck) {
           this.changeDeck(pack, deck);
         }
         this.drawer = false;
       },
-      onClickCancelButton() {
+      async onClickCancelButton() {
         this.dialog = false;
       },
       async onClickCreateButton() {
@@ -179,7 +179,7 @@
         this.packs.push(pack);
         pack.decks = await googleScriptRun('getDecks', pack);
       },
-      onClickTurn(event) {
+      async onClickTurn(event) {
         this.flipCard();
       },
       changeDeck(pack, deck) {
@@ -301,12 +301,6 @@
       this.front = card.front;
       this.back = card.back;
       this.meta = card.meta;
-      // this.meta = {
-      //   ef: card.meta.ef,
-      //   n: card.meta.n,
-      //   i: card.meta.i,
-      //   l: card.meta.l,
-      // };
     }
     evalCard(scale) {
       const result = algorithmSM2(scale, this.meta.count, this.meta.efactor, this.interval);
