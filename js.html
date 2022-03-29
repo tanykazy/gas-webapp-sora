@@ -145,10 +145,9 @@
         console.log(event);
         var confirmationMessage = "\o/";
         // Gecko + IE
-        (e || window.event).returnValue = confirmationMessage;
+        (event || window.event).returnValue = confirmationMessage;
+        // Safari, Chrome, and other WebKit-derived browsers
         return confirmationMessage;
-        // Safari, Chrome, and other
-        // WebKit-derived browsers
       },
       async onKeyup(event) {
         if (!this.isOverlay) {
