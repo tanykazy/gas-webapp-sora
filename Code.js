@@ -2,8 +2,7 @@ function doGet(e) {
   // console.log(e);
 
   // setVersion(0.1);
-  const userProperties = PropertiesService.getUserProperties();
-  userProperties.deleteProperty('id');
+  // const userProperties = PropertiesService.getUserProperties();
   // userProperties.deleteProperty('id');
 
   updatePacksInfo();
@@ -91,10 +90,6 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
-
-        // console.log(file.getOwner().getPhotoUrl());
-        // console.log(file.getOwner().getDomain());
-
         return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
       }
     });
@@ -109,6 +104,7 @@ function getPacks() {
 }
 
 function getDecks(pack) {
+  console.log('pack: ', pack);
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
@@ -119,6 +115,8 @@ function getDecks(pack) {
 }
 
 function getCards(pack, deck) {
+  console.log('pack: ', pack);
+  console.log('deck: ', deck);
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheet = spreadsheet.getSheetByName(deck.name);
@@ -318,12 +316,12 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
-    this.id = metadata.id || 0; // id 
-    this.hash = metadata.hash || 0 // digest 
-    this.efactor = metadata.efactor || 0; // e-factor
-    this.count = metadata.count || 0; // n
-    this.interval = metadata.interval || 0; // interval
-    this.last = metadata.last || 0; // last review
+    this.id = metadata['id'] || 0; // id 
+    this.hash = metadata['hash'] || 0 // digest 
+    this.efactor = metadata['efactor'] || 0; // e-factor
+    this.count = metadata['count'] || 0; // n
+    this.interval = metadata['interval'] || 0; // interval
+    this.last = metadata['last'] || 0; // last review
   }
 }
 
