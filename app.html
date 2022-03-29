@@ -70,8 +70,7 @@
               <p>Share this URL</p>
             </v-card-title>
             <v-card-text>
-              <v-text-field v-model="currentPackUrl" label="File URL" hint="" :append-outer-icon="content_copy"
-                @click:append-outer="onClickCopyButton()"></v-text-field>
+              <v-text-field v-model="currentPackUrl" label="File URL" hint=""></v-text-field>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -81,9 +80,9 @@
               <v-btn text @click="onClickShareButton()">
                 Share
               </v-btn>
-              <!-- <v-btn text @click="onClickCopyButton()">
+              <v-btn text @click="onClickCopyButton()">
                 Copy
-              </v-btn> -->
+              </v-btn>
             </v-card-actions>
           </v-card>
           <v-snackbar app v-model="snackbar" v-text="snackbarText">
