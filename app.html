@@ -59,7 +59,7 @@
           </v-btn>
         </transition>
 
-        <v-dialog v-model="dialogShare">
+        <v-dialog hide-overlay v-model="dialogShare">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl">
               <v-icon>share</v-icon>
