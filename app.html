@@ -75,8 +75,6 @@
             <v-btn text @click="onClickCopyButton()">
               Copy
             </v-btn>
-            <v-snackbar v-model="snackbar" v-text="snackbarText">
-            </v-snackbar>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="dialogShare = false">
@@ -87,6 +85,8 @@
               </v-btn>
             </v-card-actions>
           </v-card>
+          <v-snackbar app v-model="snackbar" v-text="snackbarText">
+          </v-snackbar>
         </v-dialog>
 
         <v-tooltip bottom>
