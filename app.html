@@ -65,8 +65,6 @@
               <v-icon>share</v-icon>
             </v-btn>
           </template>
-          <v-snackbar absolute v-model="snackbar" v-text="snackbarText">
-          </v-snackbar>
           <v-card>
             <v-card-title>
               <p>Share this URL</p>
@@ -98,6 +96,9 @@
           </template>
           <span>Open SpreadSheet</span>
         </v-tooltip>
+
+        <v-snackbar absolute v-model="snackbar" v-text="snackbarText">
+        </v-snackbar>
 
       </v-toolbar-items>
     </v-app-bar>
