@@ -141,9 +141,14 @@
       },
     },
     methods: {
-      onBeforeunload(event){
+      onBeforeunload(event) {
         console.log(event);
-        window.alert('close!');
+        var confirmationMessage = "\o/";
+        // Gecko + IE
+        (e || window.event).returnValue = confirmationMessage;
+        return confirmationMessage;
+        // Safari, Chrome, and other
+        // WebKit-derived browsers
       },
       async onKeyup(event) {
         if (!this.isOverlay) {
