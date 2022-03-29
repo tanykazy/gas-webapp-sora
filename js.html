@@ -316,7 +316,7 @@
       return this;
     }
     get isElapsed() {
-      return this.meta.last + this.meta.interval > Data.now();
+      return this.meta.last + this.meta.interval > Date.now();
     }
     get interval() {
       return this.meta.interval / 86400000; // 1000 * 60 * 60 * 24
