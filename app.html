@@ -61,7 +61,7 @@
 
         <v-dialog v-model="dialogShare">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl" @click="onClickShareButton()">
+            <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl">
               <v-icon>share</v-icon>
             </v-btn>
           </template>
@@ -72,13 +72,16 @@
             <v-card-text>
               <v-text-field v-model="currentPackUrl" label="File URL" hint="" value=""></v-text-field>
             </v-card-text>
+            <v-btn text @click="">
+              Copy
+            </v-btn>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="dialogShare = false">
                 Close
               </v-btn>
-              <v-btn text @click="">
-                Copy
+              <v-btn text @click="onClickShareButton()">
+                Share
               </v-btn>
             </v-card-actions>
           </v-card>
