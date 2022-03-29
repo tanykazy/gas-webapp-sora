@@ -65,14 +65,6 @@
               <v-icon>share</v-icon>
             </v-btn>
           </template>
-          <v-snackbar app color="secondary" v-model="snackbar">
-            {{snackbarText}}
-            <template v-slot:action="{ attrs }">
-              <v-btn text v-bind="attrs" @click="snackbar = false">
-                Close
-              </v-btn>
-            </template>
-          </v-snackbar>
           <v-card>
             <v-card-title>
               <p>Share this URL</p>
@@ -126,6 +118,15 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
+
+    <v-snackbar app color="secondary" v-model="snackbar">
+      {{snackbarText}}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 
     <v-main>
       <v-container>
