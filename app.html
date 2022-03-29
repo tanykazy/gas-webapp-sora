@@ -63,7 +63,7 @@
 
         <v-dialog hide-overlay v-model="dialogShare">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl">
+            <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl" @click="onClickShareButton()">
               <v-icon>share</v-icon>
             </v-btn>
           </template>
@@ -72,16 +72,16 @@
               <p>Share this URL</p>
             </v-card-title>
             <v-card-text>
-              <v-text-field v-model="currentPackUrl" label="File URL" hint=""></v-text-field>
+              <v-text-field v-model="currentPackShareUrl" label="File URL" hint=""></v-text-field>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="dialogShare = false">
                 Close
               </v-btn>
-              <v-btn text @click="onClickShareButton()">
+              <!-- <v-btn text @click="onClickShareButton()">
                 Share
-              </v-btn>
+              </v-btn> -->
               <v-btn text @click="onClickCopyButton()">
                 Copy
               </v-btn>

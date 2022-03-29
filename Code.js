@@ -242,7 +242,7 @@ function shareFile(pack) {
         return null;
       }
     }
-    return url;
+    return `${url}?copy=${file.getUrl()}`;
   }
   return null;
 }
@@ -318,6 +318,7 @@ class Pack {
     this.url = url
     this.decks = null;
     this.parent = parent;
+    this.shareUrl = null;
   }
 }
 

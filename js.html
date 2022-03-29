@@ -79,6 +79,12 @@
         }
         return '';
       },
+      currentPackShareUrl() {
+        if (this.enableCurrentPackUrl) {
+          return this.current.pack.shareUrl;
+        }
+        return '';
+      },
       currentId() {
         if (this.current.card !== null) {
           return this.current.card.id;
@@ -215,6 +221,7 @@
       },
       async onClickShareButton() {
         const result = await googleScriptRun('shareFile', this.current.pack);
+        this.current.pack.shareUrl = result;
       },
       async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackUrl);
@@ -357,6 +364,9 @@
       return this;
     }
     get isElapsed() {
+      if (this.meta.last === 0) {
+        return true;
+      }
       return this.meta.last + this.meta.interval > Date.now();
     }
     get interval() {
