@@ -100,9 +100,6 @@
       </v-toolbar-items>
     </v-app-bar>
 
-    <v-snackbar app color="secondary" v-model="snackbar" v-text="snackbarText">
-    </v-snackbar>
-
     <v-navigation-drawer v-model="drawer" app temporary>
       <v-list nav>
         <v-list-group v-for="pack in packs" :key="pack.id">
@@ -123,6 +120,14 @@
     </v-navigation-drawer>
 
     <v-main>
+      <v-snackbar app color="secondary" v-model="snackbar" v-text="snackbarText">
+        <template v-slot:action="{ attrs }">
+          <v-btn text v-bind="attrs" @click="snackbar = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+
       <v-container>
         <v-row>
           <v-col>
