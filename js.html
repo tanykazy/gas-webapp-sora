@@ -55,10 +55,10 @@
     async created() {
     },
     async mounted() {
+      window.addEventListener('beforeunload', );
       document.addEventListener('keydown', this.onKeyup);
     },
     async beforeUnmount() {
-      window.alert("close!");
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
@@ -141,6 +141,10 @@
       },
     },
     methods: {
+      onBeforeunload(event){
+        console.log(event);
+        window.alert('close!');
+      },
       async onKeyup(event) {
         if (!this.isOverlay) {
           // console.log(event);
