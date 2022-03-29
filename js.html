@@ -24,6 +24,7 @@
           deck: null,
           card: null,
           discard: [],
+          change: false,
         },
         breadcrumb: {
           items: [],
@@ -111,6 +112,7 @@
       },
       'current.deck': {
         async handler(val, old) {
+          console.log('change current deck');
           console.log(val);
           console.log(old);
           if (old !== null) {
@@ -120,7 +122,9 @@
             text: val.name
           });
           if (!val.cards) {
+            console.log('getCards');
             val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
+            console.log('getCards');
           }
           if (!val.draft) {
             val.draft = val.cards.filter(card => card.isElapsed);
@@ -131,6 +135,7 @@
           // if (val.draft.length > 0) {
           //   this.current.card = val.draft[getRandomInt(val.draft.length)];
           // }
+          console.log('nextQuestion');
           this.nextQuestion();
         },
       },
@@ -146,7 +151,9 @@
     },
     methods: {
       onBeforeunload(event) {
-        return confirmLeave(event);
+        if (this.change) {
+          return confirmLeave(event);
+        }
       },
       async onKeyup(event) {
         if (!this.isOverlay) {
@@ -171,6 +178,7 @@
         }
       },
       async onClickAssessment(scale) {
+        this.change = true;
         const card = this.current.card.evalCard(scale);
         card.lastRepetition = new Date();
         // this.updateMetadata(this.current.pack, this.current.deck, [card]);
@@ -183,8 +191,9 @@
       },
       async onClickSyncButton() {
         if (this.current.discard) {
-          this.updateMetadata(this.current.pack, this.current.deck, this.current.discard);
+          await this.updateMetadata(this.current.pack, this.current.deck, this.current.discard);
           this.current.discard = [];
+          this.change = false;
         }
       },
       async onClickListItem(pack, deck) {
@@ -241,7 +250,7 @@
           this.current.card = this.current.deck.draft.shift();
           this.disable = false;
           this.loading = false;
-        }else{
+        } else {
           console.log('done!');
         }
       },
