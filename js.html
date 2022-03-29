@@ -111,6 +111,8 @@
       },
       'current.deck': {
         async handler(val, old) {
+          console.log(val);
+          console.log(old);
           if (old !== null) {
             this.breadcrumb.items.pop();
           }
