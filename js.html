@@ -233,6 +233,7 @@
         this.syncing = false;
       },
       nextQuestion() {
+        console.log(this.current);
         if (this.current.deck.draft) {
           this.loading = true;
           this.disable = true;
