@@ -13,6 +13,7 @@
         dialogShare: false,
         reveal: false,
         loading: true,
+        syncing: false,
         disable: true,
         themeMode: true,
         filename: null,
@@ -164,8 +165,13 @@
       async onClickAssessment(scale) {
         const card = this.current.card.evalCard(scale);
         card.lastRepetition = new Date();
-        googleScriptRun('updateMetadata', this.current.pack, this.current.deck, [card]);
+        this.updateMetadata(this.current.pack, this.current.deck, [card]);
         this.nextQuestion();
+      },
+      async onClickSyncButton() {
+        if (this.current.deck.draft) {
+          this.updateMetadata(this.current.pack, this.current.deck, this.current.deck.draft);
+        }
       },
       async onClickListItem(pack, deck) {
         if (this.current.deck !== deck) {
@@ -195,6 +201,11 @@
       },
       async onClickTurn(event) {
         this.flipCard();
+      },
+      async updateMetadata(pack, deck, cards) {
+        this.syncing = true;
+        await googleScriptRun('updateMetadata', pack, deck, cards);
+        this.syncing = false;
       },
       changeDeck(pack, deck) {
         (async () => {

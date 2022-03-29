@@ -40,7 +40,7 @@
           <v-icon>event</v-icon>
         </v-btn>
 
-        <v-btn icon :disabled="true">
+        <v-btn icon :loading="syncing" @click="onClickSyncButton()">
           <v-icon>sync</v-icon>
         </v-btn>
 
@@ -118,8 +118,6 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
-
-    <v-progress-linear absolute indeterminate></v-progress-linear>
 
     <v-snackbar app color="secondary" v-model="snackbar">
       {{snackbarText}}
