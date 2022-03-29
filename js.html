@@ -179,8 +179,8 @@
         this.nextQuestion();
       },
       async onClickSyncButton() {
-        if (this.current.deck.draft) {
-          this.updateMetadata(this.current.pack, this.current.deck, this.current.deck.draft);
+        if (this.current.discard) {
+          this.updateMetadata(this.current.pack, this.current.deck, this.current.discard);
           this.current.discard = [];
         }
       },
@@ -232,17 +232,17 @@
           this.loading = false;
         })();
       },
-      changeCard(card) {
-        this.loading = true;
-        this.disable = true;
-        this.turnFront();
-        this.current.card = card;
-        this.disable = false;
-        this.loading = false;
-      },
       nextQuestion() {
-        const card = this.current.deck.draft.shift();
-        this.changeCard(card);
+        if (this.current.deck.draft) {
+          this.loading = true;
+          this.disable = true;
+          this.turnFront();
+          this.current.card = this.current.deck.draft.shift();
+          this.disable = false;
+          this.loading = false;
+        }else{
+          console.log('done!');
+        }
       },
       increaseHistory(num) {
         if (this.history[num] === undefined) {
