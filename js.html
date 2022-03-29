@@ -55,7 +55,7 @@
     async created() {
     },
     async mounted() {
-      window.addEventListener('beforeunload', );
+      window.addEventListener('beforeunload', this.onBeforeunload);
       document.addEventListener('keydown', this.onKeyup);
     },
     async beforeUnmount() {
