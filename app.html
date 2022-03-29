@@ -1,70 +1,276 @@
 <div id="app">
   <v-app>
     <v-app-bar app absolute color="primary">
-      <v-toolbar-title>Sora</v-toolbar-title>
+      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+      <v-toolbar-title v-text="appName"></v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+
+        <v-btn icon :disabled="true">
+          <v-icon>delete_sweep</v-icon>
+        </v-btn>
+
+        <v-dialog v-model="dialogCreateNewFile">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon>library_add</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <p>Create new flashcard pack</p>
+            </v-card-title>
+            <v-card-text>
+              <v-text-field v-model="filename" label="File name" hint="A spreadsheet will be created in My Drive."
+                value="New Flashcard Pack"></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="onClickCancelButton()">
+                Cancel
+              </v-btn>
+              <v-btn text :disabled="!filename" @click="onClickCreateButton()">
+                Create
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-btn icon :disabled="true">
+          <v-icon>event</v-icon>
+        </v-btn>
+
+        <v-btn icon :loading="syncing" @click="onClickSyncButton()">
+          <v-icon>sync</v-icon>
+        </v-btn>
+
+        <v-btn icon :disabled="true">
+          <v-icon>settings</v-icon>
+        </v-btn>
+
+        <transition name="flip">
+          <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
+            <v-icon>dark_mode</v-icon>
+          </v-btn>
+        </transition>
+        <transition name="flip">
+          <v-btn icon v-show="!themeMode" @click="themeMode = !themeMode">
+            <v-icon>light_mode</v-icon>
+          </v-btn>
+        </transition>
+
+        <v-dialog hide-overlay v-model="dialogShare">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl">
+              <v-icon>share</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <p>Share this URL</p>
+            </v-card-title>
+            <v-card-text>
+              <v-text-field v-model="currentPackUrl" label="File URL" hint=""></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="dialogShare = false">
+                Close
+              </v-btn>
+              <v-btn text @click="onClickShareButton()">
+                Share
+              </v-btn>
+              <v-btn text @click="onClickCopyButton()">
+                Copy
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon target="_blank" :href="currentPackUrl" :disabled="!enableCurrentPackUrl" v-bind="attrs"
+              v-on="on">
+              <v-icon>launch</v-icon>
+            </v-btn>
+          </template>
+          <span>Open SpreadSheet</span>
+        </v-tooltip>
+
+      </v-toolbar-items>
     </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" app temporary>
+      <v-list nav>
+        <v-list-group v-for="pack in packs" :key="pack.id">
+          <template v-slot:activator>
+            <v-list-item-icon>
+              <v-icon>quiz</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title v-text="pack.name"></v-list-item-title>
+          </template>
+          <v-list-item v-for="deck in pack.decks" :key="deck.id" @click="onClickListItem(pack, deck)">
+            <v-list-item-title v-text="deck.name"></v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>list</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-snackbar app color="secondary" v-model="snackbar">
+      {{snackbarText}}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 
     <v-main>
       <v-container>
         <v-row>
-
           <v-col>
-            <v-card :loading="loading" :disabled="loading">
-              <v-card-subtitle>
-                <p>{{num}}</p>
-              </v-card-subtitle>
-              <v-card-title>
-                <p class="custom-fonts">{{question}}</p>
-              </v-card-title>
-              <v-card-text>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn icon bottom color="primary" @click="turnBack($event)">
-                  <v-icon>arrow_drop_down</v-icon>
-                </v-btn>
-              </v-card-actions>
-              <v-expand-transition>
-                <v-card v-if="reveal" class="transition-fast-in-fast-out v-card--reveal" style="height: 100%;">
-                  <v-card-subtitle>
-                    <p>{{num}}</p>
-                  </v-card-subtitle>
-                  <v-card-title>
-                    <p class="custom-fonts">{{answer}}</p>
-                  </v-card-title>
-                  <v-card-text>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn icon bottom color="primary" @click="turnFront($event)">
-                      <v-icon>arrow_drop_up</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-expand-transition>
-            </v-card>
+            <v-breadcrumbs :items="breadcrumb.items"></v-breadcrumbs>
           </v-col>
-
         </v-row>
+
         <v-row>
-
           <v-col>
-            <v-btn block color="success" :loading="loading" :disabled="disable" @click="onClickDone($event)">
-              <v-icon>done</v-icon>
-            </v-btn>
-          </v-col>
+            <transition name="flip">
+              <v-card v-show="!reveal" :loading="loading" :disabled="loading">
+                <v-card-subtitle v-text="currentId"></v-card-subtitle>
+                <v-card-title v-text="currentFront"></v-card-title>
+                <v-card-text></v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn icon bottom @click="onClickTurn($event)">
+                    <v-icon>flip_to_back</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </transition>
 
+            <transition name="flip">
+              <v-card v-show="reveal" :loading="loading" :disabled="loading">
+                <v-card-subtitle v-text="currentId"></v-card-subtitle>
+                <v-card-title v-text="currentBack"></v-card-title>
+                <v-card-text></v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn icon bottom @click="onClickTurn($event)">
+                    <v-icon>flip_to_front</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </transition>
+          </v-col>
+        </v-row>
+
+        <v-row>
           <v-col>
-            <v-btn block color="error" :loading="loading" :disabled="disable" @click="onClickClear($event)">
-              <v-icon>clear</v-icon>
-            </v-btn>
-          </v-col>
+            <v-item-group>
+              <v-container>
+                <v-row>
 
+                  <v-col>
+                    <v-item>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
+                            @click="onClickAssessment(0)">
+                            <span>0</span>
+                          </v-btn>
+                        </template>
+                        <span>Complete blackout</span>
+                      </v-tooltip>
+                    </v-item>
+                  </v-col>
+
+                  <v-col>
+                    <v-item>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
+                            @click="onClickAssessment(1)">
+                            <span>1</span>
+                          </v-btn>
+                        </template>
+                        <span>Incorrect response; the correct one remembered</span>
+                      </v-tooltip>
+                    </v-item>
+                  </v-col>
+
+                  <v-col>
+                    <v-item>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
+                            @click="onClickAssessment(2)">
+                            <span>2</span>
+                          </v-btn>
+                        </template>
+                        <span>Incorrect response; where the correct one seemed easy to recall</span>
+                      </v-tooltip>
+                    </v-item>
+                  </v-col>
+
+                  <v-col>
+                    <v-item>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
+                            @click="onClickAssessment(3)">
+                            <span>3</span>
+                          </v-btn>
+                        </template>
+                        <span>Correct response recalled with serious difficulty</span>
+                      </v-tooltip>
+                    </v-item>
+                  </v-col>
+
+                  <v-col>
+                    <v-item>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
+                            @click="onClickAssessment(4)">
+                            <span>4</span>
+                          </v-btn>
+                        </template>
+                        <span>Correct response after a hesitation</span>
+                      </v-tooltip>
+                    </v-item>
+                  </v-col>
+
+                  <v-col>
+                    <v-item>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
+                            @click="onClickAssessment(5)">
+                            <span>5</span>
+                          </v-btn>
+                        </template>
+                        <span>Perfect response</span>
+                      </v-tooltip>
+                    </v-item>
+                  </v-col>
+
+                </v-row>
+              </v-container>
+            </v-item-group>
+          </v-col>
         </v-row>
       </v-container>
     </v-main>
 
     <v-footer app fixed color="primary">
-      <v-col class="text-center" cols="12">
-      </v-col>
+      <v-spacer></v-spacer>
+      <v-btn icon :disabled="true">
+        <v-icon>bug_report</v-icon>
+      </v-btn>
     </v-footer>
   </v-app>
 </div>
