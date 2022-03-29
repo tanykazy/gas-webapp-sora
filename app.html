@@ -65,6 +65,8 @@
               <v-icon>share</v-icon>
             </v-btn>
           </template>
+          <v-snackbar absolute v-model="snackbar" v-text="snackbarText">
+          </v-snackbar>
           <v-card>
             <v-card-title>
               <p>Share this URL</p>
@@ -255,9 +257,6 @@
           </v-col>
         </v-row>
       </v-container>
-
-      <v-snackbar absolute v-model="snackbar" v-text="snackbarText">
-      </v-snackbar>
     </v-main>
 
     <v-footer app fixed color="primary">
