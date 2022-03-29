@@ -91,6 +91,9 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
+
+        console.log(file.getOwner().getPhotoUrl());
+
         return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
       }
     });
@@ -218,6 +221,8 @@ function createNewFile(name) {
   }
   return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
 }
+
+function share(){}
 
 function initMetadata(sheet) {
   let metadata = sheet.getDeveloperMetadata();
