@@ -92,8 +92,8 @@ function getPacks() {
       const file = getFileById_(inf.id);
       if (file !== null) {
 
-        console.log(file.getOwner().getPhotoUrl());
-        console.log(file.getOwner().getDomain());
+        // console.log(file.getOwner().getPhotoUrl());
+        // console.log(file.getOwner().getDomain());
 
         return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
       }
@@ -225,7 +225,19 @@ function createNewFile(name) {
 
 function shareFile(pack) {
   const file = getFileById_(pack.id);
-  file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
+  if (file.isShareableByEditors()) {
+    try {
+      file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (error) {
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (error) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
 function initMetadata(sheet) {

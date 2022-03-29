@@ -9,7 +9,8 @@
       return {
         appName: 'Sora',
         drawer: false,
-        dialog: false,
+        dialogCreateNewFile: false,
+        dialogShare: false,
         reveal: false,
         loading: true,
         disable: true,
@@ -57,6 +58,9 @@
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
+      isOverlay(){
+        return this.dialogCreateNewFile;
+      },
       enableCurrentPackUrl() {
         if (this.current.pack !== null) {
           return true;
@@ -134,7 +138,7 @@
     },
     methods: {
       async onKeyup(event) {
-        if (!this.dialog) {
+        if (!this.isOverlay) {
           // console.log(event);
           switch (event.key) {
             case '0':
@@ -167,12 +171,15 @@
         }
         this.drawer = false;
       },
+      async onClickShareButton(){
+        const result = await googleScriptRun('shareFile', this.current.pack);
+      },
       async onClickCancelButton() {
-        this.dialog = false;
+        this.dialogCreateNewFile = false;
       },
       async onClickCreateButton() {
         // console.log(this.filename);
-        this.dialog = false;
+        this.dialogCreateNewFile = false;
         const pack = await googleScriptRun('createNewFile', this.filename);
         // console.log(pack);
         window.open(pack.url, "_blank");

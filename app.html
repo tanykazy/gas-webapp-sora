@@ -10,7 +10,7 @@
           <v-icon>delete_sweep</v-icon>
         </v-btn>
 
-        <v-dialog v-model="dialog">
+        <v-dialog v-model="dialogCreateNewFile">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>library_add</v-icon>
@@ -59,9 +59,30 @@
           </v-btn>
         </transition>
 
-        <v-btn icon :disabled="true">
-          <v-icon>share</v-icon>
-        </v-btn>
+        <v-dialog v-model="dialogShare">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" :disabled="!enableCurrentPackUrl" @click="onClickShareButton()">
+              <v-icon>share</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <p>Share this URL</p>
+            </v-card-title>
+            <v-card-text>
+              <v-text-field v-model="currentPackUrl" label="File URL" hint="" value=""></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="dialogShare = false">
+                Close
+              </v-btn>
+              <v-btn text @click="">
+                Copy
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
