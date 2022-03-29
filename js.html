@@ -23,7 +23,7 @@
           pack: null,
           deck: null,
           card: null,
-          count: 0,
+          discard: [],
         },
         breadcrumb: {
           items: [],
@@ -171,13 +171,17 @@
         const card = this.current.card.evalCard(scale);
         card.lastRepetition = new Date();
         // this.updateMetadata(this.current.pack, this.current.deck, [card]);
-        this.current.count++;
+        if (scale > 3) {
+          this.current.discard.push(card);
+        } else {
+          this.current.deck.draft.push(card);
+        }
         this.nextQuestion();
       },
       async onClickSyncButton() {
         if (this.current.deck.draft) {
           this.updateMetadata(this.current.pack, this.current.deck, this.current.deck.draft);
-          this.current.count = 0;
+          this.current.discard = [];
         }
       },
       async onClickListItem(pack, deck) {
@@ -237,11 +241,8 @@
         this.loading = false;
       },
       nextQuestion() {
-        const card = this.randomCard();
+        const card = this.current.deck.draft.shift();
         this.changeCard(card);
-      },
-      randomCard() {
-        return this.current.deck.draft[getRandomInt(this.current.deck.draft.length)];
       },
       increaseHistory(num) {
         if (this.history[num] === undefined) {

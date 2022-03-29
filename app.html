@@ -40,7 +40,7 @@
           <v-icon>event</v-icon>
         </v-btn>
 
-        <v-badge :content="current.count" :value="current.count">
+        <v-badge overlap :content="current.discard.length" :value="current.discard.length">
           <v-btn icon :loading="syncing" @click="onClickSyncButton()">
             <v-icon>sync</v-icon>
           </v-btn>
