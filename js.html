@@ -234,7 +234,7 @@
       },
       nextQuestion() {
         console.log(this.current);
-        if (this.current.deck.draft) {
+        if (this.current.deck.draft.length) {
           this.loading = true;
           this.disable = true;
           this.turnFront();
