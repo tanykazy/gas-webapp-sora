@@ -58,7 +58,7 @@
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
-      isOverlay(){
+      isOverlay() {
         return this.dialogCreateNewFile;
       },
       enableCurrentPackUrl() {
@@ -171,8 +171,9 @@
         }
         this.drawer = false;
       },
-      async onClickShareButton(){
+      async onClickShareButton() {
         const result = await googleScriptRun('shareFile', this.current.pack);
+        await navigator.clipboard.writeText(this.currentPackUrl);
       },
       async onClickCancelButton() {
         this.dialogCreateNewFile = false;
