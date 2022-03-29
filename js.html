@@ -222,6 +222,7 @@
       async onClickShareButton() {
         const result = await googleScriptRun('shareFile', this.current.pack);
         this.current.pack.shareUrl = result;
+        this.dialogShare = true;
       },
       async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackUrl);
@@ -249,7 +250,7 @@
         this.syncing = false;
       },
       nextQuestion() {
-        console.log(this.current);
+        // console.log(this.current);
         if (this.current.deck.draft.length) {
           this.loading = true;
           this.disable = true;
