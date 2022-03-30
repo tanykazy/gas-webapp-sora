@@ -72,16 +72,20 @@
               <p>Share this URL</p>
             </v-card-title>
             <v-card-text>
-              <v-text-field :value="currentPackShareUrl" label="File URL" hint=""></v-text-field>
+              <transition name="flip">
+                <v-btn v-show="waitShare" text @click="waitShare = !waitShare">
+                  Share
+                </v-btn>
+              </transition>
+              <transition name="flip">
+                <v-text-field v-show="!waitShare" :value="currentPackShareUrl" label="File URL" hint=""></v-text-field>
+              </transition>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text @click="dialogShare = false">
                 Close
               </v-btn>
-              <!-- <v-btn text @click="onClickShareButton()">
-                Share
-              </v-btn> -->
               <v-btn text @click="onClickCopyButton()">
                 Copy
               </v-btn>
