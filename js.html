@@ -340,32 +340,32 @@
       this.id = card.id;
       this.front = card.front;
       this.back = card.back;
-      // this.meta = card.meta;
+      this.meta = card.meta;
     }
     evalCard(scale) {
-      const result = algorithmSM2(scale, this.repetition, this.efactor, this.interval);
-      this.repetition= result.n;
-      this.efactor = result.ef;
+      const result = algorithmSM2(scale, this.meta.repetition, this.meta.efactor, this.interval);
+      this.meta.repetition = result.n;
+      this.meta.efactor = result.ef;
       this.interval = result.i;
       return this;
     }
     get isElapsed() {
-      if (this.lasttime === 0) {
+      if (this.meta.lasttime === 0) {
         return true;
       }
-      return this.lasttime + this.interval > Date.now();
+      return this.meta.lasttime + this.meta.interval > Date.now();
     }
     get interval() {
-      return this.interval / 86400000; // 1000 * 60 * 60 * 24
+      return this.meta.interval / 86400000; // 1000 * 60 * 60 * 24
     }
     set interval(day) {
-      this.interval = day * 86400000; // 1000 * 60 * 60 * 24
+      this.meta.interval = day * 86400000; // 1000 * 60 * 60 * 24
     }
     get lastRepetition() {
-      return new Date(this.lasttime);
+      return new Date(this.meta.lasttime);
     }
     set lastRepetition(date) {
-      this.lasttime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+      this.meta.lasttime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     }
   }
 

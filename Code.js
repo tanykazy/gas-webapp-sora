@@ -158,11 +158,16 @@ function getCards(pack, deck) {
 
     const cards = values.map(value => {
       const card = new Card();
-      for (const [key, index] of Object.entries(indexes)) {
-        card[key] = index !== -1 ? value[index] : null;
-      }
-      card.hash = getHash(value[indexes.front] + value[indexes.back]);
-
+      card.id = value[indexes.id];
+      card.front = value[indexes.front];
+      card.back = value[indexes.back];
+      const meta = new CardMetaData();
+      meta.efactor = value[indexes.efactor];
+      meta.repetition = value[indexes.repetition];
+      meta.interval = value[indexes.interval];
+      meta.lasttime = value[indexes.lasttime];
+      meta.hash = getHash(card.front, card.back);
+      card.meta = meta;
       return card;
     });
 
@@ -361,9 +366,9 @@ class CardMetaData {
     this.id = metadata.id || 0; // id 
     this.hash = metadata.hash || 0 // digest 
     this.efactor = metadata.efactor || 0; // e-factor
-    this.count = metadata.count || 0; // n
+    this.repetition = metadata.count || 0; // n
     this.interval = metadata.interval || 0; // interval
-    this.last = metadata.last || 0; // last review
+    this.lasttime = metadata.last || 0; // last review
   }
 }
 
