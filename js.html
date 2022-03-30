@@ -242,7 +242,7 @@
         // console.log(this.current);
       },
       async onClickCopyButton() {
-        await navigator.clipboard.writeText(this.currentPackUrl);
+        await navigator.clipboard.writeText(this.currentPackShareUrl);
         // this.dialogShare = false;
         this.showSnackbar('Copied the link.');
       },
