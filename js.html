@@ -34,20 +34,20 @@
       };
     },
     async beforeCreate() {
-      google.script.history.setChangeHandler((event) => {
-        // event.location.parameters;
-        // const name = event.state.name;
-        // if (name !== null) {
-        //   if (name !== this.flashcardName) {
-        //     this.changeFlashcardList(name);
-        //   } else {
-        //     const card = event.state.card;
-        //     if (card !== null) {
-        //       this.changeFlashcard(card);
-        //     }
-        //   }
-        // }
-      });
+      // google.script.history.setChangeHandler((event) => {
+      // event.location.parameters;
+      // const name = event.state.name;
+      // if (name !== null) {
+      //   if (name !== this.flashcardName) {
+      //     this.changeFlashcardList(name);
+      //   } else {
+      //     const card = event.state.card;
+      //     if (card !== null) {
+      //       this.changeFlashcard(card);
+      //     }
+      //   }
+      // }
+      // });
       this.packs = await googleScriptRun('getPacks');
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
