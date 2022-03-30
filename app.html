@@ -73,21 +73,21 @@
             </v-card-title>
             <v-card-text>
               <transition name="flip">
-                <v-btn v-show="!currentPackShareUrl" text block @click="onClickShareButton()">
+                <v-btn v-show="!flipshare" block @click="onClickShareButton()">
                   Share
                 </v-btn>
               </transition>
               <transition name="flip">
-                <v-text-field v-show="currentPackShareUrl" v-model="currentPackShareUrl" :loading="!currentPackShareUrl"
+                <v-text-field v-show="flipshare" v-model="currentPackShareUrl" :loading="!currentPackShareUrl"
                   label="File URL" hint=""></v-text-field>
               </transition>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn text @click="dialogShare = false">
+              <v-btn @click="dialogShare = false">
                 Close
               </v-btn>
-              <v-btn text @click="onClickCopyButton()">
+              <v-btn @click="onClickCopyButton()">
                 Copy
               </v-btn>
             </v-card-actions>
