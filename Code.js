@@ -171,62 +171,7 @@ function getCards(pack, deck) {
   });
 
   console.log(cards);
-
   return cards;
-
-  // const cards = [];
-  // for (let row = 2; row <= sheet.getLastRow(); row++) {
-  //   const range = sheet.getRange(`${row}:${row}`);
-  //   const value = range.getValues().pop();
-  //   const hash = getHash(value[1] + value[2]);
-  //   let match = range.createDeveloperMetadataFinder().withKey(hash).find();
-
-  //   // match.forEach((data) => data.remove());
-  //   // match = [];
-
-  //   let metadata = match.pop();
-  //   if (!metadata) {
-  //     metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
-  //     const data = new CardMetaData({});
-  //     data.id = metadata.getId();
-  //     data.hash = hash;
-  //     metadata.setValue(JSON.stringify(data));
-  //   } else {
-  //     match.forEach((data) => data.remove());
-  //   }
-  //   // console.log(metadata.getValue());
-  //   try {
-  //     cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
-  //   } catch (error) {
-  //     // console.log(error);
-  //     metadata.remove();
-  //   }
-  // }
-  // // console.log(cards);
-  // return cards;
-
-  // const range = sheet.getDataRange();
-  // values = range.getValues();
-  // if (values.length === 0) {
-  //   return null;
-  // }
-  // values.shift();
-  // if (values.length === 0) {
-  //   return [];
-  // }
-
-  // const cards = values.map((value) => {
-  //   const finder = sheet.createDeveloperMetadataFinder();
-  //   const hash = getHash(value[1] + value[2]);
-  //   const metadata = finder.withKey(hash).find();
-  //   if (metadata.length > 0) {
-  //     return new Card(value[0], value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue())));
-  //   } else {
-  //     return new Card(value[0], value[1], value[2], new CardMetaData({}));
-  //   }
-  // });
-  // // cache.put(sheetName, JSON.stringify(values));
-  // return cards;
 }
 
 function initMetadata() {
@@ -247,10 +192,7 @@ function updateMetadata(pack, deck, cards) {
   }
   console.log('indexes: ', indexes);
 
-  // console.log(cards);
   cards.forEach((card) => {
-    // const meta = card.meta;
-
     const index = values.findIndex(value => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.meta.hash);
     if (index !== -1) {
       console.log('index: ', index);
@@ -260,15 +202,7 @@ function updateMetadata(pack, deck, cards) {
       for (const [key, value] of Object.entries(card.meta)) {
         range.getCell(index + 2, indexes[key] + 1).setValue(value);
       }
-      // range.getCell(index + 2, indexes.efactor + 1).setValue(meta.efactor);
-      // range.getCell(index + 2, indexes.lasttime + 1).setValue(meta.lasttime);
-      // range.getCell(index + 2, indexes.interval + 1).setValue(meta.interval);
-      // range.getCell(index + 2, indexes.repetition + 1).setValue(meta.repetition);
     }
-
-    // const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
-    // const meta = match.pop();
-    // meta.setValue(JSON.stringify(card.meta));
   });
 }
 
