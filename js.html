@@ -1,5 +1,5 @@
-<script async src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
   const app = new Vue({
     el: '#app',
@@ -274,18 +274,6 @@
           console.log('done!');
         }
       },
-      increaseHistory(num) {
-        if (this.history[num] === undefined) {
-          this.history[num] = 0;
-        }
-        this.history[num] += 1;
-      },
-      decreaseHistory(num) {
-        if (this.history[num] === undefined) {
-          this.history[num] = 0;
-        }
-        this.history[num] -= 1;
-      },
       flipCard() {
         this.reveal = !this.reveal;
       },
@@ -303,21 +291,6 @@
       },
     },
   });
-
-  function pushHistory(state, params, hash) {
-    google.script.history
-      .push(state, params, hash);
-  }
-
-  function replaceHistory(state, params, hash) {
-    google.script.history
-      .replace(state, params, hash);
-  }
-
-  function setHistoryChangeHandler(handler) {
-    google.script.history
-      .setChangeHandler(handler);
-  }
 
   async function googleScriptRun(name, ...args) {
     return new Promise(function (resolve, reject) {

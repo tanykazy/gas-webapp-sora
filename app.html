@@ -40,7 +40,7 @@
           <v-icon>event</v-icon>
         </v-btn>
 
-        <v-badge inline overlap :content="current.discard.length" :value="current.discard.length">
+        <v-badge inline :content="current.discard.length" :value="current.discard.length">
           <v-btn icon :loading="syncing" @click="onClickSyncButton()">
             <v-icon>sync</v-icon>
           </v-btn>
@@ -79,9 +79,9 @@
               <v-btn text @click="dialogShare = false">
                 Close
               </v-btn>
-              <v-btn text @click="onClickShareButton()">
+              <!-- <v-btn text @click="onClickShareButton()">
                 Share
-              </v-btn>
+              </v-btn> -->
               <v-btn text @click="onClickCopyButton()">
                 Copy
               </v-btn>
