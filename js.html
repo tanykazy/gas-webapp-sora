@@ -13,8 +13,7 @@
         dialogShare: false,
         reveal: false,
         loading: true,
-        waitShare: true,
-        flipshare: true,
+        flipshare: false,
         syncing: false,
         disable: true,
         themeMode: true,
@@ -121,6 +120,9 @@
           }
           if (val.decks.length > 0) {
             this.current.deck = val.decks[0];
+          }
+          if(val.shareUrl){
+            this.flipshare = true;
           }
         },
       },
@@ -231,14 +233,11 @@
       },
       async onClickShareButton() {
         // if (!this.current.pack.shareUrl) {
-        this.flipshare = !this.flipshare;
-        this.waitShare = true;
+        this.flipshare = true;
         this.current.pack.shareUrl = await googleScriptRun('shareFile', this.current.pack);
-        this.waitShare = false;
-        console.log(this.current.pack.shareUrl);
+        // console.log(this.current.pack.shareUrl);
         // }
-        // this.dialogShare = true;
-        console.log(this.current);
+        // console.log(this.current);
       },
       async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackUrl);
