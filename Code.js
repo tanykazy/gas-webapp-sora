@@ -255,7 +255,7 @@ function updateMetadata(pack, deck, cards) {
     if (index !== -1) {
       console.log('index: ', index);
       console.log('card: ', card);
-      console.log('range: ', range.getCell(index + 1, indexes.front).getValues());
+      console.log('range: ', range.getCell(index + 2, indexes.front + 1).getValues());
     }
 
 
