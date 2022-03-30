@@ -14,6 +14,7 @@
         reveal: false,
         loading: true,
         waitShare: true,
+        flipshare: true,
         syncing: false,
         disable: true,
         themeMode: true,
@@ -230,7 +231,9 @@
       },
       async onClickShareButton() {
         // if (!this.current.pack.shareUrl) {
+        this.waitShare = true;
         this.current.pack.shareUrl = await googleScriptRun('shareFile', this.current.pack);
+        this.waitShare = false;
         console.log(this.current.pack.shareUrl);
         // }
         // this.dialogShare = true;
