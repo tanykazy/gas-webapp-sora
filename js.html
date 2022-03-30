@@ -231,6 +231,7 @@
       },
       async onClickShareButton() {
         // if (!this.current.pack.shareUrl) {
+        this.flipshare = !this.flipshare;
         this.waitShare = true;
         this.current.pack.shareUrl = await googleScriptRun('shareFile', this.current.pack);
         this.waitShare = false;
