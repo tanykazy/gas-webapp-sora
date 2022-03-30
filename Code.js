@@ -360,12 +360,11 @@ class Pack {
 
 class CardMetaData {
   constructor(metadata) {
-    this.id = metadata.id || 0; // id 
-    this.hash = metadata.hash || 0 // digest 
-    this.efactor = metadata.efactor || 0; // e-factor
-    this.repetition = metadata.count || 0; // n
-    this.interval = metadata.interval || 0; // interval
-    this.lasttime = metadata.last || 0; // last review
+    this.hash = '';
+    this.efactor = 0;
+    this.repetition = 0;
+    this.interval = 0;
+    this.lasttime = 0;
   }
 }
 
