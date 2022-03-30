@@ -256,10 +256,12 @@ function updateMetadata(pack, deck, cards) {
       console.log('index: ', index);
       console.log('card: ', card);
       console.log('range: ', range.getCell(index + 2, indexes.front + 1).getValues());
+
+      range.getCell(index + 2, indexes.efactor + 1).setValue(meta.efactor);
+      range.getCell(index + 2, indexes.lasttime + 1).setValue(meta.lasttime);
+      range.getCell(index + 2, indexes.interval + 1).setValue(meta.interval);
+      range.getCell(index + 2, indexes.repetition + 1).setValue(meta.repetition);
     }
-
-
-
 
     // const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
     // const meta = match.pop();
