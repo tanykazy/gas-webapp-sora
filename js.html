@@ -14,7 +14,7 @@
         reveal: false,
         loading: true,
         flipshare: false,
-        shareUrl:'',
+        shareUrl: '',
         syncing: false,
         disable: true,
         themeMode: true,
@@ -122,7 +122,7 @@
           if (val.decks.length > 0) {
             this.current.deck = val.decks[0];
           }
-          if(val.shareUrl){
+          if (val.shareUrl) {
             this.flipshare = true;
           }
         },
@@ -235,7 +235,8 @@
       async onClickShareButton() {
         // if (!this.current.pack.shareUrl) {
         this.flipshare = true;
-        this.current.pack.shareUrl = await googleScriptRun('shareFile', this.current.pack);
+        this.shareUrl = await googleScriptRun('shareFile', this.current.pack);
+        this.current.pack.shareUrl = this.shareUrl;
         // console.log(this.current.pack.shareUrl);
         // }
         // console.log(this.current);
