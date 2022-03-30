@@ -78,8 +78,8 @@
                 </v-btn>
               </transition>
               <transition name="flip">
-                <v-text-field v-show="currentPackShareUrl" :value="currentPackShareUrl" :loading="waitShare" label="File URL"
-                  hint=""></v-text-field>
+                <v-text-field v-show="currentPackShareUrl" v-model="currentPackShareUrl" :loading="!currentPackShareUrl"
+                  label="File URL" hint=""></v-text-field>
               </transition>
             </v-card-text>
             <v-card-actions>
