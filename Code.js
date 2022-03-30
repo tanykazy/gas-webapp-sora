@@ -89,7 +89,12 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
-        return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
+        const pack = new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
+        if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
+          const url = ScriptApp.getService().getUrl();
+          pack.shareUrl = `${url}?copy=${file.getId()}`;
+        }
+        return pack;
       }
     });
     Logger.log(packs);
