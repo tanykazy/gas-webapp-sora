@@ -79,6 +79,25 @@ function updatePacksInfo() {
   }
 }
 
+function initPack(file) {
+  const spreadsheet = SpreadsheetApp.open(file);
+  const sheets = spreadsheet.getSheets();
+  sheets.forEach((sheet) => {
+    const range = sheet.getDataRange();
+    console.log(sheet.getName());
+    console.log(range.getRow());
+    const values = range.getValues();
+    const head = values.shift();
+  });
+
+
+
+}
+
+function setMetadata() {
+
+}
+
 function getPacks() {
   Logger.log('request getPacks');
   try {
@@ -89,6 +108,9 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
+
+        initPack(file);
+
         const pack = new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
         if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
           const url = ScriptApp.getService().getUrl();
