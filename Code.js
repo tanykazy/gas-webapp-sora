@@ -161,14 +161,13 @@ function getCards(pack, deck) {
     const card = new Card(
       value[indexes.id],
       value[indexes.front],
-      value[indexes.back]);
-    const meta = new CardMetaData(
-      value[indexes.efactor],
-      value[indexes.repetition],
-      value[indexes.interval],
-      value[indexes.lasttime]);
-    meta.hash = getHash(card.front, card.back);
-    card.meta = meta;
+      value[indexes.back],
+      new CardMetaData(
+        value[indexes.efactor],
+        value[indexes.repetition],
+        value[indexes.interval],
+        value[indexes.lasttime],
+        getHash(card.front, card.back)));
     return card;
   });
 
@@ -361,8 +360,8 @@ class Pack {
 }
 
 class CardMetaData {
-  constructor(efactor, repetition, interval, lasttime) {
-    this.hash = null;
+  constructor(efactor, repetition, interval, lasttime, hash) {
+    this.hash = hash;
     this.efactor = parseFloat(efactor || 0);
     this.repetition = parseInt(repetition || 0);
     this.interval = parseInt(interval || 0);
