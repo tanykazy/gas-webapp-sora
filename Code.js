@@ -150,11 +150,9 @@ function getCards(pack, deck) {
   console.log('heaer: ', head);
 
   const indexes = {};
-
   for (const [key, value] of Object.entries(headers)) {
     indexes[key] = head.findIndex(h => h === value);
   }
-
   console.log('indexes: ', indexes);
 
   const cards = values.map(value => {
@@ -237,11 +235,33 @@ function updateMetadata(pack, deck, cards) {
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheet = spreadsheet.getSheetByName(deck.name);
+  const range = sheet.getDataRange();
+  const values = range.getValues();
+  const head = values.shift();
+  console.log('heaer: ', head);
+
+  const indexes = {};
+  for (const [key, value] of Object.entries(headers)) {
+    indexes[key] = head.findIndex(h => h === value);
+  }
+  console.log('indexes: ', indexes);
+
   // console.log(cards);
   cards.forEach((card) => {
-    const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
-    const meta = match.pop();
-    meta.setValue(JSON.stringify(card.meta));
+    const meta = card.meta;
+
+    const index = values.findIndex(value => getHash(value[indexes.front], value[indexes.back]) === meta.hash);
+    if (index !== -1) {
+      console.log('index: ', index);
+      console.log('card', card);
+    }
+
+
+
+
+    // const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
+    // const meta = match.pop();
+    // meta.setValue(JSON.stringify(card.meta));
   });
 }
 
