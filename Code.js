@@ -242,7 +242,7 @@ function shareFile(pack) {
         return null;
       }
     }
-    return `${url}?copy=${file.getUrl()}`;
+    return `${url}?copy=${file.getId()}`;
   }
   return null;
 }
