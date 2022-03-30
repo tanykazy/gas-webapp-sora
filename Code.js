@@ -165,7 +165,7 @@ function getCards(pack, deck) {
       value[indexes.repetition],
       value[indexes.interval],
       value[indexes.lasttime],
-      getHash(card.front, card.back));
+      getHash(card.id + card.front + card.back));
     card.meta = meta;
     return card;
   });
@@ -249,18 +249,21 @@ function updateMetadata(pack, deck, cards) {
 
   // console.log(cards);
   cards.forEach((card) => {
-    const meta = card.meta;
+    // const meta = card.meta;
 
-    const index = values.findIndex(value => getHash(value[indexes.front], value[indexes.back]) === meta.hash);
+    const index = values.findIndex(value => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.meta.hash);
     if (index !== -1) {
       console.log('index: ', index);
       console.log('card: ', card);
       console.log('range: ', range.getCell(index + 2, indexes.front + 1).getValues());
 
-      range.getCell(index + 2, indexes.efactor + 1).setValue(meta.efactor);
-      range.getCell(index + 2, indexes.lasttime + 1).setValue(meta.lasttime);
-      range.getCell(index + 2, indexes.interval + 1).setValue(meta.interval);
-      range.getCell(index + 2, indexes.repetition + 1).setValue(meta.repetition);
+      for (const [key, value] of Object.entries(card.meta)) {
+        range.getCell(index + 2, indexes[key] + 1).setValue(value);
+      }
+      // range.getCell(index + 2, indexes.efactor + 1).setValue(meta.efactor);
+      // range.getCell(index + 2, indexes.lasttime + 1).setValue(meta.lasttime);
+      // range.getCell(index + 2, indexes.interval + 1).setValue(meta.interval);
+      // range.getCell(index + 2, indexes.repetition + 1).setValue(meta.repetition);
     }
 
     // const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
