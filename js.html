@@ -199,9 +199,8 @@
         // this.updateMetadata(this.current.pack, this.current.deck, [card]);
         if (scale < 3) {
           this.current.deck.draft.push(card);
-        } else {
-          this.current.discard.push(card);
         }
+        this.current.discard.push(Object.assign(card));
         this.nextQuestion();
       },
       async onClickSyncButton() {

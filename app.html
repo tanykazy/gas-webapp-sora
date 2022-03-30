@@ -41,7 +41,7 @@
         </v-btn>
 
         <v-badge inline :content="current.discard.length" :value="current.discard.length">
-          <v-btn icon :loading="syncing" @click="onClickSyncButton()">
+          <v-btn icon :disabled="!current.discard.length" :loading="syncing" @click="onClickSyncButton()">
             <v-icon>sync</v-icon>
           </v-btn>
         </v-badge>
