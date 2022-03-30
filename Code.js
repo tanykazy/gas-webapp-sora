@@ -12,10 +12,8 @@ function doGet(e) {
   }
 
   let template = HtmlService.createTemplateFromFile('index');
-  const url = ScriptApp.getService().getUrl();
-  template.url = url;
-  const output = template.evaluate();
-  return output;
+  template.url = ScriptApp.getService().getUrl();
+  return template.evaluate();
 }
 
 // function setVersion(v) {
