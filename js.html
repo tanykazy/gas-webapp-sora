@@ -52,8 +52,8 @@
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
       }
-      console.log(this.packs);
-      console.log(this.current);
+      // console.log(this.packs);
+      // console.log(this.current);
     },
     async created() {
     },
@@ -81,8 +81,9 @@
         return '';
       },
       currentPackShareUrl() {
-        if (this.enableCurrentPackUrl && this.current.pack.shareUrl) {
-          console.log(this.current.pack.shareUrl);
+        if (this.enableCurrentPackUrl) {
+          // if (this.enableCurrentPackUrl && this.current.pack.shareUrl) {
+          // console.log(this.current.pack.shareUrl);
           return this.current.pack.shareUrl;
         }
         return '';
@@ -106,6 +107,9 @@
     watch: {
       'current.pack': {
         async handler(val, old) {
+          console.log('change current pack');
+          console.log('new: ', val);
+          console.log('old: ', old);
           this.breadcrumb.items = [];
           this.breadcrumb.items.push({
             text: val.name
@@ -121,8 +125,8 @@
       'current.deck': {
         async handler(val, old) {
           console.log('change current deck');
-          console.log(val);
-          console.log(old);
+          console.log('new: ', val);
+          console.log('old: ', old);
           if (old !== null) {
             this.breadcrumb.items.pop();
           }
@@ -149,6 +153,9 @@
       },
       'current.card': {
         async handler(val, old) {
+          console.log('change current card');
+          console.log('new: ', val);
+          console.log('old: ', old);
           this.disable = false;
           this.loading = false;
         },
