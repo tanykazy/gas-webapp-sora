@@ -146,7 +146,7 @@ function getCards(pack, deck) {
 
   const range = sheet.getDataRange();
   const values = range.getValues();
-  const head = values.pop();
+  const head = values.shift();
   console.log('heaer: ', head);
 
   const indexes = {};
