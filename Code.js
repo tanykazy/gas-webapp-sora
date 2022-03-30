@@ -82,8 +82,8 @@ function updatePacksInfo() {
 function getPacks() {
   Logger.log('request getPacks');
   try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
+    // const lock = LockService.getUserLock();
+    // lock.waitLock(10000);
 
     const infList = getPropertyList_();
     const packs = infList.map((inf) => {
@@ -92,8 +92,9 @@ function getPacks() {
         return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
       }
     });
+    Logger.log(packs);
 
-    lock.releaseLock();
+    // lock.releaseLock();
 
     return packs;
   } catch (error) {
