@@ -114,6 +114,17 @@ function getDecks(pack) {
   return decks;
 }
 
+const headers = {
+  id: 'ID',
+  front: 'Front',
+  back: 'Back',
+  efactor: 'E-Factor',
+  lasttime: 'Last time',
+  interval: 'Interval',
+  repetition: 'Repetition',
+  hash: 'Hash',
+};
+
 function getCards(pack, deck) {
   console.log('pack: ', pack);
   console.log('deck: ', deck);
@@ -133,36 +144,60 @@ function getCards(pack, deck) {
     }
 
     // console.log(sheet.getLastRow());
-    const cards = [];
-    for (let row = 2; row <= sheet.getLastRow(); row++) {
-      const range = sheet.getRange(`${row}:${row}`);
-      const value = range.getValues().pop();
-      const hash = getHash(value[1] + value[2]);
-      let match = range.createDeveloperMetadataFinder().withKey(hash).find();
 
-      // match.forEach((data) => data.remove());
-      // match = [];
+    const range = sheet.getDataRange();
+    const values = range.getValues();
+    const head = values.pop();
+    console.log('heaer: ', head);
 
-      let metadata = match.pop();
-      if (!metadata) {
-        metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
-        const data = new CardMetaData({});
-        data.id = metadata.getId();
-        data.hash = hash;
-        metadata.setValue(JSON.stringify(data));
-      } else {
-        match.forEach((data) => data.remove());
-      }
-      // console.log(metadata.getValue());
-      try {
-        cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
-      } catch (error) {
-        // console.log(error);
-        metadata.remove();
-      }
+    const indexes = {};
+
+    for (const [key, value] of Object.entries(headers)) {
+      indexes[key] = head.findIndex(h => h === value);
     }
-    // console.log(cards);
+
+    const cards = values.map(value => {
+      const card = new Card();
+      for (const [key, index] of Object.entries(indexes)) {
+        card[key] = index !== -1 ? value[index] : null;
+      }
+      card.hash = getHash(value[indexes.front] + value[indexes.back]);
+
+      return card;
+    });
+
     return cards;
+
+    // const cards = [];
+    // for (let row = 2; row <= sheet.getLastRow(); row++) {
+    //   const range = sheet.getRange(`${row}:${row}`);
+    //   const value = range.getValues().pop();
+    //   const hash = getHash(value[1] + value[2]);
+    //   let match = range.createDeveloperMetadataFinder().withKey(hash).find();
+
+    //   // match.forEach((data) => data.remove());
+    //   // match = [];
+
+    //   let metadata = match.pop();
+    //   if (!metadata) {
+    //     metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
+    //     const data = new CardMetaData({});
+    //     data.id = metadata.getId();
+    //     data.hash = hash;
+    //     metadata.setValue(JSON.stringify(data));
+    //   } else {
+    //     match.forEach((data) => data.remove());
+    //   }
+    //   // console.log(metadata.getValue());
+    //   try {
+    //     cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
+    //   } catch (error) {
+    //     // console.log(error);
+    //     metadata.remove();
+    //   }
+    // }
+    // // console.log(cards);
+    // return cards;
 
     // const range = sheet.getDataRange();
     // values = range.getValues();
@@ -190,6 +225,9 @@ function getCards(pack, deck) {
   } catch (error) {
     console.log(error);
   }
+}
+
+function initMetadata() {
 }
 
 function updateMetadata(pack, deck, cards) {
@@ -245,10 +283,6 @@ function shareFile(pack) {
     return `${url}?copy=${file.getId()}`;
   }
   return null;
-}
-
-function initMetadata(sheet) {
-  let metadata = sheet.getDeveloperMetadata();
 }
 
 function existFile_(id) {
