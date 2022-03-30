@@ -254,7 +254,8 @@ function updateMetadata(pack, deck, cards) {
     const index = values.findIndex(value => getHash(value[indexes.front], value[indexes.back]) === meta.hash);
     if (index !== -1) {
       console.log('index: ', index);
-      console.log('card', card);
+      console.log('card: ', card);
+      console.log('range: ', range.getCell(index + 1, indexes.front).getValues());
     }
 
 
