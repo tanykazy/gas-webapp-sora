@@ -81,6 +81,7 @@
       },
       currentPackShareUrl() {
         if (this.enableCurrentPackUrl && this.current.pack.shareUrl) {
+          console.log(this.current.pack.shareUrl);
           return this.current.pack.shareUrl;
         }
         return '';
@@ -220,9 +221,11 @@
         this.drawer = false;
       },
       async onClickShareButton() {
-        const result = await googleScriptRun('shareFile', this.current.pack);
-        this.current.pack.shareUrl = result;
+        if (!this.current.pack.shareUrl) {
+          this.current.pack.shareUrl = await googleScriptRun('shareFile', this.current.pack);
+        }
         this.dialogShare = true;
+        console.log(this.current);
       },
       async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackUrl);
