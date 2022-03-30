@@ -155,16 +155,18 @@ function getCards(pack, deck) {
     indexes[key] = head.findIndex(h => h === value);
   }
 
+  console.log('indexes: ', indexes);
+
   const cards = values.map(value => {
-    const card = new Card();
-    card.id = value[indexes.id];
-    card.front = value[indexes.front];
-    card.back = value[indexes.back];
-    const meta = new CardMetaData();
-    meta.efactor = value[indexes.efactor];
-    meta.repetition = value[indexes.repetition];
-    meta.interval = value[indexes.interval];
-    meta.lasttime = value[indexes.lasttime];
+    const card = new Card(
+      value[indexes.id],
+      value[indexes.front],
+      value[indexes.back]);
+    const meta = new CardMetaData(
+      value[indexes.efactor],
+      value[indexes.repetition],
+      value[indexes.interval],
+      value[indexes.lasttime]);
     meta.hash = getHash(card.front, card.back);
     card.meta = meta;
     return card;
@@ -359,12 +361,12 @@ class Pack {
 }
 
 class CardMetaData {
-  constructor(metadata) {
-    this.hash = '';
-    this.efactor = 0;
-    this.repetition = 0;
-    this.interval = 0;
-    this.lasttime = 0;
+  constructor(efactor, repetition, interval, lasttime) {
+    this.hash = null;
+    this.efactor = parseFloat(efactor || 0);
+    this.repetition = parseInt(repetition || 0);
+    this.interval = parseInt(interval || 0);
+    this.lasttime = parseInt(lasttime || 0);
   }
 }
 
