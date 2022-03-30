@@ -78,8 +78,8 @@
                 </v-btn>
               </transition>
               <transition name="flip">
-                <v-text-field v-show="flipshare" v-model="shareUrl" :loading="!shareUrl" label="File URL"
-                  hint=""></v-text-field>
+                <v-text-field readonly outlined v-show="flipshare" v-model="shareUrl" :loading="!shareUrl"
+                  label="File URL" hint=""></v-text-field>
               </transition>
             </v-card-text>
             <v-card-actions>
