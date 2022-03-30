@@ -223,6 +223,7 @@
       async onClickShareButton() {
         if (!this.current.pack.shareUrl) {
           this.current.pack.shareUrl = await googleScriptRun('shareFile', this.current.pack);
+          console.log(this.current.pack.shareUrl);
         }
         this.dialogShare = true;
         console.log(this.current);
