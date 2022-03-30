@@ -49,10 +49,11 @@
         // }
       });
       this.packs = await googleScriptRun('getPacks');
-      // console.log(this.packs);
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
       }
+      console.log(this.packs);
+      console.log(this.current);
     },
     async created() {
     },
