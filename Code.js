@@ -80,6 +80,7 @@ function updatePacksInfo() {
 }
 
 function getPacks() {
+  Logger.log('request getPacks');
   try {
     const lock = LockService.getUserLock();
     lock.waitLock(10000);
