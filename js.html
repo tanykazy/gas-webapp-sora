@@ -133,6 +133,7 @@
           console.log('change current deck');
           console.log('new: ', val);
           console.log('old: ', old);
+          this.current.card = null;
           if (old !== null) {
             this.breadcrumb.items.pop();
           }
@@ -153,7 +154,6 @@
           // if (val.draft.length > 0) {
           //   this.current.card = val.draft[getRandomInt(val.draft.length)];
           // }
-          this.current.card = null;
           console.log('nextQuestion');
           this.nextQuestion();
         },
