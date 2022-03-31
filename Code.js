@@ -5,8 +5,7 @@ const headers = {
   efactor: 'E-Factor',
   lasttime: 'Last time',
   interval: 'Interval',
-  repetition: 'Repetition',
-  // hash: 'Hash',
+  repetition: 'Repetition'
 };
 
 const headerArray = [
@@ -16,7 +15,7 @@ const headerArray = [
   headers.efactor,
   headers.lasttime,
   headers.interval,
-  headers.repetition,
+  headers.repetition
 ];
 
 function doGet(e) {
