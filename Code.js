@@ -83,15 +83,13 @@ function initPack(file) {
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   sheets.forEach((sheet) => {
-    const range = sheet.getDataRange();
-    console.log(sheet.getName());
-    console.log(range.getRow());
-    const values = range.getValues();
-    const head = values.shift();
+    const range = sheet.getRange('1:1');
+    const protection = range.protect();
+    if (protection.canEdit()) {
+      protection.setDescription('Do not edit this row.');
+      protection.setWarningOnly(true);
+    }
   });
-
-
-
 }
 
 function setMetadata() {
