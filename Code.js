@@ -435,7 +435,7 @@ class Pack {
 class CardMetaData {
   constructor(efactor, repetition, interval, lasttime) {
     efactor = parseFloat(efactor);
-    this.efactor = Number.isNaN(efactor) ? 0 : efactor;
+    this.efactor = Number.isNaN(efactor) ? 2.5 : efactor;
     repetition = parseInt(repetition);
     this.repetition = Number.isNaN(repetition) ? 0 : repetition;
     interval = parseInt(interval);
