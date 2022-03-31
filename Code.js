@@ -152,7 +152,7 @@ function insertHeader(sheet) {
   console.log(head.getValues());
   const newHead = head.insertCells(SpreadsheetApp.Dimension.ROWS);
   console.log(newHead.getValues());
-  headerArray.forEach((header) => {
+  headerArray.forEach((header, index) => {
     newHead.getCell(1, index + 1).setValue(header);
   });
 }
