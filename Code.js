@@ -67,6 +67,8 @@ function handleCopy(parameters) {
     for (const parameter of parameters) {
       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
         const file = getFileById_(parameter).makeCopy();
+        const spreadsheet = SpreadsheetApp.open(file);
+        initPack(spreadsheet);
         let inf = new PackInfo({});
         inf.parent = parameter;
         inf.id = file.getId();
@@ -100,19 +102,20 @@ function updatePacksInfo() {
   }
 }
 
-function initPack(file) {
-  const spreadsheet = SpreadsheetApp.open(file);
+function initPack(spreadsheet, isNew) {
   const sheets = spreadsheet.getSheets();
   sheets.forEach((sheet) => {
-
-    insertHeader(sheet);
-
-    const head = getHeadRange(sheet);
-    if (isHeader(head)) {
-      const protection = head.protect();
-      if (protection.canEdit()) {
-        protection.setDescription('Do not edit this row.');
-        protection.setWarningOnly(true);
+    if (isNew) {
+      addColumns(sheet);
+      insertHeader(sheet)
+    } else {
+      if (isDeckSheet(sheet)) {
+        const head = getHeadRange(sheet);
+        const protection = head.protect();
+        if (protection.canEdit()) {
+          protection.setDescription('Do not edit this row.');
+          protection.setWarningOnly(true);
+        }
       }
     }
   });
@@ -143,18 +146,18 @@ function isHeader(range) {
 }
 
 function insertHeader(sheet) {
+  const head = getHeadRange(sheet).insertCells(SpreadsheetApp.Dimension.ROWS);
+  headerArray.forEach((header, index) => {
+    head.getCell(1, index + 1).setValue(header);
+  });
+  return head;
+}
+
+function addColumns(sheet) {
   const maxColumns = sheet.getMaxColumns();
   if (maxColumns < headerArray.length) {
     sheet.insertColumns(maxColumns, headerArray.length - maxColumns);
   }
-  const head = getHeadRange(sheet);
-  console.log('insertHeader');
-  console.log(head.getValues());
-  const newHead = head.insertCells(SpreadsheetApp.Dimension.ROWS);
-  console.log(newHead.getValues());
-  headerArray.forEach((header, index) => {
-    newHead.getCell(1, index + 1).setValue(header);
-  });
 }
 
 function getPacks() {
@@ -167,9 +170,6 @@ function getPacks() {
     const packs = infList.map((inf) => {
       const file = getFileById_(inf.id);
       if (file !== null) {
-
-        initPack(file);
-
         const pack = new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
         if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
           const url = ScriptApp.getService().getUrl();
@@ -195,7 +195,9 @@ function getDecks(pack) {
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   const decks = sheets.map((sheet) => {
-    return new Deck(sheet.getSheetId(), sheet.getName());
+    if (isDeckSheet(sheet)) {
+      return new Deck(sheet.getSheetId(), sheet.getName());
+    }
   });
   return decks;
 }
@@ -249,9 +251,6 @@ function getCards(pack, deck) {
   return cards;
 }
 
-function initMetadata() {
-}
-
 function updateMetadata(pack, deck, cards) {
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
@@ -283,6 +282,8 @@ function updateMetadata(pack, deck, cards) {
 
 function createNewFile(name) {
   const spreadsheet = SpreadsheetApp.create(name);
+  initPack(spreadsheet, true);
+
   const packInfo = new PackInfo({});
   packInfo.id = spreadsheet.getId();
   packInfo.parent = null;
