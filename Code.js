@@ -275,10 +275,10 @@ function updateMetadata(pack, deck, cards) {
   console.log('indexes: ', indexes);
 
   cards.forEach((card) => {
-    const index = values.findIndex(value => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
+    const index = values.findIndex((value) => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
+    console.log('index: ', index);
+    console.log('card: ', card);
     if (index !== -1) {
-      console.log('index: ', index);
-      console.log('card: ', card);
       console.log('range: ', range.getCell(index + 2, indexes.front + 1).getValues());
 
       for (const [key, value] of Object.entries(card.meta)) {
