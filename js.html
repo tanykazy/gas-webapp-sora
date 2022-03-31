@@ -99,13 +99,13 @@
       },
       currentFront() {
         if (this.current.card !== null) {
-          return marked(this.current.card.front);
+          return marked.parse(this.current.card.front);
           // return this.current.card.front;
         }
       },
       currentBack() {
         if (this.current.card !== null) {
-          return marked(this.current.card.back);
+          return marked.parse(this.current.card.back);
           // return this.current.card.back;
         }
       },
