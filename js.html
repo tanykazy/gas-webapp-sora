@@ -53,6 +53,9 @@
       this.packs = await googleScriptRun('getPacks');
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
+        for (let index = 1; index < this.packs.length; index++) {
+          this.packs[index].decks = await googleScriptRun('getDecks', this.packs[index]);
+        }
       } else {
         this.dialogCreateNewFile = true;
       }
