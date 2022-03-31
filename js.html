@@ -28,9 +28,6 @@
           discard: [],
           change: false,
         },
-        breadcrumb: {
-          items: [],
-        },
         snackbar: false,
         snackbarText: '',
       };
@@ -119,23 +116,17 @@
           console.log('change current pack');
           console.log('new: ', val);
           console.log('old: ', old);
-          this.current.deck = null;
-          this.breadcrumb.items = [];
-          if(!val){
-            return;
-          }
-          this.breadcrumb.items.push({
-            text: val.name
-          });
-          if (!val.decks) {
-            val.decks = await googleScriptRun('getDecks', val);
-          }
-          if (val.decks.length > 0) {
-            this.current.deck = val.decks[0];
-          }
-          if (val.shareUrl) {
-            this.flipshare = true;
-            this.shareUrl = val.shareUrl;
+          if (val) {
+            if (!val.decks) {
+              val.decks = await googleScriptRun('getDecks', val);
+            }
+            if (val.decks.length > 0) {
+              this.current.deck = val.decks[0];
+            }
+            if (val.shareUrl) {
+              this.flipshare = true;
+              this.shareUrl = val.shareUrl;
+            }
           }
         },
       },
@@ -144,32 +135,22 @@
           console.log('change current deck');
           console.log('new: ', val);
           console.log('old: ', old);
-          this.current.card = null;
-          if(!val){
-            return;
+          if (val) {
+            if (!val.cards) {
+              console.log('getCards');
+              this.disable = true;
+              this.loading = true;
+              val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
+              this.disable = false;
+              this.loading = false;
+              console.log('getCards');
+            }
+            if (!val.draft) {
+              val.draft = val.cards.filter(card => card.isElapsed);
+            }
+            console.log('nextQuestion');
+            this.nextQuestion();
           }
-          if (old !== null) {
-            this.breadcrumb.items.pop();
-          }
-          this.breadcrumb.items.push({
-            text: val.name
-          });
-          if (!val.cards) {
-            console.log('getCards');
-            val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
-            console.log('getCards');
-          }
-          if (!val.draft) {
-            val.draft = val.cards.filter(card => card.isElapsed);
-          }
-          // if (val.cards.length > 0) {
-          //   this.current.card = val.cards[getRandomInt(val.cards.length)];
-          // }
-          // if (val.draft.length > 0) {
-          //   this.current.card = val.draft[getRandomInt(val.draft.length)];
-          // }
-          console.log('nextQuestion');
-          this.nextQuestion();
         },
       },
       'current.card': {
@@ -177,8 +158,6 @@
           console.log('change current card');
           console.log('new: ', val);
           console.log('old: ', old);
-          this.disable = false;
-          this.loading = false;
         },
       },
       async themeMode(value, old) {
@@ -232,22 +211,13 @@
         }
       },
       async onClickListItem(pack, deck) {
-        console.log('pack', pack);
-        console.log('deck', deck);
+        console.log('onClickListItem');
+        console.log('pack: ', pack);
+        console.log('deck: ', deck);
         if (this.current.pack !== pack) {
           this.current.pack = pack;
-        }
-        if (this.current.deck !== deck) {
-          // this.loading = true;
-          // if (!deck.cards) {
-          //   deck.cards = (await googleScriptRun('getCards', pack, deck)).map(card => new FunctionalCard(card));
-          // }
-          // if (!deck.draft) {
-          //   deck.draft = deck.cards.filter(card => card.isElapsed);
-          // }
+        } else if (this.current.deck !== deck) {
           this.current.deck = deck;
-          // this.nextQuestion();
-          // this.loading = false;
         }
         this.drawer = false;
       },

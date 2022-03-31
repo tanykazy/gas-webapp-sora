@@ -141,16 +141,19 @@
 
     <v-main>
       <v-container>
-        <v-row>
+        <!-- <v-row>
           <v-col>
             <v-breadcrumbs :items="breadcrumb.items"></v-breadcrumbs>
           </v-col>
-        </v-row>
+        </v-row> -->
 
         <v-row>
           <v-col>
             <transition name="flip">
               <v-card v-show="!reveal" :loading="loading" :disabled="loading">
+                <!-- <template slot="progress">
+                  <v-progress-linear v-model="10"></v-progress-linear>
+                </template> -->
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
                 <v-card-title v-html="currentFront"></v-card-title>
                 <v-card-text></v-card-text>
