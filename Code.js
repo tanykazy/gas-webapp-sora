@@ -251,8 +251,7 @@ function getCards(pack, deck) {
       value[indexes.efactor],
       value[indexes.repetition],
       value[indexes.interval],
-      value[indexes.lasttime],
-      getHash(card.id + card.front + card.back));
+      value[indexes.lasttime]);
     card.meta = meta;
     return card;
   });
@@ -277,7 +276,7 @@ function updateMetadata(pack, deck, cards) {
   console.log('indexes: ', indexes);
 
   cards.forEach((card) => {
-    const index = values.findIndex(value => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.meta.hash);
+    const index = values.findIndex(value => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
     if (index !== -1) {
       console.log('index: ', index);
       console.log('card: ', card);
@@ -383,6 +382,7 @@ class Card {
     this.front = front;
     this.back = back;
     this.meta = meta;
+    this.hash = getHash(id + front + back);
   }
 }
 
@@ -407,8 +407,7 @@ class Pack {
 }
 
 class CardMetaData {
-  constructor(efactor, repetition, interval, lasttime, hash) {
-    this.hash = hash;
+  constructor(efactor, repetition, interval, lasttime) {
     efactor = parseFloat(efactor);
     this.efactor = Number.isNaN(efactor) ? 0 : efactor;
     repetition = parseInt(repetition);
