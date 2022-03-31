@@ -194,11 +194,18 @@ function getDecks(pack) {
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
-  const decks = sheets.map((sheet) => {
+  const decks = [];
+  for (const sheet of sheets) {
     if (isDeckSheet(sheet)) {
-      return new Deck(sheet.getSheetId(), sheet.getName());
+      decks.push(new Deck(sheet.getSheetId(), sheet.getName()));
     }
-  });
+  }
+  // const decks = sheets.map((sheet) => {
+  //   if (isDeckSheet(sheet)) {
+  //     return new Deck(sheet.getSheetId(), sheet.getName());
+  //   }
+  // });
+  console.log('decks: ', decks);
   return decks;
 }
 
