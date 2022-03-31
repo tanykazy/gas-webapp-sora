@@ -129,10 +129,10 @@ function initPack(spreadsheet, isNew) {
 
         for (let index = 1; index < range.getNumRows(); index++) {
           for (const key in metadataHeaders) {
-            console.log('index: ', index, '  key: ', key);
-            console.log(range.getCell(index, indexes[key]).getValues());
+            // console.log('index: ', index, '  key: ', key);
+            // console.log(range.getCell(index, indexes[key]).getValues());
 
-            range.getCell(index, indexes[key]).setValue('');
+            range.getCell(index + 1, indexes[key] + 1).setValue('');
           }
         }
         const header = getHeadRange(sheet);
