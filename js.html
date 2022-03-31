@@ -209,7 +209,7 @@
         if (scale < 3) {
           this.current.deck.draft.push(card);
         }
-        this.current.discard.push(Object.assign(card));
+        this.current.discard.push(Object.assign({}, card));
         this.nextQuestion();
       },
       async onClickSyncButton() {
@@ -349,6 +349,7 @@
       this.id = card.id;
       this.front = card.front;
       this.back = card.back;
+      this.hash = card.hash;
       this.meta = card.meta;
     }
     evalCard(scale) {
