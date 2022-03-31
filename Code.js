@@ -133,7 +133,6 @@ function initPack(spreadsheet, isNew) {
         for (const key in metadataHeaders) {
           // console.log('index: ', index, '  key: ', key);
           // console.log(range.getCell(index, indexes[key]).getValues());
-
           range.getCell(index + 1, indexes[key] + 1).setValue('');
         }
       }

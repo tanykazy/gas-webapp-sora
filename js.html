@@ -119,7 +119,11 @@
           console.log('change current pack');
           console.log('new: ', val);
           console.log('old: ', old);
+          this.current.deck = null;
           this.breadcrumb.items = [];
+          if(!val){
+            return;
+          }
           this.breadcrumb.items.push({
             text: val.name
           });
@@ -141,6 +145,9 @@
           console.log('new: ', val);
           console.log('old: ', old);
           this.current.card = null;
+          if(!val){
+            return;
+          }
           if (old !== null) {
             this.breadcrumb.items.pop();
           }
