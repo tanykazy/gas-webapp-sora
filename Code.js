@@ -72,7 +72,7 @@ function handleCopy(parameters) {
     let infList = getPropertyList_();
     // console.log(infList);
     for (const parameter of parameters) {
-      if (true) {
+      if (parameter) {
         if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
           const file = getFileById_(parameter).makeCopy();
           const spreadsheet = SpreadsheetApp.open(file);
