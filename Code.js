@@ -104,6 +104,9 @@ function initPack(file) {
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   sheets.forEach((sheet) => {
+
+    insertHeader(sheet);
+
     const head = getHeadRange(sheet);
     if (isHeader(head)) {
       const protection = head.protect();
