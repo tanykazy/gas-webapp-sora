@@ -123,8 +123,9 @@ function isHeader(range) {
 
 function insertHeader(sheet) {
   const head = getHeadRange(sheet);
+  console.log('insertHeader');
   console.log(head.getValues());
-  const tmp = head.insertCells(SpreadsheetApp.Dimension.COLUMNS);
+  const tmp = head.insertCells(SpreadsheetApp.Dimension.ROWS);
   console.log(tmp.getValues());
 }
 
