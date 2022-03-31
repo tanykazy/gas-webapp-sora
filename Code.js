@@ -113,7 +113,7 @@ function isDeckSheet(sheet) {
 
 function isHeader(range) {
   const head = range.getValues();
-  for (const value of headers) {
+  for (const value of Object.values(headers)) {
     if (!head.includes(value)) {
       return false;
     }
