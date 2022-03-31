@@ -27,7 +27,7 @@ const headerArray = [
 
 
 function doGet(e) {
-  // console.log(e);
+  console.log(e);
 
   // setVersion(0.1);
   // const userProperties = PropertiesService.getUserProperties();
@@ -72,14 +72,16 @@ function handleCopy(parameters) {
     let infList = getPropertyList_();
     // console.log(infList);
     for (const parameter of parameters) {
-      if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
-        const file = getFileById_(parameter).makeCopy();
-        const spreadsheet = SpreadsheetApp.open(file);
-        initPack(spreadsheet);
-        let inf = new PackInfo({});
-        inf.parent = parameter;
-        inf.id = file.getId();
-        infList.push(inf);
+      if (true) {
+        if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
+          const file = getFileById_(parameter).makeCopy();
+          const spreadsheet = SpreadsheetApp.open(file);
+          initPack(spreadsheet);
+          let inf = new PackInfo({});
+          inf.parent = parameter;
+          inf.id = file.getId();
+          infList.push(inf);
+        }
       }
     }
     setProperty_('list', infList);
@@ -115,32 +117,31 @@ function initPack(spreadsheet, isNew) {
     if (isNew) {
       addColumns(sheet);
       insertHeader(sheet)
-    } else {
-      if (isDeckSheet(sheet)) {
-        const range = sheet.getDataRange();
-        const values = range.getValues();
-        const head = values.shift();
+    }
+    if (isNew || isDeckSheet(sheet)) {
+      const range = sheet.getDataRange();
+      const values = range.getValues();
+      const head = values.shift();
 
-        const indexes = {};
-        for (const [key, value] of Object.entries(metadataHeaders)) {
-          indexes[key] = head.findIndex(h => h === value);
-        }
-        console.log('indexes: ', indexes);
+      const indexes = {};
+      for (const [key, value] of Object.entries(metadataHeaders)) {
+        indexes[key] = head.findIndex(h => h === value);
+      }
+      console.log('indexes: ', indexes);
 
-        for (let index = 1; index < range.getNumRows(); index++) {
-          for (const key in metadataHeaders) {
-            // console.log('index: ', index, '  key: ', key);
-            // console.log(range.getCell(index, indexes[key]).getValues());
+      for (let index = 1; index < range.getNumRows(); index++) {
+        for (const key in metadataHeaders) {
+          // console.log('index: ', index, '  key: ', key);
+          // console.log(range.getCell(index, indexes[key]).getValues());
 
-            range.getCell(index + 1, indexes[key] + 1).setValue('');
-          }
+          range.getCell(index + 1, indexes[key] + 1).setValue('');
         }
-        const header = getHeadRange(sheet);
-        const protection = header.protect();
-        if (protection.canEdit()) {
-          protection.setDescription('Do not edit this row.');
-          protection.setWarningOnly(true);
-        }
+      }
+      const header = getHeadRange(sheet);
+      const protection = header.protect();
+      if (protection.canEdit()) {
+        protection.setDescription('Do not edit this row.');
+        protection.setWarningOnly(true);
       }
     }
   });
