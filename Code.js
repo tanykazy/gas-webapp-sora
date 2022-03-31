@@ -1,3 +1,24 @@
+const headers = {
+  id: 'ID',
+  front: 'Front',
+  back: 'Back',
+  efactor: 'E-Factor',
+  lasttime: 'Last time',
+  interval: 'Interval',
+  repetition: 'Repetition',
+  // hash: 'Hash',
+};
+
+const headerArray = [
+  headers.id,
+  headers.front,
+  headers.back,
+  headers.efactor,
+  headers.lasttime,
+  headers.interval,
+  headers.repetition,
+];
+
 function doGet(e) {
   // console.log(e);
 
@@ -83,9 +104,6 @@ function initPack(file) {
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   sheets.forEach((sheet) => {
-
-    insertHeader(sheet);
-
     const head = getHeadRange(sheet);
     if (isHeader(head)) {
       const protection = head.protect();
@@ -99,7 +117,7 @@ function initPack(file) {
 
 function getHeadRange(sheet) {
   const range = sheet.getDataRange();
-  const head = range.offset(0, 0, 1, range.getNumColumns());
+  const head = range.offset(0, 0, 1, headerArray.length);
   return head;
 }
 
@@ -122,14 +140,18 @@ function isHeader(range) {
 }
 
 function insertHeader(sheet) {
+  const maxColumns = sheet.getMaxColumns();
+  if (maxColumns < headerArray.length) {
+    sheet.insertColumns(maxColumns, headerArray.length - maxColumns);
+  }
   const head = getHeadRange(sheet);
   console.log('insertHeader');
   console.log(head.getValues());
-  const tmp = head.insertCells(SpreadsheetApp.Dimension.ROWS);
+  const newHead = head.insertCells(SpreadsheetApp.Dimension.ROWS);
   console.log(tmp.getValues());
-  for (let index = 0; index < headerArray.length; index++) {
-    tmp.getCell(1, index + 1).setValue(headerArray[index]);
-  }
+  headerArray.forEach((header) => {
+    newHead.getCell(1, index + 1).setValue(header);
+  });
 }
 
 function getPacks() {
@@ -174,27 +196,6 @@ function getDecks(pack) {
   });
   return decks;
 }
-
-const headers = {
-  id: 'ID',
-  front: 'Front',
-  back: 'Back',
-  efactor: 'E-Factor',
-  lasttime: 'Last time',
-  interval: 'Interval',
-  repetition: 'Repetition',
-  // hash: 'Hash',
-};
-
-const headerArray = [
-  headers.id,
-  headers.front,
-  headers.back,
-  headers.efactor,
-  headers.lasttime,
-  headers.interval,
-  headers.repetition,
-];
 
 function getCards(pack, deck) {
   console.log('pack: ', pack);
