@@ -124,6 +124,7 @@ function initPack(spreadsheet, isNew) {
 function getHeadRange(sheet) {
   const range = sheet.getDataRange();
   const head = range.offset(0, 0, 1, headerArray.length);
+  console.log(head.getValues());
   return head;
 }
 
