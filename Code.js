@@ -349,6 +349,7 @@ function getFileById_(id) {
   } catch (error) {
     console.log(error);
   }
+  throw `This file [${id}] not found.`;
   return null;
 }
 
