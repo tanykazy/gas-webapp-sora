@@ -12,7 +12,7 @@ const metadataHeaders = {
   efactor: 'E-Factor',
   lasttime: 'Last time',
   interval: 'Interval',
-  repetition: 'Repetition'
+  repetition: 'Repetition',
 };
 
 const headerArray = [
@@ -122,13 +122,15 @@ function initPack(spreadsheet, isNew) {
         const head = values.shift();
 
         const indexes = {};
-        for (const [key, value] of Object.entries(headers)) {
+        for (const [key, value] of Object.entries(metadataHeaders)) {
           indexes[key] = head.findIndex(h => h === value);
         }
         console.log('indexes: ', indexes);
 
         for (let index = 1; index < range.getNumRows(); index++) {
           for (const key in metadataHeaders) {
+            console.log(range.getCell(index, indexes[key]));
+
             range.getCell(index, indexes[key]).setValue('');
           }
         }
