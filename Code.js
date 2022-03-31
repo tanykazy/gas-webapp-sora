@@ -409,10 +409,14 @@ class Pack {
 class CardMetaData {
   constructor(efactor, repetition, interval, lasttime, hash) {
     this.hash = hash;
-    this.efactor = parseFloat(efactor || 0);
-    this.repetition = parseInt(repetition || 0);
-    this.interval = parseInt(interval || 0);
-    this.lasttime = parseInt(lasttime || 0);
+    efactor = parseFloat(efactor);
+    this.efactor = Number.isNaN(efactor) ? 0 : efactor;
+    repetition = parseInt(repetition);
+    this.repetition = Number.isNaN(repetition) ? 0 : repetition;
+    interval = parseInt(interval);
+    this.interval = Number.isNaN(interval) ? 0 : interval;
+    lasttime = parseInt(lasttime);
+    this.lasttime = Number.isNaN(lasttime) ? 0 : lasttime;
   }
 }
 
