@@ -119,12 +119,12 @@ function initPack(spreadsheet, isNew) {
         }
         console.log('indexes: ', indexes);
 
-        for (let index = 0; index < range.getNumRows(); index++) {
+        for (let index = 1; index < range.getNumRows(); index++) {
           for (const key in headers) {
-            range.getCell(index + 2, indexes[key] + 1).setValue('');
+            range.getCell(index, indexes[key]).setValue('');
           }
         }
-        const header = getHeadRange(sheet);
+        const header  = getHeadRange(sheet);
         const protection = header.protect();
         if (protection.canEdit()) {
           protection.setDescription('Do not edit this row.');
