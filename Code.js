@@ -131,8 +131,10 @@ function getHeadRange(sheet) {
 function isDeckSheet(sheet) {
   const head = getHeadRange(sheet);
   if (isHeader(head)) {
+    console.log('deck!');
     return true;
   }
+  console.log('not deck!');
   return false;
 }
 
