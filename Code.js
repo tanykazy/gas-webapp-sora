@@ -129,7 +129,7 @@ function initPack(spreadsheet, isNew) {
 
         for (let index = 1; index < range.getNumRows(); index++) {
           for (const key in metadataHeaders) {
-            console.log(range.getCell(index, indexes[key]));
+            console.log(range.getCell(index, indexes[key]).getValues());
 
             range.getCell(index, indexes[key]).setValue('');
           }
