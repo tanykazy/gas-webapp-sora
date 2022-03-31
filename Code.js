@@ -341,9 +341,10 @@ function getFileById_(id) {
   try {
     const file = DriveApp.getFileById(id);
     if (file !== null) {
-      if (!file.isTrashed()) {
-        return file;
+      if (file.isTrashed()) {
+        throw `This file [${id}] has been deleted.`;
       }
+      return file;
     }
   } catch (error) {
     console.log(error);
