@@ -8,6 +8,13 @@ const headers = {
   repetition: 'Repetition'
 };
 
+const metadataHeaders = {
+  efactor: 'E-Factor',
+  lasttime: 'Last time',
+  interval: 'Interval',
+  repetition: 'Repetition'
+};
+
 const headerArray = [
   headers.id,
   headers.front,
@@ -17,6 +24,7 @@ const headerArray = [
   headers.interval,
   headers.repetition
 ];
+
 
 function doGet(e) {
   // console.log(e);
@@ -120,11 +128,11 @@ function initPack(spreadsheet, isNew) {
         console.log('indexes: ', indexes);
 
         for (let index = 1; index < range.getNumRows(); index++) {
-          for (const key in headers) {
+          for (const key in metadataHeaders) {
             range.getCell(index, indexes[key]).setValue('');
           }
         }
-        const header  = getHeadRange(sheet);
+        const header = getHeadRange(sheet);
         const protection = header.protect();
         if (protection.canEdit()) {
           protection.setDescription('Do not edit this row.');
