@@ -139,7 +139,7 @@ function isDeckSheet(sheet) {
 }
 
 function isHeader(range) {
-  const head = range.getValues();
+  const head = range.getValues().shift();
   for (const value of Object.values(headers)) {
     if (!head.includes(value)) {
       return false;
