@@ -83,18 +83,49 @@ function initPack(file) {
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   sheets.forEach((sheet) => {
-    const range = sheet.getDataRange();
-    const head = range.offset(0, 0, 1, range.getNumColumns());
-    const protection = head.protect();
-    if (protection.canEdit()) {
-      protection.setDescription('Do not edit this row.');
-      protection.setWarningOnly(true);
+
+    insertHeader(sheet);
+
+    const head = getHeadRange(sheet);
+    if (isHeader(head)) {
+      const protection = head.protect();
+      if (protection.canEdit()) {
+        protection.setDescription('Do not edit this row.');
+        protection.setWarningOnly(true);
+      }
     }
   });
 }
 
-function setMetadata() {
+function getHeadRange(sheet) {
+  const range = sheet.getDataRange();
+  const head = range.offset(0, 0, 1, range.getNumColumns());
+  return head;
+}
 
+function isDeckSheet(sheet) {
+  const head = getHeadRange(sheet);
+  if (isHeader(head)) {
+    return true;
+  }
+  return false;
+}
+
+function isHeader(range) {
+  const head = range.getValues();
+  for (const value of headers) {
+    if (!head.includes(value)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function insertHeader(sheet) {
+  const head = getHeadRange(sheet);
+  console.log(head.getValues());
+  const tmp = head.insertCells(SpreadsheetApp.Dimension.COLUMNS);
+  console.log(tmp.getValues());
 }
 
 function getPacks() {
@@ -173,7 +204,7 @@ function getCards(pack, deck) {
   const range = sheet.getDataRange();
   const values = range.getValues();
   const head = values.shift();
-  console.log('heaer: ', head);
+  console.log('header: ', head);
 
   const indexes = {};
   for (const [key, value] of Object.entries(headers)) {
