@@ -127,6 +127,9 @@ function insertHeader(sheet) {
   console.log(head.getValues());
   const tmp = head.insertCells(SpreadsheetApp.Dimension.ROWS);
   console.log(tmp.getValues());
+  for (let index = 0; index < headerArray.length; index++) {
+    tmp.getCell(1, index + 1).setValue(headerArray[index]);
+  }
 }
 
 function getPacks() {
@@ -182,6 +185,16 @@ const headers = {
   repetition: 'Repetition',
   // hash: 'Hash',
 };
+
+const headerArray = [
+  headers.id,
+  headers.front,
+  headers.back,
+  headers.efactor,
+  headers.lasttime,
+  headers.interval,
+  headers.repetition,
+];
 
 function getCards(pack, deck) {
   console.log('pack: ', pack);
