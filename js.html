@@ -224,6 +224,9 @@
       async onClickListItem(pack, deck) {
         console.log('pack', pack);
         console.log('deck', deck);
+        if (this.current.pack !== pack) {
+          this.current.pack = pack;
+        }
         if (this.current.deck !== deck) {
           // this.loading = true;
           // if (!deck.cards) {
