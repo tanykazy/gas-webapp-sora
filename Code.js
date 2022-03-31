@@ -83,8 +83,9 @@ function initPack(file) {
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
   sheets.forEach((sheet) => {
-    const range = sheet.getRange('1:1');
-    const protection = range.protect();
+    const range = sheet.getDataRange();
+    const head = range.offset(0, 0, 1, range.getNumColumns());
+    const protection = head.protect();
     if (protection.canEdit()) {
       protection.setDescription('Do not edit this row.');
       protection.setWarningOnly(true);
@@ -147,7 +148,7 @@ const headers = {
   lasttime: 'Last time',
   interval: 'Interval',
   repetition: 'Repetition',
-  hash: 'Hash',
+  // hash: 'Hash',
 };
 
 function getCards(pack, deck) {
