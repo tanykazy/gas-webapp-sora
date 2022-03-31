@@ -109,8 +109,23 @@ function initPack(spreadsheet, isNew) {
       insertHeader(sheet)
     } else {
       if (isDeckSheet(sheet)) {
-        const head = getHeadRange(sheet);
-        const protection = head.protect();
+        const range = sheet.getDataRange();
+        const values = range.getValues();
+        const head = values.shift();
+
+        const indexes = {};
+        for (const [key, value] of Object.entries(headers)) {
+          indexes[key] = head.findIndex(h => h === value);
+        }
+        console.log('indexes: ', indexes);
+
+        for (let index = 0; index < range.getNumRows(); index++) {
+          for (const key in headers) {
+            range.getCell(index + 2, indexes[key] + 1).setValue('');
+          }
+        }
+        const header = getHeadRange(sheet);
+        const protection = header.protect();
         if (protection.canEdit()) {
           protection.setDescription('Do not edit this row.');
           protection.setWarningOnly(true);
