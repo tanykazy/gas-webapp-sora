@@ -44,6 +44,40 @@ function doGet(e) {
   return template.evaluate();
 }
 
+function getAppFolder() {
+  try {
+    const lock = LockService.getUserLock();
+    lock.waitLock(10000);
+
+    let folderId = getProperty_('dir');
+    let folder = null;
+    if (folderId) {
+      try {
+        folder = DriveApp.getFolderById(folderId);
+        // if (folder.isTrashed()) {
+        //   folder = DriveApp.createFolder('Flashcard');
+        //   folderId = folder.getId();
+        // }
+      } catch (error) {
+        console.log(error);
+
+        folder = DriveApp.createFolder('Flashcard');
+        folderId = folder.getId();
+      }
+    } else {
+      folder = DriveApp.createFolder('Flashcard');
+      folderId = folder.getId();
+    }
+    setProperty_('dir', folderId);
+
+    lock.releaseLock();
+    return folder;
+  } catch (error) {
+    console.log('Could not obtain lock after 10 seconds.');
+    throw error;
+  }
+}
+
 // function setVersion(v) {
 //   try {
 //     const lock = LockService.getUserLock();
@@ -65,6 +99,24 @@ function doGet(e) {
 // }
 
 function handleCopy(parameters) {
+  const folder = getAppFolder();
+
+  for (const parameter of parameters) {
+    if (parameter) {
+      try {
+        const file = DriveApp.getFileById(id);
+        // if (file.isTrashed()) {
+        //   throw `This file [${id}] has been deleted.`;
+        // }
+        file.makeCopy(folder);
+      } catch (error) {
+        console.log(error);
+        throw `the file does not exist or the user does not have permission to access it.`;
+      }
+    }
+  }
+
+
   try {
     const lock = LockService.getUserLock();
     lock.waitLock(10000);
