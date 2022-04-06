@@ -111,38 +111,37 @@ function handleCopy(parameters) {
         file.makeCopy(folder);
       } catch (error) {
         console.log(error);
-        throw `the file does not exist or the user does not have permission to access it.`;
+        throw `The file does not exist or the user does not have permission to access it.`;
       }
     }
   }
 
+  // try {
+  //   const lock = LockService.getUserLock();
+  //   lock.waitLock(10000);
 
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
+  //   let infList = getPropertyList_();
+  //   // console.log(infList);
+  //   for (const parameter of parameters) {
+  //     if (parameter) {
+  //       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
+  //         const file = getFileById_(parameter).makeCopy();
+  //         const spreadsheet = SpreadsheetApp.open(file);
+  //         initPack(spreadsheet);
+  //         let inf = new PackInfo({});
+  //         inf.parent = parameter;
+  //         inf.id = file.getId();
+  //         infList.push(inf);
+  //       }
+  //     }
+  //   }
+  //   setProperty_('list', infList);
 
-    let infList = getPropertyList_();
-    // console.log(infList);
-    for (const parameter of parameters) {
-      if (parameter) {
-        if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
-          const file = getFileById_(parameter).makeCopy();
-          const spreadsheet = SpreadsheetApp.open(file);
-          initPack(spreadsheet);
-          let inf = new PackInfo({});
-          inf.parent = parameter;
-          inf.id = file.getId();
-          infList.push(inf);
-        }
-      }
-    }
-    setProperty_('list', infList);
-
-    lock.releaseLock();
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
-  }
+  //   lock.releaseLock();
+  // } catch (error) {
+  //   console.log('Could not obtain lock after 10 seconds.');
+  //   throw error;
+  // }
 }
 
 function updatePacksInfo() {
@@ -242,31 +241,54 @@ function addColumns(sheet) {
 
 function getPacks() {
   Logger.log('request getPacks');
-  try {
-    // const lock = LockService.getUserLock();
-    // lock.waitLock(10000);
 
-    const infList = getPropertyList_();
-    const packs = infList.map((inf) => {
-      const file = getFileById_(inf.id);
-      if (file !== null) {
-        const pack = new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
-        if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
-          const url = ScriptApp.getService().getUrl();
-          pack.shareUrl = `${url}?copy=${file.getId()}`;
-        }
-        return pack;
-      }
-    });
-    Logger.log(packs);
-
-    // lock.releaseLock();
-
-    return packs;
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
+  const appFolder = getAppFolder();
+  if (!appFolder) {
+    console.log('Fail getAppFolder()');
+    throw 'Fail getAppFolder()';
   }
+  const packs = [];
+  const files = appFolder.getFiles();
+  while (files.hasNext()) {
+    let file = files.next();
+    let type = file.getMimeType();
+    if (type === MimeType.GOOGLE_SHEETS) {
+      console.log(file.getName());
+      const pack = new Pack(file.getId(), file.getName(), file.getUrl());
+      if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
+        const url = ScriptApp.getService().getUrl();
+        pack.shareUrl = `${url}?copy=${file.getId()}`;
+      }
+      packs.push(pack);
+    }
+  }
+  return packs;
+
+  // try {
+  //   // const lock = LockService.getUserLock();
+  //   // lock.waitLock(10000);
+
+  //   const infList = getPropertyList_();
+  //   const packs = infList.map((inf) => {
+  //     const file = getFileById_(inf.id);
+  //     if (file !== null) {
+  //       const pack = new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
+  //       if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
+  //         const url = ScriptApp.getService().getUrl();
+  //         pack.shareUrl = `${url}?copy=${file.getId()}`;
+  //       }
+  //       return pack;
+  //     }
+  //   });
+  //   Logger.log(packs);
+
+  //   // lock.releaseLock();
+
+  //   return packs;
+  // } catch (error) {
+  //   console.log('Could not obtain lock after 10 seconds.');
+  //   throw error;
+  // }
 }
 
 function getDecks(pack) {
