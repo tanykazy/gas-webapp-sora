@@ -100,22 +100,37 @@ function getAppFolder() {
 
 function handleCopy(parameters) {
   const folder = getAppFolder();
-
+  const files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+  const parents = [];
+  while (files.hasNext()) {
+    const file = files.next();
+    const spreadsheet = SpreadsheetApp.open(file);
+    const metadata = spreadsheet.createDeveloperMetadataFinder()
+      .withKey('parent')
+      .withLocationType(SpreadsheetApp.DeveloperMetadataLocationType.SPREADSHEET)
+      .find();
+    for (const data of metadata) {
+      parents.push(data.getValue());
+    }
+  }
   for (const parameter of parameters) {
     if (parameter) {
-      try {
-        const file = DriveApp.getFileById(parameter);
-        // if (file.isTrashed()) {
-        //   throw `This file [${id}] has been deleted.`;
-        // }
-        file.makeCopy(folder);
-      } catch (error) {
-        console.log(error);
-        throw `The file does not exist or the user does not have permission to access it.`;
+      if (!parents.includes(parameter)) {
+        try {
+          let file = DriveApp.getFileById(parameter);
+          // if (file.isTrashed()) {
+          //   throw `This file [${id}] has been deleted.`;
+          // }
+          file = file.makeCopy(folder);
+          const spreadsheet = SpreadsheetApp.open(file);
+          spreadsheet.addDeveloperMetadata('parent', parameter);
+        } catch (error) {
+          console.log(error);
+          throw `The file does not exist or the user does not have permission to access it.`;
+        }
       }
     }
   }
-
   // try {
   //   const lock = LockService.getUserLock();
   //   lock.waitLock(10000);
