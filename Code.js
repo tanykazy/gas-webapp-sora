@@ -104,7 +104,7 @@ function handleCopy(parameters) {
   for (const parameter of parameters) {
     if (parameter) {
       try {
-        const file = DriveApp.getFileById(id);
+        const file = DriveApp.getFileById(parameter);
         // if (file.isTrashed()) {
         //   throw `This file [${id}] has been deleted.`;
         // }
