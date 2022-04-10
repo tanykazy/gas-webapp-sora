@@ -124,6 +124,7 @@ function handleCopy(parameters) {
           file = file.makeCopy(folder);
           const spreadsheet = SpreadsheetApp.open(file);
           spreadsheet.addDeveloperMetadata('parent', parameter);
+          initPack(spreadsheet);
         } catch (error) {
           console.log(error);
           throw `The file does not exist or the user does not have permission to access it.`;
