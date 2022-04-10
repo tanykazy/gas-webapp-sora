@@ -4,6 +4,30 @@
   const app = new Vue({
     el: '#app',
     vuetify: new Vuetify({
+      theme: {
+        themes: {
+          light: {
+            primary: '#93a1a1',
+            secondary: '#586e75',
+            // accent: '#859900',
+            // error: '#CB4B16',
+            // info: '#D33682',
+            // success: '#6C71C4',
+            // warning: '#B58900',
+            background: "#fdf6e3",
+          },
+          dark: {
+            primary: '#586e75',
+            secondary: '#93a1a1',
+            // accent: '#82B1FF',
+            // error: '#FF5252',
+            // info: '#2196F3',
+            // success: '#4CAF50',
+            // warning: '#FFC107',
+            background: "#002b36",
+          }
+        }
+      }
     }),
     data() {
       return {
@@ -26,8 +50,8 @@
           deck: null,
           card: null,
           discard: [],
-          change: false,
         },
+        change: false,
         snackbar: false,
         snackbarText: '',
       };
@@ -50,14 +74,9 @@
       this.packs = await googleScriptRun('getPacks');
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
-        for (let index = 1; index < this.packs.length; index++) {
-          this.packs[index].decks = await googleScriptRun('getDecks', this.packs[index]);
-        }
       } else {
         this.dialogCreateNewFile = true;
       }
-      // console.log(this.packs);
-      // console.log(this.current);
     },
     async created() {
     },
@@ -69,8 +88,64 @@
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
+      theme() {
+        return this.$vuetify.theme.dark ? "dark" : "light";
+      },
       isOverlay() {
         return this.dialogCreateNewFile || this.dialogShare;
+      },
+      allcards() {
+        let num = 0;
+        if (this.packs) {
+          this.packs.forEach(pack => {
+            if (pack.decks) {
+              pack.decks.forEach(deck => {
+                if (deck.cards) {
+                  num += deck.cards.length;
+                }
+              });
+            }
+          });
+        }
+        console.log('allcards: ', num);
+        return num;
+      },
+      alldraft() {
+        let num = 0;
+        if (this.packs) {
+          this.packs.forEach(pack => {
+            if (pack.decks) {
+              pack.decks.forEach(deck => {
+                if (deck.draft) {
+                  num += deck.draft.length;
+                }
+              });
+            }
+          });
+        }
+        console.log('alldraft: ', num);
+        return num;
+      },
+      progress() {
+        let cardnum = 0;
+        let draftnum = 0;
+        if (this.packs) {
+          this.packs.forEach(pack => {
+            if (pack.decks) {
+              pack.decks.forEach(deck => {
+                if (deck.cards) {
+                  cardnum += deck.cards.length;
+                }
+                if (deck.draft) {
+                  draftnum += deck.draft.length;
+                }
+              });
+            }
+          });
+        }
+        cardnum = cardnum === 0 ? 1 : cardnum;
+        console.log(draftnum / cardnum * 100);
+        return draftnum / cardnum * 100;
       },
       enableCurrentPackUrl() {
         if (this.current.pack !== null) {
@@ -111,53 +186,69 @@
       },
     },
     watch: {
+      'packs': {
+        async handler(packs, old) {
+          console.log('packs:', old, '->', packs);
+          for (let packIndex = 1; packIndex < packs.length; packIndex++) {
+            if (!packs[packIndex].decks) {
+              packs[packIndex].decks = await googleScriptRun('getDecks', packs[packIndex]);
+              for (let deckIndex = 0; deckIndex < packs[packIndex].decks.length; deckIndex++) {
+                if (!packs[packIndex].decks[deckIndex].cards) {
+                  packs[packIndex].decks[deckIndex].cards = (await googleScriptRun('getCards', packs[packIndex], packs[packIndex].decks[deckIndex])).map(card => new FunctionalCard(card));
+                  if (!packs[packIndex].decks[deckIndex].draft) {
+                    packs[packIndex].decks[deckIndex].draft = packs[packIndex].decks[deckIndex].cards.filter(card => card.isElapsed);
+                  }
+                }
+              }
+            }
+          }
+
+        }
+      },
       'current.pack': {
-        async handler(val, old) {
-          console.log('change current pack');
-          console.log('new: ', val);
-          console.log('old: ', old);
-          if (val) {
-            if (!val.decks) {
-              val.decks = await googleScriptRun('getDecks', val);
+        async handler(pack, old) {
+          console.log('current.pack:', old, '->', pack);
+          if (pack) {
+            if (!pack.decks) {
+              pack.decks = await googleScriptRun('getDecks', pack);
             }
-            if (val.decks.length > 0) {
-              this.current.deck = val.decks[0];
+            if (pack.decks.length > 0) {
+              this.current.deck = pack.decks[0];
             }
-            if (val.shareUrl) {
+            if (pack.shareUrl) {
               this.flipshare = true;
-              this.shareUrl = val.shareUrl;
+              this.shareUrl = pack.shareUrl;
             }
           }
         },
       },
       'current.deck': {
-        async handler(val, old) {
-          console.log('change current deck');
-          console.log('new: ', val);
-          console.log('old: ', old);
-          if (val) {
-            if (!val.cards) {
-              console.log('getCards');
+        async handler(deck, old) {
+          console.log('current.deck:', old, '->', deck);
+          if (deck) {
+            if (!deck.cards) {
+              // console.log('getCards');
               this.disable = true;
               this.loading = true;
-              val.cards = (await googleScriptRun('getCards', this.current.pack, val)).map(card => new FunctionalCard(card));
+              deck.cards = (await googleScriptRun('getCards', this.current.pack, deck)).map(card => new FunctionalCard(card));
               this.disable = false;
               this.loading = false;
-              console.log('getCards');
+              // console.log('getCards');
             }
-            if (!val.draft) {
-              val.draft = val.cards.filter(card => card.isElapsed);
+            if (!deck.draft) {
+              deck.draft = deck.cards.filter(card => card.isElapsed);
             }
-            console.log('nextQuestion');
-            this.nextQuestion();
+            if (deck.draft.length > 0) {
+              this.nextQuestion();
+            } else {
+              this.drawer = true;
+            }
           }
         },
       },
       'current.card': {
-        async handler(val, old) {
-          console.log('change current card');
-          console.log('new: ', val);
-          console.log('old: ', old);
+        async handler(card, old) {
+          console.log('current.card:', old, '->', card);
         },
       },
       async themeMode(value, old) {
@@ -195,7 +286,6 @@
       async onClickAssessment(scale) {
         this.change = true;
         const card = this.current.card.evalCard(scale);
-        card.lastRepetition = new Date();
         // this.updateMetadata(this.current.pack, this.current.deck, [card]);
         if (scale < 3) {
           this.current.deck.draft.push(card);
@@ -216,8 +306,10 @@
         console.log('deck: ', deck);
         if (this.current.pack !== pack) {
           this.current.pack = pack;
+          this.current.card = emptycard;
         } else if (this.current.deck !== deck) {
           this.current.deck = deck;
+          this.current.card = emptycard;
         }
         this.drawer = false;
       },
@@ -256,6 +348,7 @@
         this.syncing = false;
       },
       nextQuestion() {
+        // console.log('nextQuestion');
         // console.log(this.current);
         if (this.current.deck.draft.length) {
           this.loading = true;
@@ -266,6 +359,9 @@
           this.loading = false;
         } else {
           console.log('done!');
+          // this.current.card = cardFinish;
+          this.showSnackbar('Done!');
+          this.drawer = true;
         }
       },
       flipCard() {
@@ -288,10 +384,13 @@
 
   async function googleScriptRun(name, ...args) {
     return new Promise(function (resolve, reject) {
+      console.log(`Executes the server-side Apps Script function "${name}"`, args);
       google.script.run
         .withSuccessHandler(function (...e) {
+          console.log(`The server-side function "${name}" returns successfully.`, e);
           resolve(...e);
         }).withFailureHandler(function (...e) {
+          console.log(`The server-side function "${name}" throws an exception.`, e);
           reject(...e);
         })[name](...args);
     });
@@ -342,25 +441,20 @@
       this.meta.repetition = result.n;
       this.meta.efactor = result.ef;
       this.interval = result.i;
+      this.meta.lasttime = Date.now();
       return this;
     }
     get isElapsed() {
       if (this.meta.lasttime === 0) {
         return true;
       }
-      return this.meta.lasttime + this.meta.interval > Date.now();
+      return Date.now() - this.meta.lasttime > this.meta.interval;
     }
     get interval() {
       return this.meta.interval / 86400000; // 1000 * 60 * 60 * 24
     }
     set interval(day) {
       this.meta.interval = day * 86400000; // 1000 * 60 * 60 * 24
-    }
-    get lastRepetition() {
-      return new Date(this.meta.lasttime);
-    }
-    set lastRepetition(date) {
-      this.meta.lasttime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
     }
   }
 
@@ -374,4 +468,20 @@
     // Safari, Chrome, and other WebKit-derived browsers
     return confirmationMessage;
   }
+
+  const emptycard = new FunctionalCard({
+    id: '',
+    front: '',
+    back: '',
+    hash: null,
+    meta: null,
+  });
+
+  const cardFinish = new FunctionalCard({
+    id: '',
+    front: 'デッキのすべてのカードがなくなりました。',
+    back: '',
+    hash: null,
+    meta: null,
+  });
 </script>

@@ -189,9 +189,10 @@ function initPack(spreadsheet, isNew) {
       }
       const header = getHeadRange(sheet);
       const protection = header.protect();
-      if (protection.canEdit()) {
-        protection.setDescription('Do not edit this row.');
-        protection.setWarningOnly(true);
+      protection.setDescription('Do not edit this row.');
+      protection.setWarningOnly(true);
+      for (const key in indexes) {
+        sheet.hideColumns(indexes[key] + 1);
       }
     }
   });
@@ -390,26 +391,30 @@ function updateMetadata(pack, deck, cards) {
 
 function createNewFile(name) {
   const spreadsheet = SpreadsheetApp.create(name);
+  const id = spreadsheet.getId();
+  const url = spreadsheet.getUrl();
+  DriveApp.getFileById(id).moveTo(getAppFolder());
   initPack(spreadsheet, true);
 
-  const packInfo = new PackInfo({});
-  packInfo.id = spreadsheet.getId();
-  packInfo.parent = null;
+  // const packInfo = new PackInfo({});
+  // packInfo.id = spreadsheet.getId();
+  // packInfo.parent = null;
 
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
+  // try {
+  //   const lock = LockService.getUserLock();
+  //   lock.waitLock(10000);
 
-    const infList = getPropertyList_();
-    infList.push(packInfo);
-    setProperty_('list', infList);
+  //   const infList = getPropertyList_();
+  //   infList.push(packInfo);
+  //   setProperty_('list', infList);
 
-    lock.releaseLock();
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
-  }
-  return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
+  //   lock.releaseLock();
+  // } catch (error) {
+  //   console.log('Could not obtain lock after 10 seconds.');
+  //   throw error;
+  // }
+  // return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
+  return new Pack(id, name, url, null);
 }
 
 function shareFile(pack) {

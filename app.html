@@ -1,18 +1,36 @@
 <div id="app">
-  <v-app>
+  <v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <v-app-bar app absolute color="primary">
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
-      <v-toolbar-title v-text="appName"></v-toolbar-title>
+      <v-toolbar-title></v-toolbar-title>
+
+      <!-- <v-progress-linear
+        absolute
+        bottom
+        v-model=""
+        buffer-value="10"
+        :active="loading"
+      ></v-progress-linear> -->
+      <!-- <v-progress-linear
+        absolute
+        bottom
+        active
+        color="purple"
+        :buffer-value="(allcards - alldraft) / allcards * 100"
+      ></v-progress-linear> -->
+
       <v-spacer></v-spacer>
       <v-toolbar-items>
-
+        <!-- 
         <v-btn icon :disabled="true">
           <v-icon>delete_sweep</v-icon>
         </v-btn>
-
+        -->
+        <!-- 
         <v-btn icon :disabled="true">
           <v-icon>emoji_events</v-icon>
         </v-btn>
+        -->
 
         <v-dialog v-model="dialogCreateNewFile">
           <template v-slot:activator="{ on, attrs }">
@@ -39,20 +57,22 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-
+        <!-- 
         <v-btn icon :disabled="true">
           <v-icon>event</v-icon>
         </v-btn>
+        -->
 
-        <v-badge inline :content="current.discard.length" :value="current.discard.length">
-          <v-btn icon :disabled="!current.discard.length" :loading="syncing" @click="onClickSyncButton()">
+        <v-btn icon :disabled="!current.discard.length" :loading="syncing" @click="onClickSyncButton()">
+          <v-badge overlap color="secondary" :content="current.discard.length" :value="current.discard.length">
             <v-icon>sync</v-icon>
-          </v-btn>
-        </v-badge>
-
+          </v-badge>
+        </v-btn>
+        <!-- 
         <v-btn icon :disabled="true">
           <v-icon>settings</v-icon>
         </v-btn>
+        -->
 
         <transition name="flip">
           <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
@@ -115,18 +135,25 @@
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
-      <v-list nav>
+      <v-list nav expand>
         <v-list-group v-for="pack in packs" :key="pack.id">
           <template v-slot:activator>
             <v-list-item-icon>
               <v-icon>quiz</v-icon>
             </v-list-item-icon>
-            <v-list-item-title v-text="pack.name"></v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title v-text="pack.name"></v-list-item-title>
+            </v-list-item-content>
           </template>
           <v-list-item v-for="deck in pack.decks" :key="deck.id" @click="onClickListItem(pack, deck)">
-            <v-list-item-title v-text="deck.name"></v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title v-text="deck.name"></v-list-item-title>
+            </v-list-item-content>
             <v-list-item-icon>
-              <v-icon>list</v-icon>
+              <v-badge overlap inline left color="secondary" :content="deck.draft && deck.draft.length"
+                :value="deck.draft && deck.draft.length">
+                <v-icon>list</v-icon>
+              </v-badge>
             </v-list-item-icon>
           </v-list-item>
         </v-list-group>
