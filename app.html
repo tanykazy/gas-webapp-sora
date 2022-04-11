@@ -215,95 +215,117 @@
         <v-row>
           <v-col>
             <v-item-group>
-              <v-container>
-                <v-row>
 
-                  <v-col>
-                    <v-item>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
-                            @click="onClickAssessment(0)">
-                            <span>0</span>
-                          </v-btn>
-                        </template>
-                        <span>Complete blackout</span>
-                      </v-tooltip>
-                    </v-item>
-                  </v-col>
+              <transition name="flip">
+                <v-container v-show="!revealed">
+                  <v-row>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="secondary" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="turnBack()">
+                              <span>Flip</span>
+                            </v-btn>
+                          </template>
+                          <span>Reveal back</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </transition>
 
-                  <v-col>
-                    <v-item>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
-                            @click="onClickAssessment(1)">
-                            <span>1</span>
-                          </v-btn>
-                        </template>
-                        <span>Incorrect response; the correct one remembered</span>
-                      </v-tooltip>
-                    </v-item>
-                  </v-col>
+              <transition name="flip">
+                <v-container v-show="revealed">
+                  <v-row>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="onClickAssessment(0)">
+                              <span>0</span>
+                            </v-btn>
+                          </template>
+                          <span>Complete blackout</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
 
-                  <v-col>
-                    <v-item>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
-                            @click="onClickAssessment(2)">
-                            <span>2</span>
-                          </v-btn>
-                        </template>
-                        <span>Incorrect response; where the correct one seemed easy to recall</span>
-                      </v-tooltip>
-                    </v-item>
-                  </v-col>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="onClickAssessment(1)">
+                              <span>1</span>
+                            </v-btn>
+                          </template>
+                          <span>Incorrect response; the correct one remembered</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
 
-                  <v-col>
-                    <v-item>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
-                            @click="onClickAssessment(3)">
-                            <span>3</span>
-                          </v-btn>
-                        </template>
-                        <span>Correct response recalled with serious difficulty</span>
-                      </v-tooltip>
-                    </v-item>
-                  </v-col>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="error" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="onClickAssessment(2)">
+                              <span>2</span>
+                            </v-btn>
+                          </template>
+                          <span>Incorrect response; where the correct one seemed easy to recall</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
 
-                  <v-col>
-                    <v-item>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
-                            @click="onClickAssessment(4)">
-                            <span>4</span>
-                          </v-btn>
-                        </template>
-                        <span>Correct response after a hesitation</span>
-                      </v-tooltip>
-                    </v-item>
-                  </v-col>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="onClickAssessment(3)">
+                              <span>3</span>
+                            </v-btn>
+                          </template>
+                          <span>Correct response recalled with serious difficulty</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
 
-                  <v-col>
-                    <v-item>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
-                            @click="onClickAssessment(5)">
-                            <span>5</span>
-                          </v-btn>
-                        </template>
-                        <span>Perfect response</span>
-                      </v-tooltip>
-                    </v-item>
-                  </v-col>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="onClickAssessment(4)">
+                              <span>4</span>
+                            </v-btn>
+                          </template>
+                          <span>Correct response after a hesitation</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
 
-                </v-row>
-              </v-container>
+                    <v-col>
+                      <v-item>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn block color="success" v-bind="attrs" v-on="on" :disabled="disable"
+                              @click="onClickAssessment(5)">
+                              <span>5</span>
+                            </v-btn>
+                          </template>
+                          <span>Perfect response</span>
+                        </v-tooltip>
+                      </v-item>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </transition>
+
             </v-item-group>
           </v-col>
         </v-row>

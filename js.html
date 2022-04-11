@@ -36,6 +36,7 @@
         dialogCreateNewFile: false,
         dialogShare: false,
         reveal: false,
+        revealed: false,
         loading: true,
         flipshare: false,
         shareUrl: '',
@@ -271,11 +272,14 @@
             case '3':
             case '4':
             case '5':
-              this.onClickAssessment(parseInt(event.key));
+              if (this.revealed) {
+                this.onClickAssessment(parseInt(event.key));
+              }
               break;
 
             case ' ':
               this.flipCard();
+              this.revealed = true;
               break;
 
             default:
@@ -360,6 +364,7 @@
         } else {
           console.log('done!');
           // this.current.card = cardFinish;
+          this.current.card = null;
           this.showSnackbar('Done!');
           this.drawer = true;
         }
@@ -369,10 +374,12 @@
       },
       turnFront(event) {
         this.reveal = false;
+        this.revealed = false;
         this.disable = false;
       },
       turnBack(event) {
         this.reveal = true;
+        this.revealed = true;
         this.disable = false;
       },
       showSnackbar(text) {

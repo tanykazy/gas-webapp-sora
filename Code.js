@@ -33,7 +33,7 @@ function doGet(e) {
   // const userProperties = PropertiesService.getUserProperties();
   // userProperties.deleteProperty('id');
 
-  updatePacksInfo();
+  // updatePacksInfo();
 
   if (e.parameters['copy']) {
     handleCopy(e.parameters['copy']);
