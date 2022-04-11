@@ -180,7 +180,7 @@
         <v-row>
           <v-col>
             <transition name="flip">
-              <v-card v-show="!reveal" :loading="loading" :disabled="loading">
+              <v-card v-show="!reveal" :loading="loading" :disabled="disable">
                 <!-- <template slot="progress">
                   <v-progress-linear v-model="10"></v-progress-linear>
                 </template> -->
@@ -197,7 +197,7 @@
             </transition>
 
             <transition name="flip">
-              <v-card v-show="reveal" :loading="loading" :disabled="loading">
+              <v-card v-show="reveal" :loading="loading" :disabled="disable">
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
                 <v-card-title v-html="currentBack"></v-card-title>
                 <v-card-text></v-card-text>
