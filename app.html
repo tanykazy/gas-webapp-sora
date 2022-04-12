@@ -169,6 +169,20 @@
       </template>
     </v-snackbar>
 
+    <v-dialog v-model="dialogDone">
+      <v-card>
+        <v-card-subtitle></v-card-subtitle>
+        <v-card-title>Congratulations</v-card-title>
+        <v-card-text></v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="dialogDone = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-main>
       <v-container>
         <!-- <v-row>

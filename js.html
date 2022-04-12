@@ -1,6 +1,20 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
+  const renderer = {
+    image(href, title, text) {
+      title = title ? `title="${title}"` : '';
+      return `<img src="${href}" ${title} width="100%"></img>`;
+    },
+    link(href, title, text) {
+      text = text || href;
+      title = title ? `title="${title}"` : '';
+      return `<a href="${href}" ${title} target="_blank">${text}</a>`;
+    },
+  };
+  marked.use({
+    renderer
+  });
   const app = new Vue({
     el: '#app',
     vuetify: new Vuetify({
@@ -35,6 +49,7 @@
         drawer: false,
         dialogCreateNewFile: false,
         dialogShare: false,
+        dialogDone: false,
         reveal: false,
         revealed: false,
         loading: true,
@@ -162,8 +177,6 @@
       },
       currentPackShareUrl() {
         if (this.enableCurrentPackUrl) {
-          // if (this.enableCurrentPackUrl && this.current.pack.shareUrl) {
-          // console.log(this.current.pack.shareUrl);
           return this.current.pack.shareUrl;
         }
         return '';
@@ -176,13 +189,11 @@
       currentFront() {
         if (this.current.card !== null) {
           return marked.parse(this.current.card.front);
-          // return this.current.card.front;
         }
       },
       currentBack() {
         if (this.current.card !== null) {
           return marked.parse(this.current.card.back);
-          // return this.current.card.back;
         }
       },
     },
@@ -230,13 +241,11 @@
           if (deck) {
             this.current.card = null;
             if (!deck.cards) {
-              // console.log('getCards');
               this.disable = true;
               this.loading = true;
               deck.cards = (await googleScriptRun('getCards', this.current.pack, deck)).map(card => new FunctionalCard(card));
               this.disable = false;
               this.loading = false;
-              // console.log('getCards');
             }
             if (!deck.draft) {
               deck.draft = deck.cards.filter(card => card.isElapsed);
@@ -270,7 +279,6 @@
       },
       async onKeyup(event) {
         if (!this.isOverlay) {
-          // console.log(event);
           switch (event.key) {
             case '0':
             case '1':
@@ -295,7 +303,6 @@
       async onClickAssessment(scale) {
         this.change = true;
         const card = this.current.card.evalCard(scale);
-        // this.updateMetadata(this.current.pack, this.current.deck, [card]);
         if (scale < 3) {
           this.current.deck.draft.push(card);
         }
@@ -310,40 +317,30 @@
         }
       },
       async onClickListItem(pack, deck) {
-        console.log('onClickListItem');
-        console.log('pack: ', pack);
-        console.log('deck: ', deck);
+        this.updateMetadata(Object.assign({}, this.current.pack), Object.assign({}, this.current.deck), this.current.discard.slice());
+        this.current.discard = [];
         if (this.current.pack !== pack) {
           this.current.pack = pack;
-          this.current.card = emptycard;
         } else if (this.current.deck !== deck) {
           this.current.deck = deck;
-          this.current.card = emptycard;
         }
         this.drawer = false;
       },
       async onClickShareButton() {
-        // if (!this.current.pack.shareUrl) {
         this.flipshare = true;
         this.shareUrl = await googleScriptRun('shareFile', this.current.pack);
         this.current.pack.shareUrl = this.shareUrl;
-        // console.log(this.current.pack.shareUrl);
-        // }
-        // console.log(this.current);
       },
       async onClickCopyButton() {
         await navigator.clipboard.writeText(this.currentPackShareUrl);
-        // this.dialogShare = false;
         this.showSnackbar('Copied the link.');
       },
       async onClickCancelButton() {
         this.dialogCreateNewFile = false;
       },
       async onClickCreateButton() {
-        // console.log(this.filename);
         this.dialogCreateNewFile = false;
         const pack = await googleScriptRun('createNewFile', this.filename);
-        // console.log(pack);
         window.open(pack.url, "_blank");
         this.packs.push(pack);
         pack.decks = await googleScriptRun('getDecks', pack);
@@ -357,8 +354,6 @@
         this.syncing = false;
       },
       nextQuestion() {
-        // console.log('nextQuestion');
-        // console.log(this.current);
         if (this.current.deck.draft.length) {
           this.loading = true;
           this.disable = true;
@@ -368,10 +363,8 @@
           this.loading = false;
         } else {
           console.log('done!');
-          // this.current.card = cardFinish;
           this.current.card = null;
-          this.showSnackbar('Done!');
-          this.drawer = true;
+          this.dialogDone = true;
         }
       },
       flipCard() {
@@ -383,13 +376,10 @@
       },
       turnFront(event) {
         this.reveal = false;
-        // this.revealed = false;
-        // this.disable = false;
       },
       turnBack(event) {
         this.reveal = true;
         this.revealed = true;
-        // this.disable = false;
       },
       showSnackbar(text) {
         this.snackbarText = text;
@@ -484,20 +474,4 @@
     // Safari, Chrome, and other WebKit-derived browsers
     return confirmationMessage;
   }
-
-  const emptycard = new FunctionalCard({
-    id: '',
-    front: '',
-    back: '',
-    hash: null,
-    meta: null,
-  });
-
-  const cardFinish = new FunctionalCard({
-    id: '',
-    front: 'デッキのすべてのカードがなくなりました。',
-    back: '',
-    hash: null,
-    meta: null,
-  });
 </script>
