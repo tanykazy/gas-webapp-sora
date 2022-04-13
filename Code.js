@@ -29,14 +29,8 @@ const headerArray = [
 function doGet(e) {
   console.log(e);
 
-  // setVersion(0.1);
-  // const userProperties = PropertiesService.getUserProperties();
-  // userProperties.deleteProperty('id');
-
-  // updatePacksInfo();
-
-  if (e.parameters['copy']) {
-    handleCopy(e.parameters['copy']);
+  if ('copy' in e.parameter) {
+    handleCopy(e.parameter['copy']);
   }
 
   let template = HtmlService.createTemplateFromFile('index');
@@ -49,15 +43,11 @@ function getAppFolder() {
     const lock = LockService.getUserLock();
     lock.waitLock(10000);
 
-    let folderId = getProperty_('dir');
+    let folderId = getProperty('dir');
     let folder = null;
     if (folderId) {
       try {
         folder = DriveApp.getFolderById(folderId);
-        // if (folder.isTrashed()) {
-        //   folder = DriveApp.createFolder('Flashcard');
-        //   folderId = folder.getId();
-        // }
       } catch (error) {
         console.log(error);
 
@@ -68,7 +58,7 @@ function getAppFolder() {
       folder = DriveApp.createFolder('Flashcard');
       folderId = folder.getId();
     }
-    setProperty_('dir', folderId);
+    setProperty('dir', folderId);
 
     lock.releaseLock();
     return folder;
@@ -78,30 +68,30 @@ function getAppFolder() {
   }
 }
 
-// function setVersion(v) {
-//   try {
-//     const lock = LockService.getUserLock();
-//     lock.waitLock(10000);
-
-//     const currentVersion = getProperty_('version');
-//     if (currentVersion !== v) {
-//       const userProperties = PropertiesService.getUserProperties();
-//       userProperties.deleteProperty('id');
-
-//       setProperty_('version', 0.1);
-//     }
-
-//     lock.releaseLock();
-//   } catch (error) {
-//     console.log('Could not obtain lock after 10 seconds.');
-//     throw error;
-//   }
-// }
-
-function handleCopy(parameters) {
+function handleCopy(parameter, packs) {
   const folder = getAppFolder();
-  const files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+  if (!packs) {
+    packs = getPacksInfo(folder);
+  }
+  if (parameter) {
+    if (!packs.find(pack => pack.parent === parameter)) {
+      try {
+        let file = DriveApp.getFileById(parameter);
+        file = file.makeCopy(folder);
+        const spreadsheet = SpreadsheetApp.open(file);
+        spreadsheet.addDeveloperMetadata('parent', parameter);
+        initPack(spreadsheet);
+      } catch (error) {
+        console.log(error);
+        throw `The file does not exist or the user does not have permission to access it.`;
+      }
+    }
+  }
+}
+
+function getPacksInfo(folder) {
   const parents = [];
+  const files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
   while (files.hasNext()) {
     const file = files.next();
     const spreadsheet = SpreadsheetApp.open(file);
@@ -110,72 +100,13 @@ function handleCopy(parameters) {
       .withLocationType(SpreadsheetApp.DeveloperMetadataLocationType.SPREADSHEET)
       .find();
     for (const data of metadata) {
-      parents.push(data.getValue());
+      const packinfo = new PackInfo();
+      packinfo.parent = data.getValue();
+      packinfo.id = file.getId();
+      parents.push(packinfo);
     }
   }
-  for (const parameter of parameters) {
-    if (parameter) {
-      if (!parents.includes(parameter)) {
-        try {
-          let file = DriveApp.getFileById(parameter);
-          // if (file.isTrashed()) {
-          //   throw `This file [${id}] has been deleted.`;
-          // }
-          file = file.makeCopy(folder);
-          const spreadsheet = SpreadsheetApp.open(file);
-          spreadsheet.addDeveloperMetadata('parent', parameter);
-          initPack(spreadsheet);
-        } catch (error) {
-          console.log(error);
-          throw `The file does not exist or the user does not have permission to access it.`;
-        }
-      }
-    }
-  }
-  // try {
-  //   const lock = LockService.getUserLock();
-  //   lock.waitLock(10000);
-
-  //   let infList = getPropertyList_();
-  //   // console.log(infList);
-  //   for (const parameter of parameters) {
-  //     if (parameter) {
-  //       if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
-  //         const file = getFileById_(parameter).makeCopy();
-  //         const spreadsheet = SpreadsheetApp.open(file);
-  //         initPack(spreadsheet);
-  //         let inf = new PackInfo({});
-  //         inf.parent = parameter;
-  //         inf.id = file.getId();
-  //         infList.push(inf);
-  //       }
-  //     }
-  //   }
-  //   setProperty_('list', infList);
-
-  //   lock.releaseLock();
-  // } catch (error) {
-  //   console.log('Could not obtain lock after 10 seconds.');
-  //   throw error;
-  // }
-}
-
-function updatePacksInfo() {
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
-
-    let infList = getPropertyList_();
-    // console.log(infList);
-    infList = infList.filter((inf) => existFile_(inf.id));
-    // console.log(infList);
-    setProperty_('list', infList);
-
-    lock.releaseLock();
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
-  }
+  return parents;
 }
 
 function initPack(spreadsheet, isNew) {
@@ -198,8 +129,6 @@ function initPack(spreadsheet, isNew) {
 
       for (let index = 1; index < range.getNumRows(); index++) {
         for (const key in metadataHeaders) {
-          // console.log('index: ', index, '  key: ', key);
-          // console.log(range.getCell(index, indexes[key]).getValues());
           range.getCell(index + 1, indexes[key] + 1).setValue('');
         }
       }
@@ -224,10 +153,8 @@ function getHeadRange(sheet) {
 function isDeckSheet(sheet) {
   const head = getHeadRange(sheet);
   if (isHeader(head)) {
-    console.log('deck!');
     return true;
   }
-  console.log('not deck!');
   return false;
 }
 
@@ -280,36 +207,9 @@ function getPacks() {
     }
   }
   return packs;
-
-  // try {
-  //   // const lock = LockService.getUserLock();
-  //   // lock.waitLock(10000);
-
-  //   const infList = getPropertyList_();
-  //   const packs = infList.map((inf) => {
-  //     const file = getFileById_(inf.id);
-  //     if (file !== null) {
-  //       const pack = new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
-  //       if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
-  //         const url = ScriptApp.getService().getUrl();
-  //         pack.shareUrl = `${url}?copy=${file.getId()}`;
-  //       }
-  //       return pack;
-  //     }
-  //   });
-  //   Logger.log(packs);
-
-  //   // lock.releaseLock();
-
-  //   return packs;
-  // } catch (error) {
-  //   console.log('Could not obtain lock after 10 seconds.');
-  //   throw error;
-  // }
 }
 
 function getDecks(pack) {
-  console.log('pack: ', pack);
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
@@ -319,18 +219,10 @@ function getDecks(pack) {
       decks.push(new Deck(sheet.getSheetId(), sheet.getName()));
     }
   }
-  // const decks = sheets.map((sheet) => {
-  //   if (isDeckSheet(sheet)) {
-  //     return new Deck(sheet.getSheetId(), sheet.getName());
-  //   }
-  // });
-  console.log('decks: ', decks);
   return decks;
 }
 
 function getCards(pack, deck) {
-  console.log('pack: ', pack);
-  console.log('deck: ', deck);
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheet = spreadsheet.getSheetByName(deck.name);
@@ -345,18 +237,14 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
-  // console.log(sheet.getLastRow());
-
   const range = sheet.getDataRange();
   const values = range.getValues();
   const head = values.shift();
-  console.log('header: ', head);
 
   const indexes = {};
   for (const [key, value] of Object.entries(headers)) {
     indexes[key] = head.findIndex(h => h === value);
   }
-  console.log('indexes: ', indexes);
 
   const cards = values.map(value => {
     const card = new Card(
@@ -372,7 +260,6 @@ function getCards(pack, deck) {
     return card;
   });
 
-  console.log(cards);
   return cards;
 }
 
@@ -383,21 +270,15 @@ function updateMetadata(pack, deck, cards) {
   const range = sheet.getDataRange();
   const values = range.getValues();
   const head = values.shift();
-  console.log('heaer: ', head);
 
   const indexes = {};
   for (const [key, value] of Object.entries(headers)) {
     indexes[key] = head.findIndex(h => h === value);
   }
-  console.log('indexes: ', indexes);
 
   cards.forEach((card) => {
     const index = values.findIndex((value) => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
-    console.log('index: ', index);
-    console.log('card: ', card);
     if (index !== -1) {
-      console.log('range: ', range.getCell(index + 2, indexes.front + 1).getValues());
-
       for (const [key, value] of Object.entries(card.meta)) {
         range.getCell(index + 2, indexes[key] + 1).setValue(value);
       }
@@ -412,31 +293,12 @@ function createNewFile(name) {
   DriveApp.getFileById(id).moveTo(getAppFolder());
   initPack(spreadsheet, true);
 
-  // const packInfo = new PackInfo({});
-  // packInfo.id = spreadsheet.getId();
-  // packInfo.parent = null;
-
-  // try {
-  //   const lock = LockService.getUserLock();
-  //   lock.waitLock(10000);
-
-  //   const infList = getPropertyList_();
-  //   infList.push(packInfo);
-  //   setProperty_('list', infList);
-
-  //   lock.releaseLock();
-  // } catch (error) {
-  //   console.log('Could not obtain lock after 10 seconds.');
-  //   throw error;
-  // }
-  // return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
   return new Pack(id, name, url, null);
 }
 
 function shareFile(pack) {
   const file = getFileById_(pack.id);
   const url = ScriptApp.getService().getUrl();
-  console.log(url);
   if (file.isShareableByEditors()) {
     try {
       file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
@@ -473,23 +335,25 @@ function getFileById_(id) {
   return null;
 }
 
-function getPropertyList_() {
-  let list = getProperty_('list');
-  if (list === null) {
-    return [];
-  }
-  return list.map(value => new PackInfo(value));
-}
-
-function getProperty_(key) {
+function getProperty(key) {
   var userProperties = PropertiesService.getUserProperties();
   var value = userProperties.getProperty(key);
   return JSON.parse(value);
 }
 
-function setProperty_(key, value) {
+function setProperty(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
+}
+
+function getCache(key) {
+  const cache = CacheService.getUserCache();
+  return cache.get(key);
+}
+
+function putCache(key, value) {
+  const cache = CacheService.getUserCache();
+  cache.put(key, value);
 }
 
 function getHash(value) {
@@ -541,9 +405,9 @@ class CardMetaData {
 }
 
 class PackInfo {
-  constructor(info) {
-    this.p = info.p || '';
-    this.i = info.i || '';
+  constructor() {
+    this.p = null;
+    this.i = null;
   }
   get parent() {
     return this.p;
