@@ -57,24 +57,56 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
         <!-- 
         <v-btn icon :disabled="true">
           <v-icon>event</v-icon>
         </v-btn>
         -->
 
+        <v-dialog v-model="dialogSettings" fullscreen hide-overlay transition="dialog-bottom-transition">
+          <!-- <v-dialog v-model="dialogSettings"> -->
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon>settings</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-toolbar color="primary">
+              <v-btn icon @click="dialogSettings = false">
+                <v-icon>close</v-icon>
+              </v-btn>
+              <v-toolbar-title>Settings</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-toolbar-items>
+                <!-- <v-btn text @click="dialogSettings = false">
+                  Save
+                </v-btn> -->
+              </v-toolbar-items>
+            </v-toolbar>
+            <v-list subheader>
+              <v-subheader>General</v-subheader>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Dark Mode</v-list-item-title>
+                  <v-list-item-subtitle></v-list-item-subtitle>
+                </v-list-item-content>
+                <v-spacer></v-spacer>
+                <v-list-item-action>
+                  <v-switch v-model="darkmode"></v-switch>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-dialog>
+
         <v-btn icon :disabled="!current.discard.length" :loading="syncing" @click="onClickSyncButton()">
           <v-badge overlap color="secondary" :content="current.discard.length" :value="current.discard.length">
             <v-icon>sync</v-icon>
           </v-badge>
         </v-btn>
-        <!-- 
-        <v-btn icon :disabled="true">
-          <v-icon>settings</v-icon>
-        </v-btn>
-        -->
 
-        <transition name="flip">
+        <!-- <transition name="flip">
           <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
             <v-icon>dark_mode</v-icon>
           </v-btn>
@@ -83,7 +115,7 @@
           <v-btn icon v-show="!themeMode" @click="themeMode = !themeMode">
             <v-icon>light_mode</v-icon>
           </v-btn>
-        </transition>
+        </transition> -->
 
         <v-dialog v-model="dialogShare">
           <template v-slot:activator="{ on, attrs }">

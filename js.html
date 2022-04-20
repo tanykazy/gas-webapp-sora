@@ -56,6 +56,7 @@
         dialogCreateNewFile: false,
         dialogShare: false,
         dialogDone: false,
+        dialogSettings: false,
         reveal: false,
         revealed: false,
         loading: true,
@@ -64,6 +65,7 @@
         syncing: false,
         disable: true,
         themeMode: true,
+        darkmode:false,
         filename: null,
         history: {},
         packs: null,
@@ -275,6 +277,9 @@
       },
       async themeMode(value, old) {
         this.$vuetify.theme.dark = !value;
+      },
+      async darkmode(value, old) {
+        this.$vuetify.theme.dark = value;
       },
     },
     methods: {
