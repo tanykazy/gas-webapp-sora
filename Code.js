@@ -265,25 +265,29 @@ function getCards(pack, deck) {
 
 function updateMetadata(pack, deck, cards) {
   const file = getFileById_(pack.id);
-  const spreadsheet = SpreadsheetApp.open(file);
-  const sheet = spreadsheet.getSheetByName(deck.name);
-  const range = sheet.getDataRange();
-  const values = range.getValues();
-  const head = values.shift();
+  if (file) {
+    const spreadsheet = SpreadsheetApp.open(file);
+    const sheet = spreadsheet.getSheetByName(deck.name);
+    if (sheet) {
+      const range = sheet.getDataRange();
+      const values = range.getValues();
+      const head = values.shift();
 
-  const indexes = {};
-  for (const [key, value] of Object.entries(headers)) {
-    indexes[key] = head.findIndex(h => h === value);
-  }
-
-  cards.forEach((card) => {
-    const index = values.findIndex((value) => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
-    if (index !== -1) {
-      for (const [key, value] of Object.entries(card.meta)) {
-        range.getCell(index + 2, indexes[key] + 1).setValue(value);
+      const indexes = {};
+      for (const [key, value] of Object.entries(headers)) {
+        indexes[key] = head.findIndex(h => h === value);
       }
+
+      cards.forEach((card) => {
+        const index = values.findIndex((value) => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
+        if (index !== -1) {
+          for (const [key, value] of Object.entries(card.meta)) {
+            range.getCell(index + 2, indexes[key] + 1).setValue(value);
+          }
+        }
+      });
     }
-  });
+  }
 }
 
 function createNewFile(name) {

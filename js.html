@@ -10,7 +10,7 @@
       text = text || href;
       title = title ? `title="${title}"` : '';
       return `<a href="${href}" ${title} target="_blank">${text}</a>`;
-    },
+    }
   };
   marked.use({
     renderer
@@ -65,7 +65,7 @@
         syncing: false,
         disable: true,
         themeMode: true,
-        darkmode:false,
+        darkmode: false,
         filename: null,
         history: {},
         packs: null,
@@ -107,6 +107,9 @@
     async mounted() {
       window.addEventListener('beforeunload', this.onBeforeunload);
       document.addEventListener('keydown', this.onKeyup);
+    },
+    updated() {
+      typeset(() => null);
     },
     async beforeUnmount() {
       document.removeEventListener('keydown', this.onKeyup);

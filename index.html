@@ -16,6 +16,9 @@
   <!-- for marked -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+  <!-- for mathjax -->
+  <?!= HtmlService.createHtmlOutputFromFile('load-mathjax').getContent(); ?>
+
   <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
 </head>
 
