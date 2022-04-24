@@ -1,20 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
-  const renderer = {
-    image(href, title, text) {
-      title = title ? `title="${title}"` : '';
-      return `<img src="${href}" ${title} width="100%"></img>`;
-    },
-    link(href, title, text) {
-      text = text || href;
-      title = title ? `title="${title}"` : '';
-      return `<a href="${href}" ${title} target="_blank">${text}</a>`;
-    }
-  };
-  marked.use({
-    renderer
-  });
   const app = new Vue({
     el: '#app',
     vuetify: new Vuetify({
