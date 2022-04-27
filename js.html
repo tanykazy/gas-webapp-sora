@@ -50,11 +50,18 @@
         shareUrl: '',
         syncing: false,
         disable: true,
-        themeMode: true,
-        darkmode: false,
         filename: null,
         history: {},
         packs: null,
+        settings: {
+          isDark: false,
+          speech: {
+            support: 'speechSynthesis' in window,
+            on: false,
+            voices: [],
+            voice: null,
+          },
+        },
         current: {
           pack: null,
           deck: null,
@@ -81,6 +88,7 @@
       //   }
       // }
       // });
+      // console.log(this);
       this.packs = await googleScriptRun('getPacks');
       if (this.packs.length > 0) {
         this.current.pack = this.packs[0];
@@ -88,16 +96,25 @@
         this.dialogCreateNewFile = true;
       }
     },
-    async created() {
+    created() {
+      if (this.settings.speech.support) {
+        console.log("This browser supports speech synthesis.");
+        this.populateVoiceList();
+        window.speechSynthesis.addEventListener('voiceschanged', event => {
+          this.populateVoiceList();
+        });
+      } else {
+        console.log("This browser does not support speech synthesis.");
+      }
     },
-    async mounted() {
+    mounted() {
       window.addEventListener('beforeunload', this.onBeforeunload);
       document.addEventListener('keydown', this.onKeyup);
     },
     updated() {
       typeset(() => null);
     },
-    async beforeUnmount() {
+    beforeUnmount() {
       document.removeEventListener('keydown', this.onKeyup);
     },
     computed: {
@@ -264,11 +281,10 @@
           }
         },
       },
-      async themeMode(value, old) {
-        this.$vuetify.theme.dark = !value;
-      },
-      async darkmode(value, old) {
-        this.$vuetify.theme.dark = value;
+      'settings.isDark': {
+        async handler(dark, old) {
+          this.$vuetify.theme.dark = dark;
+        }
       },
     },
     methods: {
@@ -384,6 +400,15 @@
       showSnackbar(text) {
         this.snackbarText = text;
         this.snackbar = true;
+      },
+      populateVoiceList() {
+        const voices = window.speechSynthesis.getVoices();
+        for (let i = 0; i < voices.length; i++) {
+          if (voices[i].default) {
+            this.settings.speech.voice = voices[i].lang;
+          }
+        }
+        this.settings.speech.voices = voices;
       },
     },
   });
