@@ -367,9 +367,9 @@ function getHash(value) {
 
 class Card {
   constructor(id, front, back, meta) {
-    this.id = id;
-    this.front = front;
-    this.back = back;
+    this.id = String(id);
+    this.front = String(front);
+    this.back = String(back);
     this.meta = meta;
     this.hash = getHash(id + front + back);
   }
