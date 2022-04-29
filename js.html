@@ -369,6 +369,11 @@
         await googleScriptRun('updateMetadata', pack, deck, cards);
         this.syncing = false;
       },
+      playText(text, voice){
+        let uttr = new SpeechSynthesisUtterance(text);
+        uttr.lang = this.settings.speech.voice;
+        speechSynthesis.speak(uttr);
+      },
       nextQuestion() {
         if (this.current.deck.draft.length) {
           this.loading = true;
@@ -382,12 +387,24 @@
           this.current.card = null;
           this.dialogDone = true;
         }
+        // read aloud the text if voice is specified in the setting
+        if(this.settings.speech.voice){
+          this.playText(this.current.card.front, this.settings.speech.voice);
+        }
       },
       flipCard() {
         if (this.reveal) {
           this.turnFront();
+          // read aloud the text if voice is specified in the setting
+          if(this.settings.speech.voice){
+            this.playText(this.current.card.front, this.settings.speech.voice);
+          }
         } else {
           this.turnBack();
+          // read aloud the text if voice is specified in the setting
+          if(this.settings.speech.voice){
+            this.playText(this.current.card.back, this.settings.speech.voice);
+          }          
         }
       },
       turnFront(event) {
@@ -405,7 +422,8 @@
         const voices = window.speechSynthesis.getVoices();
         for (let i = 0; i < voices.length; i++) {
           if (voices[i].default) {
-            this.settings.speech.voice = voices[i].lang;
+            // comment out the next line to avoid side effects
+            // this.settings.speech.voice = voices[i].lang;
           }
         }
         this.settings.speech.voices = voices;
