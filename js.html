@@ -290,6 +290,7 @@
     methods: {
       onBeforeunload(event) {
         if (this.change) {
+          this.updateMetadata(this.current.pack, this.current.deck, this.current.discard);
           return confirmLeave(event);
         }
       },
