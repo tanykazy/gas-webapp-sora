@@ -52,16 +52,21 @@
         disable: true,
         filename: null,
         history: {},
-        packs: null,
+        support: {
+          speech: 'speechSynthesis' in window,
+        },
+        speech: {
+          voices: [],
+          default: null,
+        },
         settings: {
           isDark: false,
           speech: {
-            support: 'speechSynthesis' in window,
             on: false,
-            voices: [],
-            voice: null,
+            voice: '',
           },
         },
+        packs: null,
         current: {
           pack: null,
           deck: null,
@@ -97,7 +102,7 @@
       }
     },
     created() {
-      if (this.settings.speech.support) {
+      if (this.support.speech) {
         console.log("This browser supports speech synthesis.");
         this.populateVoiceList();
         window.speechSynthesis.addEventListener('voiceschanged', event => {
@@ -124,65 +129,71 @@
       isOverlay() {
         return this.dialogCreateNewFile || this.dialogShare;
       },
-      allcards() {
-        let num = 0;
-        if (this.packs) {
-          this.packs.forEach(pack => {
-            if (pack.decks) {
-              pack.decks.forEach(deck => {
-                if (deck.cards) {
-                  num += deck.cards.length;
-                }
-              });
-            }
-          });
-        }
-        console.log('allcards: ', num);
-        return num;
-      },
-      alldraft() {
-        let num = 0;
-        if (this.packs) {
-          this.packs.forEach(pack => {
-            if (pack.decks) {
-              pack.decks.forEach(deck => {
-                if (deck.draft) {
-                  num += deck.draft.length;
-                }
-              });
-            }
-          });
-        }
-        console.log('alldraft: ', num);
-        return num;
-      },
-      progress() {
-        let cardnum = 0;
-        let draftnum = 0;
-        if (this.packs) {
-          this.packs.forEach(pack => {
-            if (pack.decks) {
-              pack.decks.forEach(deck => {
-                if (deck.cards) {
-                  cardnum += deck.cards.length;
-                }
-                if (deck.draft) {
-                  draftnum += deck.draft.length;
-                }
-              });
-            }
-          });
-        }
-        cardnum = cardnum === 0 ? 1 : cardnum;
-        console.log(draftnum / cardnum * 100);
-        return draftnum / cardnum * 100;
-      },
+      // allcards() {
+      //   let num = 0;
+      //   if (this.packs) {
+      //     this.packs.forEach(pack => {
+      //       if (pack.decks) {
+      //         pack.decks.forEach(deck => {
+      //           if (deck.cards) {
+      //             num += deck.cards.length;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      //   console.log('allcards: ', num);
+      //   return num;
+      // },
+      // alldraft() {
+      //   let num = 0;
+      //   if (this.packs) {
+      //     this.packs.forEach(pack => {
+      //       if (pack.decks) {
+      //         pack.decks.forEach(deck => {
+      //           if (deck.draft) {
+      //             num += deck.draft.length;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      //   console.log('alldraft: ', num);
+      //   return num;
+      // },
+      // progress() {
+      //   let cardnum = 0;
+      //   let draftnum = 0;
+      //   if (this.packs) {
+      //     this.packs.forEach(pack => {
+      //       if (pack.decks) {
+      //         pack.decks.forEach(deck => {
+      //           if (deck.cards) {
+      //             cardnum += deck.cards.length;
+      //           }
+      //           if (deck.draft) {
+      //             draftnum += deck.draft.length;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      //   cardnum = cardnum === 0 ? 1 : cardnum;
+      //   console.log(draftnum / cardnum * 100);
+      //   return draftnum / cardnum * 100;
+      // },
       enableCurrentPackUrl() {
         if (this.current.pack !== null) {
           return true;
         }
         return false;
       },
+      // currentSettings() {
+      //   if (this.current.pack !== null) {
+      //     return this.current.pack.settings;
+      //   }
+      //   return this.settings;
+      // },
       currentPackUrl() {
         if (this.enableCurrentPackUrl) {
           return this.current.pack.url;
@@ -246,6 +257,15 @@
               this.flipshare = true;
               this.shareUrl = pack.shareUrl;
             }
+            if (!pack.settings.speech) {
+              console.log('copy this -> pack');
+              pack.settings.speech = this.settings.speech;
+              console.log(pack.settings.speech);
+            } else {
+              console.log('copy pack -> this');
+              Object.assign(this.settings.speech, pack.settings.speech);
+              console.log(this.settings.speech);
+            }
           }
         },
       },
@@ -282,8 +302,19 @@
         },
       },
       'settings.isDark': {
-        async handler(dark, old) {
+        handler(dark, old) {
           this.$vuetify.theme.dark = dark;
+          this.current.pack.settings.isDark = dark;
+        }
+      },
+      'settings.speech.on': {
+        handler(on, old) {
+          this.current.pack.settings.speech.on = on;
+        }
+      },
+      'settings.speech.voice': {
+        handler(voice, old) {
+          this.current.pack.settings.speech.voice = voice;
         }
       },
     },
@@ -404,12 +435,14 @@
       },
       populateVoiceList() {
         const voices = window.speechSynthesis.getVoices();
+        console.log('Available voices on the current device: ', voices);
+        console.log(this.settings);
         for (let i = 0; i < voices.length; i++) {
           if (voices[i].default) {
-            this.settings.speech.voice = voices[i].lang;
+            this.speech.default = voices[i].lang;
           }
         }
-        this.settings.speech.voices = voices;
+        this.speech.voices = voices;
       },
     },
   });

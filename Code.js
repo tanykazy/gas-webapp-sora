@@ -203,10 +203,38 @@ function getPacks() {
         const url = ScriptApp.getService().getUrl();
         pack.shareUrl = `${url}?copy=${file.getId()}`;
       }
+      const spreadsheet = SpreadsheetApp.open(file);
+      const metadata = getMetadata(spreadsheet, 'settings');
+      // metadata.setVisibility(SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
+      // metadata.setVisibility(SpreadsheetApp.DeveloperMetadataVisibility.PROJECT);
+      // metadata.setValue(JSON.stringify({}));
+      let value = metadata.getValue();
+      console.log(`value: ${value}`);
+      if (value === '') {
+        pack.settings = {};
+      } else {
+        pack.settings = JSON.parse(value);
+      }
+
       packs.push(pack);
     }
   }
   return packs;
+}
+
+function getMetadata(location, key) {
+  const finder = location.createDeveloperMetadataFinder().withKey(key);
+  let metadata = finder.find();
+  if (metadata.length === 0) {
+    console.log(`No metadata was found. key: ${key}`);
+    // location.addDeveloperMetadata(key, JSON.stringify({}), SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
+    location.addDeveloperMetadata(key, JSON.stringify({}), SpreadsheetApp.DeveloperMetadataVisibility.PROJECT);
+    metadata = finder.find();
+  }
+  if (metadata.length > 1) {
+    console.log(`Multiple metadata was found. key: ${key}`);
+  }
+  return metadata[0];
 }
 
 function getDecks(pack) {
@@ -392,6 +420,7 @@ class Pack {
     this.decks = null;
     this.parent = parent;
     this.shareUrl = null;
+    this.settings = {};
   }
 }
 
