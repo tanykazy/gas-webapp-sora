@@ -233,7 +233,6 @@
               }
             }
           }
-
         }
       },
       'current.pack': {
@@ -386,10 +385,11 @@
         await googleScriptRun('updateMetadata', pack, deck, cards);
         this.syncing = false;
       },
-      playText(text, voice){
-        let uttr = new SpeechSynthesisUtterance(text);
+      playText(text, voice) {
+        const uttr = new SpeechSynthesisUtterance(text);
         uttr.lang = this.settings.speech.voice;
-        speechSynthesis.speak(uttr);
+        console.log(`Add to the utterance queue. text: "${text}" voice: "${voice}"`);
+        window.speechSynthesis.speak(uttr);
       },
       nextQuestion() {
         if (this.current.deck.draft.length) {
@@ -405,7 +405,10 @@
           this.dialogDone = true;
         }
         // read aloud the text if voice is specified in the setting
-        if(this.settings.speech.voice){
+        if (this.settings.speech.on) {
+          window.speechSynthesis.pause();
+          window.speechSynthesis.cancel();
+          // window.speechSynthesis.resume();
           this.playText(this.current.card.front, this.settings.speech.voice);
         }
       },
@@ -413,15 +416,15 @@
         if (this.reveal) {
           this.turnFront();
           // read aloud the text if voice is specified in the setting
-          if(this.settings.speech.voice){
+          if (this.settings.speech.on) {
             this.playText(this.current.card.front, this.settings.speech.voice);
           }
         } else {
           this.turnBack();
           // read aloud the text if voice is specified in the setting
-          if(this.settings.speech.voice){
+          if (this.settings.speech.on) {
             this.playText(this.current.card.back, this.settings.speech.voice);
-          }          
+          }
         }
       },
       turnFront(event) {
@@ -438,11 +441,9 @@
       populateVoiceList() {
         const voices = window.speechSynthesis.getVoices();
         console.log('Available voices on the current device: ', voices);
-        console.log(this.settings);
         for (let i = 0; i < voices.length; i++) {
           if (voices[i].default) {
-            // comment out the next line to avoid side effects
-            // this.settings.speech.voice = voices[i].lang;
+            this.speech.default = voices[i].lang;
           }
         }
         this.speech.voices = voices;
