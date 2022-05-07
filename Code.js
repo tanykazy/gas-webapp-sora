@@ -318,6 +318,15 @@ function updateMetadata(pack, deck, cards) {
   }
 }
 
+function updateSettings(pack, settings) {
+  const file = getFileById_(pack.id);
+  if (file) {
+    const spreadsheet = SpreadsheetApp.open(file);
+    const metadata = getMetadata(spreadsheet, 'settings');
+    metadata.setValue(JSON.stringify(settings));
+  }
+}
+
 function createNewFile(name) {
   const spreadsheet = SpreadsheetApp.create(name);
   const id = spreadsheet.getId();
@@ -420,7 +429,7 @@ class Pack {
     this.decks = null;
     this.parent = parent;
     this.shareUrl = null;
-    this.settings = {};
+    this.settings = null;
   }
 }
 
