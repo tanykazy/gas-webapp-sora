@@ -4,33 +4,8 @@
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
       <v-toolbar-title></v-toolbar-title>
 
-      <!-- <v-progress-linear
-        absolute
-        bottom
-        v-model=""
-        buffer-value="10"
-        :active="loading"
-      ></v-progress-linear> -->
-      <!-- <v-progress-linear
-        absolute
-        bottom
-        active
-        color="purple"
-        :buffer-value="(allcards - alldraft) / allcards * 100"
-      ></v-progress-linear> -->
-
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <!-- 
-        <v-btn icon :disabled="true">
-          <v-icon>delete_sweep</v-icon>
-        </v-btn>
-        -->
-        <!-- 
-        <v-btn icon :disabled="true">
-          <v-icon>emoji_events</v-icon>
-        </v-btn>
-        -->
 
         <v-dialog v-model="dialogCreateNewFile">
           <template v-slot:activator="{ on, attrs }">
@@ -65,7 +40,6 @@
         -->
 
         <v-dialog v-model="dialogSettings" fullscreen hide-overlay transition="dialog-bottom-transition">
-          <!-- <v-dialog v-model="dialogSettings"> -->
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>settings</v-icon>
@@ -79,9 +53,6 @@
               <v-toolbar-title>Settings</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-toolbar-items>
-                <!-- <v-btn text @click="dialogSettings = false">
-                  Save
-                </v-btn> -->
               </v-toolbar-items>
             </v-toolbar>
             <v-list subheader>
@@ -94,7 +65,6 @@
                 <v-spacer></v-spacer>
                 <v-list-item-action>
                   <v-switch v-model="settings.isDark"></v-switch>
-                  <!-- <v-switch v-model="currentSettings.isDark"></v-switch> -->
                 </v-list-item-action>
               </v-list-item>
               <v-list-item :disabled="!support.speech">
@@ -103,13 +73,11 @@
                   <v-list-item-subtitle></v-list-item-subtitle>
                   <v-select v-model="settings.speech.voice" :items="speech.voices" item-text="name" item-value="lang"
                     single-line full-width>
-                    <!-- <v-select v-model="currentSettings.speech.voice" :items="speech.voices" item-text="name" item-value="lang" single-line full-width> -->
                   </v-select>
                 </v-list-item-content>
                 <v-spacer></v-spacer>
                 <v-list-item-action>
                   <v-switch v-model="settings.speech.on"></v-switch>
-                  <!-- <v-switch v-model="currentSettings.speech.on"></v-switch> -->
                 </v-list-item-action>
               </v-list-item>
             </v-list>
@@ -121,17 +89,6 @@
             <v-icon>sync</v-icon>
           </v-badge>
         </v-btn>
-
-        <!-- <transition name="flip">
-          <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
-            <v-icon>dark_mode</v-icon>
-          </v-btn>
-        </transition>
-        <transition name="flip">
-          <v-btn icon v-show="!themeMode" @click="themeMode = !themeMode">
-            <v-icon>light_mode</v-icon>
-          </v-btn>
-        </transition> -->
 
         <v-dialog v-model="dialogShare">
           <template v-slot:activator="{ on, attrs }">
@@ -178,8 +135,6 @@
 
       </v-toolbar-items>
 
-      <!-- <v-progress-linear :active="loading" :indeterminate="loading" absolute bottom">
-      </v-progress-linear> -->
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
@@ -233,19 +188,10 @@
 
     <v-main>
       <v-container>
-        <!-- <v-row>
-          <v-col>
-            <v-breadcrumbs :items="breadcrumb.items"></v-breadcrumbs>
-          </v-col>
-        </v-row> -->
-
         <v-row>
           <v-col>
             <transition name="flip">
               <v-card overflow-auto v-show="!reveal" :loading="loading" :disabled="disable">
-                <!-- <template slot="progress">
-                  <v-progress-linear v-model="10"></v-progress-linear>
-                </template> -->
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
                 <v-card-title></v-card-title>
                 <v-card-text v-html="currentFront"></v-card-text>

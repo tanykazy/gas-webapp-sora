@@ -188,12 +188,6 @@
         }
         return false;
       },
-      // currentSettings() {
-      //   if (this.current.pack !== null) {
-      //     return this.current.pack.settings;
-      //   }
-      //   return this.settings;
-      // },
       currentPackUrl() {
         if (this.enableCurrentPackUrl) {
           return this.current.pack.url;
@@ -257,13 +251,7 @@
               this.flipshare = true;
               this.shareUrl = pack.shareUrl;
             }
-            if (pack.settings.speech) {
-              // console.log('copy this -> pack');
-              // pack.settings.speech = this.settings.speech;
-              // console.log(pack.settings.speech);
-              // console.log('copy pack -> this');
-              // Object.assign(this.settings.speech, pack.settings.speech);
-              // console.log(this.settings.speech);
+            if (pack.settings) {
               Object.assign(this.settings, pack.settings);
             }
           }
@@ -304,10 +292,6 @@
       'settings': {
         handler(settings, old) {
           console.log('settings:', old, '->', settings);
-          // console.log('change settings');
-          // console.log(settings);
-          // console.log(old);
-          // console.log('new: %s, old: %s', settings, old);
           googleScriptRun('updateSettings', this.current.pack, settings);
         },
         deep: true
@@ -316,21 +300,8 @@
         handler(dark, old) {
           console.log('settings.isDark:', old, '->', dark);
           this.$vuetify.theme.dark = dark;
-          // this.current.pack.settings.isDark = dark;
         }
       },
-      // 'settings.speech.on': {
-      //   handler(on, old) {
-      //     console.log('change settings.speech.on');
-      //     this.current.pack.settings.speech.on = on;
-      //   }
-      // },
-      // 'settings.speech.voice': {
-      //   handler(voice, old) {
-      //     console.log('change settings.speech.voice');
-      //     this.current.pack.settings.speech.voice = voice;
-      //   }
-      // },
     },
     methods: {
       onBeforeunload(event) {
