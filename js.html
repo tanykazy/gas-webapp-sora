@@ -52,16 +52,21 @@
         disable: true,
         filename: null,
         history: {},
-        packs: null,
+        support: {
+          speech: 'speechSynthesis' in window,
+        },
+        speech: {
+          voices: [],
+          default: null,
+        },
         settings: {
           isDark: false,
           speech: {
-            support: 'speechSynthesis' in window,
             on: false,
-            voices: [],
-            voice: null,
+            voice: '',
           },
         },
+        packs: null,
         current: {
           pack: null,
           deck: null,
@@ -97,7 +102,7 @@
       }
     },
     created() {
-      if (this.settings.speech.support) {
+      if (this.support.speech) {
         console.log("This browser supports speech synthesis.");
         this.populateVoiceList();
         window.speechSynthesis.addEventListener('voiceschanged', event => {
@@ -124,59 +129,59 @@
       isOverlay() {
         return this.dialogCreateNewFile || this.dialogShare;
       },
-      allcards() {
-        let num = 0;
-        if (this.packs) {
-          this.packs.forEach(pack => {
-            if (pack.decks) {
-              pack.decks.forEach(deck => {
-                if (deck.cards) {
-                  num += deck.cards.length;
-                }
-              });
-            }
-          });
-        }
-        console.log('allcards: ', num);
-        return num;
-      },
-      alldraft() {
-        let num = 0;
-        if (this.packs) {
-          this.packs.forEach(pack => {
-            if (pack.decks) {
-              pack.decks.forEach(deck => {
-                if (deck.draft) {
-                  num += deck.draft.length;
-                }
-              });
-            }
-          });
-        }
-        console.log('alldraft: ', num);
-        return num;
-      },
-      progress() {
-        let cardnum = 0;
-        let draftnum = 0;
-        if (this.packs) {
-          this.packs.forEach(pack => {
-            if (pack.decks) {
-              pack.decks.forEach(deck => {
-                if (deck.cards) {
-                  cardnum += deck.cards.length;
-                }
-                if (deck.draft) {
-                  draftnum += deck.draft.length;
-                }
-              });
-            }
-          });
-        }
-        cardnum = cardnum === 0 ? 1 : cardnum;
-        console.log(draftnum / cardnum * 100);
-        return draftnum / cardnum * 100;
-      },
+      // allcards() {
+      //   let num = 0;
+      //   if (this.packs) {
+      //     this.packs.forEach(pack => {
+      //       if (pack.decks) {
+      //         pack.decks.forEach(deck => {
+      //           if (deck.cards) {
+      //             num += deck.cards.length;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      //   console.log('allcards: ', num);
+      //   return num;
+      // },
+      // alldraft() {
+      //   let num = 0;
+      //   if (this.packs) {
+      //     this.packs.forEach(pack => {
+      //       if (pack.decks) {
+      //         pack.decks.forEach(deck => {
+      //           if (deck.draft) {
+      //             num += deck.draft.length;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      //   console.log('alldraft: ', num);
+      //   return num;
+      // },
+      // progress() {
+      //   let cardnum = 0;
+      //   let draftnum = 0;
+      //   if (this.packs) {
+      //     this.packs.forEach(pack => {
+      //       if (pack.decks) {
+      //         pack.decks.forEach(deck => {
+      //           if (deck.cards) {
+      //             cardnum += deck.cards.length;
+      //           }
+      //           if (deck.draft) {
+      //             draftnum += deck.draft.length;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      //   cardnum = cardnum === 0 ? 1 : cardnum;
+      //   console.log(draftnum / cardnum * 100);
+      //   return draftnum / cardnum * 100;
+      // },
       enableCurrentPackUrl() {
         if (this.current.pack !== null) {
           return true;
@@ -246,6 +251,9 @@
               this.flipshare = true;
               this.shareUrl = pack.shareUrl;
             }
+            if (pack.settings) {
+              Object.assign(this.settings, pack.settings);
+            }
           }
         },
       },
@@ -281,8 +289,16 @@
           }
         },
       },
+      'settings': {
+        handler(settings, old) {
+          console.log('settings:', old, '->', settings);
+          googleScriptRun('updateSettings', this.current.pack, settings);
+        },
+        deep: true
+      },
       'settings.isDark': {
-        async handler(dark, old) {
+        handler(dark, old) {
+          console.log('settings.isDark:', old, '->', dark);
           this.$vuetify.theme.dark = dark;
         }
       },
@@ -290,6 +306,7 @@
     methods: {
       onBeforeunload(event) {
         if (this.change) {
+          this.updateMetadata(this.current.pack, this.current.deck, this.current.discard);
           return confirmLeave(event);
         }
       },
@@ -420,13 +437,15 @@
       },
       populateVoiceList() {
         const voices = window.speechSynthesis.getVoices();
+        console.log('Available voices on the current device: ', voices);
+        console.log(this.settings);
         for (let i = 0; i < voices.length; i++) {
           if (voices[i].default) {
             // comment out the next line to avoid side effects
             // this.settings.speech.voice = voices[i].lang;
           }
         }
-        this.settings.speech.voices = voices;
+        this.speech.voices = voices;
       },
     },
   });

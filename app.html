@@ -1,36 +1,11 @@
-<div id="app">
+<div id="app" v-cloak>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <v-app-bar app absolute color="primary">
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
       <v-toolbar-title></v-toolbar-title>
 
-      <!-- <v-progress-linear
-        absolute
-        bottom
-        v-model=""
-        buffer-value="10"
-        :active="loading"
-      ></v-progress-linear> -->
-      <!-- <v-progress-linear
-        absolute
-        bottom
-        active
-        color="purple"
-        :buffer-value="(allcards - alldraft) / allcards * 100"
-      ></v-progress-linear> -->
-
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <!-- 
-        <v-btn icon :disabled="true">
-          <v-icon>delete_sweep</v-icon>
-        </v-btn>
-        -->
-        <!-- 
-        <v-btn icon :disabled="true">
-          <v-icon>emoji_events</v-icon>
-        </v-btn>
-        -->
 
         <v-dialog v-model="dialogCreateNewFile">
           <template v-slot:activator="{ on, attrs }">
@@ -65,7 +40,6 @@
         -->
 
         <v-dialog v-model="dialogSettings" fullscreen hide-overlay transition="dialog-bottom-transition">
-          <!-- <v-dialog v-model="dialogSettings"> -->
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>settings</v-icon>
@@ -79,9 +53,6 @@
               <v-toolbar-title>Settings</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-toolbar-items>
-                <!-- <v-btn text @click="dialogSettings = false">
-                  Save
-                </v-btn> -->
               </v-toolbar-items>
             </v-toolbar>
             <v-list subheader>
@@ -96,12 +67,12 @@
                   <v-switch v-model="settings.isDark"></v-switch>
                 </v-list-item-action>
               </v-list-item>
-              <v-list-item :disabled="!settings.speech.support">
+              <v-list-item :disabled="!support.speech">
                 <v-list-item-content>
                   <v-list-item-title>Speech</v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
-                  <v-select v-model="settings.speech.voice" :items="settings.speech.voices" item-text="name"
-                    item-value="lang" single-line full-width>
+                  <v-select v-model="settings.speech.voice" :items="speech.voices" item-text="name" item-value="lang"
+                    single-line full-width>
                   </v-select>
                 </v-list-item-content>
                 <v-spacer></v-spacer>
@@ -118,17 +89,6 @@
             <v-icon>sync</v-icon>
           </v-badge>
         </v-btn>
-
-        <!-- <transition name="flip">
-          <v-btn icon v-show="themeMode" @click="themeMode = !themeMode">
-            <v-icon>dark_mode</v-icon>
-          </v-btn>
-        </transition>
-        <transition name="flip">
-          <v-btn icon v-show="!themeMode" @click="themeMode = !themeMode">
-            <v-icon>light_mode</v-icon>
-          </v-btn>
-        </transition> -->
 
         <v-dialog v-model="dialogShare">
           <template v-slot:activator="{ on, attrs }">
@@ -175,8 +135,6 @@
 
       </v-toolbar-items>
 
-      <!-- <v-progress-linear :active="loading" :indeterminate="loading" absolute bottom">
-      </v-progress-linear> -->
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app temporary>
@@ -230,22 +188,13 @@
 
     <v-main>
       <v-container>
-        <!-- <v-row>
-          <v-col>
-            <v-breadcrumbs :items="breadcrumb.items"></v-breadcrumbs>
-          </v-col>
-        </v-row> -->
-
         <v-row>
           <v-col>
             <transition name="flip">
-              <v-card v-show="!reveal" :loading="loading" :disabled="disable">
-                <!-- <template slot="progress">
-                  <v-progress-linear v-model="10"></v-progress-linear>
-                </template> -->
+              <v-card overflow-auto v-show="!reveal" :loading="loading" :disabled="disable">
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
-                <v-card-title v-html="currentFront"></v-card-title>
-                <v-card-text></v-card-text>
+                <v-card-title></v-card-title>
+                <v-card-text v-html="currentFront"></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon bottom @click="onClickTurn($event)">
@@ -256,10 +205,10 @@
             </transition>
 
             <transition name="flip">
-              <v-card v-show="reveal" :loading="loading" :disabled="disable">
+              <v-card overflow-auto v-show="reveal" :loading="loading" :disabled="disable">
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
-                <v-card-title v-html="currentBack"></v-card-title>
-                <v-card-text></v-card-text>
+                <v-card-title></v-card-title>
+                <v-card-text v-html="currentBack"></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon bottom @click="onClickTurn($event)">
@@ -391,7 +340,73 @@
       </v-container>
     </v-main>
 
-    <v-footer app fixed color="primary">
+    <!-- <transition name="flip">
+      <v-bottom-navigation app grow v-show="!revealed">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="turnBack()">
+              <span>Flip</span>
+            </v-btn>
+          </template>
+          <span>Reveal back</span>
+        </v-tooltip>
+      </v-bottom-navigation>
+    </transition>
+
+    <transition name="flip">
+      <v-bottom-navigation app grow v-show="revealed">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="onClickAssessment(0)">
+              <span>0</span>
+            </v-btn>
+          </template>
+          <span>Complete blackout</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="onClickAssessment(1)">
+              <span>1</span>
+            </v-btn>
+          </template>
+          <span>Incorrect response; the correct one remembered</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="onClickAssessment(2)">
+              <span>2</span>
+            </v-btn>
+          </template>
+          <span>Incorrect response; where the correct one seemed easy to recall</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="onClickAssessment(3)">
+              <span>3</span>
+            </v-btn>
+          </template>
+          <span>Correct response recalled with serious difficulty</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="onClickAssessment(4)">
+              <span>4</span>
+            </v-btn>
+          </template>
+          <span>Correct response after a hesitation</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" v-on="on" :disabled="disable" @click="onClickAssessment(5)">
+              <span>5</span>
+            </v-btn>
+          </template>
+          <span>Perfect response</span>
+        </v-tooltip>
+      </v-bottom-navigation>
+    </transition> -->
+
+    <v-footer app color="primary">
       <v-spacer></v-spacer>
       <v-btn icon :disabled="true">
         <v-icon>bug_report</v-icon>
