@@ -1,4 +1,4 @@
-<div id="app">
+<div id="app" v-cloak>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
     <v-app-bar app absolute color="primary">
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
@@ -101,8 +101,9 @@
                 <v-list-item-content>
                   <v-list-item-title>Speech</v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
-                  <v-select v-model="settings.speech.voice" :items="speech.voices" item-text="name" item-value="lang" single-line full-width>
-                  <!-- <v-select v-model="currentSettings.speech.voice" :items="speech.voices" item-text="name" item-value="lang" single-line full-width> -->
+                  <v-select v-model="settings.speech.voice" :items="speech.voices" item-text="name" item-value="lang"
+                    single-line full-width>
+                    <!-- <v-select v-model="currentSettings.speech.voice" :items="speech.voices" item-text="name" item-value="lang" single-line full-width> -->
                   </v-select>
                 </v-list-item-content>
                 <v-spacer></v-spacer>
