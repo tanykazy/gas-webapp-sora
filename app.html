@@ -72,7 +72,7 @@
                   <v-list-item-title>Speech</v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
                   <v-select v-model="settings.speech.voice" :items="speech.voices" item-text="name" item-value="lang"
-                    single-line full-width>
+                    single-line full-width :disabled="!settings.speech.on">
                   </v-select>
                 </v-list-item-content>
                 <v-spacer></v-spacer>
