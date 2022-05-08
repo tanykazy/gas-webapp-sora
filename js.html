@@ -301,6 +301,15 @@
           this.$vuetify.theme.dark = dark;
         }
       },
+      'settings.speech.on': {
+        handler(on, old) {
+          console.log('settings.speech.on:', old, '->', on);
+          if (!on) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.cancel();
+          }
+        }
+      },
     },
     methods: {
       onBeforeunload(event) {
