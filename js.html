@@ -396,8 +396,11 @@
       },
       playText(text, voice) {
         const uttr = new SpeechSynthesisUtterance(text);
-        uttr.lang = this.settings.speech.voice;
         console.log(`Add to the utterance queue. text: "${text}" voice: "${voice}"`);
+        uttr.lang = this.settings.speech.voice;
+        window.speechSynthesis.pause();
+        window.speechSynthesis.cancel();
+        // window.speechSynthesis.resume();
         window.speechSynthesis.speak(uttr);
       },
       nextQuestion() {
@@ -415,10 +418,9 @@
         }
         // read aloud the text if voice is specified in the setting
         if (this.settings.speech.on) {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.cancel();
-          // window.speechSynthesis.resume();
-          this.playText(this.current.card.front, this.settings.speech.voice);
+          this.$nextTick(function () {
+            this.playText(this.$refs.front.innerText, this.settings.speech.voice);
+          });
         }
       },
       flipCard() {
@@ -426,13 +428,17 @@
           this.turnFront();
           // read aloud the text if voice is specified in the setting
           if (this.settings.speech.on) {
-            this.playText(this.current.card.front, this.settings.speech.voice);
+            this.$nextTick(function () {
+              this.playText(this.$refs.front.innerText, this.settings.speech.voice);
+            });
           }
         } else {
           this.turnBack();
           // read aloud the text if voice is specified in the setting
           if (this.settings.speech.on) {
-            this.playText(this.current.card.back, this.settings.speech.voice);
+            this.$nextTick(function () {
+              this.playText(this.$refs.back.innerText, this.settings.speech.voice);
+            });
           }
         }
       },
@@ -449,7 +455,7 @@
       },
       populateVoiceList() {
         const voices = window.speechSynthesis.getVoices();
-        console.log('Available voices on the current device: ', voices);
+        // console.log('Available voices on the current device: ', voices);
         for (let i = 0; i < voices.length; i++) {
           if (voices[i].default) {
             this.speech.default = voices[i].lang;

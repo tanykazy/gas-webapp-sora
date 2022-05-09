@@ -194,7 +194,7 @@
               <v-card overflow-auto v-show="!reveal" :loading="loading" :disabled="disable">
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
                 <v-card-title></v-card-title>
-                <v-card-text v-html="currentFront"></v-card-text>
+                <v-card-text ref="front" v-html="currentFront"></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon bottom @click="onClickTurn($event)">
@@ -208,7 +208,7 @@
               <v-card overflow-auto v-show="reveal" :loading="loading" :disabled="disable">
                 <v-card-subtitle v-text="currentId"></v-card-subtitle>
                 <v-card-title></v-card-title>
-                <v-card-text v-html="currentBack"></v-card-text>
+                <v-card-text ref="back" v-html="currentBack"></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon bottom @click="onClickTurn($event)">
@@ -232,7 +232,7 @@
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn block color="secondary" v-bind="attrs" v-on="on" :disabled="disable"
-                              @click="turnBack()">
+                              @click="flipCard()">
                               <span>Flip</span>
                             </v-btn>
                           </template>
