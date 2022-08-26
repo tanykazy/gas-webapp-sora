@@ -1,120 +1,254 @@
+// hoge
+
+const headers = {
+  id: 'ID',
+  front: 'Front',
+  back: 'Back',
+  efactor: 'E-Factor',
+  lasttime: 'Last time',
+  interval: 'Interval',
+  repetition: 'Repetition'
+};
+
+const metadataHeaders = {
+  efactor: 'E-Factor',
+  lasttime: 'Last time',
+  interval: 'Interval',
+  repetition: 'Repetition',
+};
+
+const headerArray = [
+  headers.id,
+  headers.front,
+  headers.back,
+  headers.efactor,
+  headers.lasttime,
+  headers.interval,
+  headers.repetition
+];
+
+
 function doGet(e) {
   console.log(e);
 
-  // setVersion(0.1);
-  const userProperties = PropertiesService.getUserProperties();
-  userProperties.deleteProperty('id');
-  // userProperties.deleteProperty('id');
-
-  updatePacksInfo();
-
-  if (e.parameters['copy']) {
-    handleCopy(e.parameters['copy']);
+  if ('copy' in e.parameter) {
+    handleCopy(e.parameter['copy']);
   }
 
   let template = HtmlService.createTemplateFromFile('index');
-  const url = ScriptApp.getService().getUrl();
-  template.url = url;
-  const output = template.evaluate();
-  return output;
+  template.url = ScriptApp.getService().getUrl();
+  return template.evaluate();
 }
 
-// function setVersion(v) {
-//   try {
-//     const lock = LockService.getUserLock();
-//     lock.waitLock(10000);
-
-//     const currentVersion = getProperty_('version');
-//     if (currentVersion !== v) {
-//       const userProperties = PropertiesService.getUserProperties();
-//       userProperties.deleteProperty('id');
-
-//       setProperty_('version', 0.1);
-//     }
-
-//     lock.releaseLock();
-//   } catch (error) {
-//     console.log('Could not obtain lock after 10 seconds.');
-//     throw error;
-//   }
-// }
-
-function handleCopy(parameters) {
+function getAppFolder() {
   try {
     const lock = LockService.getUserLock();
     lock.waitLock(10000);
 
-    let infList = getPropertyList_();
-    // console.log(infList);
-    for (const parameter of parameters) {
-      if (!infList.find(inf => new PackInfo(inf).parent === parameter)) {
-        const file = getFileById_(parameter).makeCopy();
-        let inf = new PackInfo({});
-        inf.parent = parameter;
-        inf.id = file.getId();
-        infList.push(inf);
+    let folderId = getProperty('dir');
+    let folder = null;
+    if (folderId) {
+      try {
+        folder = DriveApp.getFolderById(folderId);
+      } catch (error) {
+        console.log(error);
+
+        folder = DriveApp.createFolder('Flashcard');
+        folderId = folder.getId();
       }
+    } else {
+      folder = DriveApp.createFolder('Flashcard');
+      folderId = folder.getId();
     }
-    setProperty_('list', infList);
+    setProperty('dir', folderId);
 
     lock.releaseLock();
+    return folder;
   } catch (error) {
     console.log('Could not obtain lock after 10 seconds.');
     throw error;
   }
 }
 
-function updatePacksInfo() {
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
+function handleCopy(parameter, packs) {
+  const folder = getAppFolder();
+  if (!packs) {
+    packs = getPacksInfo(folder);
+  }
+  if (parameter) {
+    if (!packs.find(pack => pack.parent === parameter)) {
+      try {
+        let file = DriveApp.getFileById(parameter);
+        file = file.makeCopy(folder);
+        const spreadsheet = SpreadsheetApp.open(file);
+        spreadsheet.addDeveloperMetadata('parent', parameter);
+        initPack(spreadsheet);
+      } catch (error) {
+        console.log(error);
+        throw `The file does not exist or the user does not have permission to access it.`;
+      }
+    }
+  }
+}
 
-    let infList = getPropertyList_();
-    // console.log(infList);
-    infList = infList.filter((inf) => existFile_(inf.id));
-    // console.log(infList);
-    setProperty_('list', infList);
+function getPacksInfo(folder) {
+  const parents = [];
+  const files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+  while (files.hasNext()) {
+    const file = files.next();
+    const spreadsheet = SpreadsheetApp.open(file);
+    const metadata = spreadsheet.createDeveloperMetadataFinder()
+      .withKey('parent')
+      .withLocationType(SpreadsheetApp.DeveloperMetadataLocationType.SPREADSHEET)
+      .find();
+    for (const data of metadata) {
+      const packinfo = new PackInfo();
+      packinfo.parent = data.getValue();
+      packinfo.id = file.getId();
+      parents.push(packinfo);
+    }
+  }
+  return parents;
+}
 
-    lock.releaseLock();
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
+function initPack(spreadsheet, isNew) {
+  const sheets = spreadsheet.getSheets();
+  sheets.forEach((sheet) => {
+    if (isNew) {
+      addColumns(sheet);
+      insertHeader(sheet)
+    }
+    if (isNew || isDeckSheet(sheet)) {
+      const range = sheet.getDataRange();
+      const values = range.getValues();
+      const head = values.shift();
+
+      const indexes = {};
+      for (const [key, value] of Object.entries(metadataHeaders)) {
+        indexes[key] = head.findIndex(h => h === value);
+      }
+      console.log('indexes: ', indexes);
+
+      for (let index = 1; index < range.getNumRows(); index++) {
+        for (const key in metadataHeaders) {
+          range.getCell(index + 1, indexes[key] + 1).setValue('');
+        }
+      }
+      const header = getHeadRange(sheet);
+      const protection = header.protect();
+      protection.setDescription('Do not edit this row.');
+      protection.setWarningOnly(true);
+      for (const key in indexes) {
+        sheet.hideColumns(indexes[key] + 1);
+      }
+    }
+  });
+}
+
+function getHeadRange(sheet) {
+  const range = sheet.getDataRange();
+  const head = range.offset(0, 0, 1, headerArray.length);
+  console.log(head.getValues());
+  return head;
+}
+
+function isDeckSheet(sheet) {
+  const head = getHeadRange(sheet);
+  if (isHeader(head)) {
+    return true;
+  }
+  return false;
+}
+
+function isHeader(range) {
+  const head = range.getValues().shift();
+  for (const value of Object.values(headers)) {
+    if (!head.includes(value)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function insertHeader(sheet) {
+  const head = getHeadRange(sheet).insertCells(SpreadsheetApp.Dimension.ROWS);
+  headerArray.forEach((header, index) => {
+    head.getCell(1, index + 1).setValue(header);
+  });
+  return head;
+}
+
+function addColumns(sheet) {
+  const maxColumns = sheet.getMaxColumns();
+  if (maxColumns < headerArray.length) {
+    sheet.insertColumns(maxColumns, headerArray.length - maxColumns);
   }
 }
 
 function getPacks() {
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
+  Logger.log('request getPacks');
 
-    const infList = getPropertyList_();
-    const packs = infList.map((inf) => {
-      const file = getFileById_(inf.id);
-      if (file !== null) {
-
-        // console.log(file.getOwner().getPhotoUrl());
-        // console.log(file.getOwner().getDomain());
-
-        return new Pack(inf.id, file.getName(), file.getUrl(), inf.parent);
-      }
-    });
-
-    lock.releaseLock();
-
-    return packs;
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
+  const appFolder = getAppFolder();
+  if (!appFolder) {
+    console.log('Fail getAppFolder()');
+    throw 'Fail getAppFolder()';
   }
+  const packs = [];
+  const files = appFolder.getFiles();
+  while (files.hasNext()) {
+    let file = files.next();
+    let type = file.getMimeType();
+    if (type === MimeType.GOOGLE_SHEETS) {
+      console.log(file.getName());
+      const pack = new Pack(file.getId(), file.getName(), file.getUrl());
+      if (file.getSharingAccess() !== DriveApp.Access.PRIVATE) {
+        const url = ScriptApp.getService().getUrl();
+        pack.shareUrl = `${url}?copy=${file.getId()}`;
+      }
+      const spreadsheet = SpreadsheetApp.open(file);
+      const metadata = getMetadata(spreadsheet, 'settings');
+      // metadata.setVisibility(SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
+      // metadata.setVisibility(SpreadsheetApp.DeveloperMetadataVisibility.PROJECT);
+      // metadata.setValue(JSON.stringify({}));
+      let value = metadata.getValue();
+      console.log(`value: ${value}`);
+      if (value === '') {
+        pack.settings = {};
+      } else {
+        pack.settings = JSON.parse(value);
+      }
+
+      packs.push(pack);
+    }
+  }
+  return packs;
+}
+
+function getMetadata(location, key) {
+  const finder = location.createDeveloperMetadataFinder().withKey(key);
+  let metadata = finder.find();
+  if (metadata.length === 0) {
+    console.log(`No metadata was found. key: ${key}`);
+    // location.addDeveloperMetadata(key, JSON.stringify({}), SpreadsheetApp.DeveloperMetadataVisibility.DOCUMENT);
+    location.addDeveloperMetadata(key, JSON.stringify({}), SpreadsheetApp.DeveloperMetadataVisibility.PROJECT);
+    metadata = finder.find();
+  }
+  if (metadata.length > 1) {
+    console.log(`Multiple metadata was found. key: ${key}`);
+  }
+  return metadata[0];
 }
 
 function getDecks(pack) {
   const file = getFileById_(pack.id);
   const spreadsheet = SpreadsheetApp.open(file);
   const sheets = spreadsheet.getSheets();
-  const decks = sheets.map((sheet) => {
-    return new Deck(sheet.getSheetId(), sheet.getName());
-  });
+  const decks = [];
+  for (const sheet of sheets) {
+    if (isDeckSheet(sheet)) {
+      decks.push(new Deck(sheet.getSheetId(), sheet.getName()));
+    }
+  }
   return decks;
 }
 
@@ -133,115 +267,96 @@ function getCards(pack, deck) {
     throw 'there is no sheet with the given name.';
   }
 
-  // console.log(sheet.getLastRow());
-  const cards = [];
-  for (let row = 2; row <= sheet.getLastRow(); row++) {
-    const range = sheet.getRange(`${row}:${row}`);
-    const value = range.getValues().pop();
-    const hash = getHash(value[1] + value[2]);
-    let match = range.createDeveloperMetadataFinder().withKey(hash).find();
+  const range = sheet.getDataRange();
+  const values = range.getValues();
+  const head = values.shift();
 
-    // match.forEach((data) => data.remove());
-    // match = [];
-
-    let metadata = match.pop();
-    if (!metadata) {
-      metadata = range.addDeveloperMetadata(hash).getDeveloperMetadata().pop();
-      const data = new CardMetaData({});
-      data.id = metadata.getId();
-      data.hash = hash;
-      metadata.setValue(JSON.stringify(data));
-    } else {
-      match.forEach((data) => data.remove());
-    }
-    // console.log(metadata.getValue());
-    try {
-      cards.push(new Card(value[0], value[1], value[2], JSON.parse(metadata.getValue())));
-    } catch (error) {
-      // console.log(error);
-      metadata.remove();
-    }
+  const indexes = {};
+  for (const [key, value] of Object.entries(headers)) {
+    indexes[key] = head.findIndex(h => h === value);
   }
-  // console.log(cards);
+
+  const cards = values.map(value => {
+    const card = new Card(
+      value[indexes.id],
+      value[indexes.front],
+      value[indexes.back]);
+    const meta = new CardMetaData(
+      value[indexes.efactor],
+      value[indexes.repetition],
+      value[indexes.interval],
+      value[indexes.lasttime]);
+    card.meta = meta;
+    return card;
+  });
+
   return cards;
-
-  // const range = sheet.getDataRange();
-  // values = range.getValues();
-  // if (values.length === 0) {
-  //   return null;
-  // }
-  // values.shift();
-  // if (values.length === 0) {
-  //   return [];
-  // }
-
-  // const cards = values.map((value) => {
-  //   const finder = sheet.createDeveloperMetadataFinder();
-  //   const hash = getHash(value[1] + value[2]);
-  //   const metadata = finder.withKey(hash).find();
-  //   if (metadata.length > 0) {
-  //     return new Card(value[0], value[1], value[2], new CardMetaData(JSON.parse(metadata.getValue())));
-  //   } else {
-  //     return new Card(value[0], value[1], value[2], new CardMetaData({}));
-  //   }
-  // });
-  // // cache.put(sheetName, JSON.stringify(values));
-  // return cards;
 }
 
 function updateMetadata(pack, deck, cards) {
   const file = getFileById_(pack.id);
-  const spreadsheet = SpreadsheetApp.open(file);
-  const sheet = spreadsheet.getSheetByName(deck.name);
-  // console.log(cards);
-  cards.forEach((card) => {
-    const match = sheet.createDeveloperMetadataFinder().withId(card.meta.id).find();
-    const meta = match.pop();
-    meta.setValue(JSON.stringify(card.meta));
-  });
+  if (file) {
+    const spreadsheet = SpreadsheetApp.open(file);
+    const sheet = spreadsheet.getSheetByName(deck.name);
+    if (sheet) {
+      const range = sheet.getDataRange();
+      const values = range.getValues();
+      const head = values.shift();
+
+      const indexes = {};
+      for (const [key, value] of Object.entries(headers)) {
+        indexes[key] = head.findIndex(h => h === value);
+      }
+
+      cards.forEach((card) => {
+        const index = values.findIndex((value) => getHash(value[indexes.id] + value[indexes.front] + value[indexes.back]) === card.hash);
+        if (index !== -1) {
+          for (const [key, value] of Object.entries(card.meta)) {
+            range.getCell(index + 2, indexes[key] + 1).setValue(value);
+          }
+        }
+      });
+    }
+  }
+}
+
+function updateSettings(pack, settings) {
+  const file = getFileById_(pack.id);
+  if (file) {
+    const spreadsheet = SpreadsheetApp.open(file);
+    const metadata = getMetadata(spreadsheet, 'settings');
+    metadata.setValue(JSON.stringify(settings));
+  }
 }
 
 function createNewFile(name) {
   const spreadsheet = SpreadsheetApp.create(name);
-  const packInfo = new PackInfo({});
-  packInfo.id = spreadsheet.getId();
-  packInfo.parent = null;
+  const id = spreadsheet.getId();
+  const url = spreadsheet.getUrl();
+  DriveApp.getFileById(id).moveTo(getAppFolder());
+  initPack(spreadsheet, true);
 
-  try {
-    const lock = LockService.getUserLock();
-    lock.waitLock(10000);
-
-    const infList = getPropertyList_();
-    infList.push(packInfo);
-    setProperty_('list', infList);
-
-    lock.releaseLock();
-  } catch (error) {
-    console.log('Could not obtain lock after 10 seconds.');
-    throw error;
-  }
-  return new Pack(packInfo.id, spreadsheet.getName(), spreadsheet.getUrl(), packInfo.parent);
+  return new Pack(id, name, url, null);
 }
 
 function shareFile(pack) {
   const file = getFileById_(pack.id);
+  const url = ScriptApp.getService().getUrl();
   if (file.isShareableByEditors()) {
     try {
       file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
     } catch (error) {
+      console.log(error);
       try {
         file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       } catch (error) {
-        return false;
+        console.log(error);
+        return null;
       }
     }
-    return true;
+    return `${url}?copy=${file.getId()}`;
   }
-  return false;
-}
-
-function initMetadata(sheet) {
-  let metadata = sheet.getDeveloperMetadata();
+  return null;
 }
 
 function existFile_(id) {
@@ -252,9 +367,10 @@ function getFileById_(id) {
   try {
     const file = DriveApp.getFileById(id);
     if (file !== null) {
-      if (!file.isTrashed()) {
-        return file;
+      if (file.isTrashed()) {
+        throw `This file [${id}] has been deleted.`;
       }
+      return file;
     }
   } catch (error) {
     console.log(error);
@@ -262,23 +378,25 @@ function getFileById_(id) {
   return null;
 }
 
-function getPropertyList_() {
-  let list = getProperty_('list');
-  if (list === null) {
-    return [];
-  }
-  return list.map(value => new PackInfo(value));
-}
-
-function getProperty_(key) {
+function getProperty(key) {
   var userProperties = PropertiesService.getUserProperties();
   var value = userProperties.getProperty(key);
   return JSON.parse(value);
 }
 
-function setProperty_(key, value) {
+function setProperty(key, value) {
   var userProperties = PropertiesService.getUserProperties();
   userProperties.setProperty(key, JSON.stringify(value));
+}
+
+function getCache(key) {
+  const cache = CacheService.getUserCache();
+  return cache.get(key);
+}
+
+function putCache(key, value) {
+  const cache = CacheService.getUserCache();
+  cache.put(key, value);
 }
 
 function getHash(value) {
@@ -288,10 +406,11 @@ function getHash(value) {
 
 class Card {
   constructor(id, front, back, meta) {
-    this.id = id;
-    this.front = front;
-    this.back = back;
+    this.id = String(id);
+    this.front = String(front);
+    this.back = String(back);
     this.meta = meta;
+    this.hash = getHash(id + front + back);
   }
 }
 
@@ -311,24 +430,28 @@ class Pack {
     this.url = url
     this.decks = null;
     this.parent = parent;
+    this.shareUrl = null;
+    this.settings = null;
   }
 }
 
 class CardMetaData {
-  constructor(metadata) {
-    this.id = metadata.id || 0; // id 
-    this.hash = metadata.hash || 0 // digest 
-    this.efactor = metadata.efactor || 0; // e-factor
-    this.count = metadata.count || 0; // n
-    this.interval = metadata.interval || 0; // interval
-    this.last = metadata.last || 0; // last review
+  constructor(efactor, repetition, interval, lasttime) {
+    efactor = parseFloat(efactor);
+    this.efactor = Number.isNaN(efactor) ? 2.5 : efactor;
+    repetition = parseInt(repetition);
+    this.repetition = Number.isNaN(repetition) ? 0 : repetition;
+    interval = parseInt(interval);
+    this.interval = Number.isNaN(interval) ? 0 : interval;
+    lasttime = parseInt(lasttime);
+    this.lasttime = Number.isNaN(lasttime) ? 0 : lasttime;
   }
 }
 
 class PackInfo {
-  constructor(info) {
-    this.p = info.p || '';
-    this.i = info.i || '';
+  constructor() {
+    this.p = null;
+    this.i = null;
   }
   get parent() {
     return this.p;

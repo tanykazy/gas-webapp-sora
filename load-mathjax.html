@@ -1,0 +1,28 @@
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script async>
+    window.MathJax = {
+        startup: {
+            promise: Promise.resolve()
+        },
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+
+    function typeset(code) {
+        window.MathJax.startup.promise = window.MathJax.startup.promise
+            .then(() => window.MathJax.typesetPromise(code()))
+            .catch((err) => console.log('Typeset failed: ' + err.message));
+        return window.MathJax.startup.promise;
+    }
+
+    (function () {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+    })();
+</script>

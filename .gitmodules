@@ -1,0 +1,3 @@
+[submodule "javascript-algorithm-sm2"]
+	path = javascript-algorithm-sm2
+	url = git@github.com:tanykazy/javascript-algorithm-sm2.git
