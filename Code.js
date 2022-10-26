@@ -1,5 +1,3 @@
-// hoge
-
 const headers = {
   id: 'ID',
   front: 'Front',
